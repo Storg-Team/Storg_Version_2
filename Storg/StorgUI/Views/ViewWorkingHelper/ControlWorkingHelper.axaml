@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 Background="#6d717a"
+             x:Class="StorgUI.ControlWorkingHelper">
+	<Grid>
+		<ScrollViewer VerticalScrollBarVisibility="Visible" Name="ScollBar" Margin="20, 40,0,0">
+			<Grid>
+				<StackPanel Orientation="Vertical" Margin="0,20,0,0">
+					<TextBlock Text="Rechercher :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Resources/ImageHelper/bouton_recherche.png" Width="400" Height="300" VerticalAlignment="Top"/>
+						<TextBlock Text="La barre de recherche vous permet de naviguer dans les fichiers listés au milieu de la page." Foreground="Black" VerticalAlignment="Top" MaxWidth="290" TextWrapping="Wrap" Margin="20,0,0,0" Classes="Text"/>
+					</StackPanel>
+					<TextBlock Text="Actualiser :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Resources/ImageHelper/bouton_Parametres.png" Width="400" Height="300" VerticalAlignment="Top"/>
+						<TextBlock Text="Le bouton de rafraichissement vous permet d’actualiser la liste des fichiers." Foreground="Black" VerticalAlignment="Top" MaxWidth="290" TextWrapping="Wrap" Margin="20,0,0,0" Classes="Text"/>
+					</StackPanel>
+					<TextBlock Text="Navigateur de fichier :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Resources/ImageHelper/selecteur_fichier.png" Width="400" Height="300" VerticalAlignment="Top"/>
+						<TextBlock Text="Le navigateur de fichier est situé au milieu de la page, c’est là où vous pouvez y trouver vos différents fichiers compressés." Foreground="Black" VerticalAlignment="Top" MaxWidth="290" TextWrapping="Wrap" Margin="20,0,0,0"/>
+					</StackPanel>
+					<TextBlock Text="Déposez ici :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Resources/ImageHelper/Drag_drop.png" Width="400" Height="300" VerticalAlignment="Top"/>
+						<TextBlock Text="Le drag and drop vous permet de directement glisser vos fichiers dans cette zone en effectuant un clic gauche maintenu et en ramenant le fichier souhaité." Foreground="Black" VerticalAlignment="Top" MaxWidth="290" TextWrapping="Wrap" Margin="20,0,0,0"/>
+					</StackPanel>
+					<TextBlock Text="Exportation :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Resources/ImageHelper/Exporter.png" Width="400" Height="300" VerticalAlignment="Top"/>
+						<TextBlock Text="Le bouton Exporter permet d’exporter le fichier sous forme compressée dans votre dossier Téléchargement de votre ordinateur, cela peut être utile pour envoyer un lourd." Foreground="Black" VerticalAlignment="Top" MaxWidth="290" TextWrapping="Wrap" Margin="20,0,0,0"/>
+					</StackPanel>
+					<TextBlock Text="Téléchargement :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Resources/ImageHelper/Telecharger.png" Width="400" Height="300" VerticalAlignment="Top"/>
+						<TextBlock Text="Le bouton Télécharger permet de récupérer le fichier décompressé." Foreground="Black" VerticalAlignment="Top" MaxWidth="290" TextWrapping="Wrap" Margin="20,0,0,0"/>
+					</StackPanel>
+					<TextBlock Text="Suppression :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Resources/ImageHelper/Supprimer.png" Width="400" Height="300" VerticalAlignment="Top"/>
+						<TextBlock Text="Le bouton Supprimer permet de supprimer les fichiers listés dans le sélecteur de fichiers." Foreground="Black" VerticalAlignment="Top" MaxWidth="290" TextWrapping="Wrap" Margin="20,0,0,0"/>
+					</StackPanel>
+				</StackPanel>
+			</Grid>
+		</ScrollViewer>
+	</Grid>
+</UserControl>

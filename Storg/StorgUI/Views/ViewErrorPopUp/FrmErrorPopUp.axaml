@@ -1,0 +1,16 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        WindowStartupLocation="CenterOwner" Background="white" Width="260" Height="150" CanResize="False" Title="Error" Icon="/Resources/Icon_Storg.ico"
+        x:Class="StorgUI.FrmErrorPopUp">
+	<Grid>
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+			<Image Source="/Resources/erreur.png" Width="30" Height="30"/>
+			<TextBlock Text="Fichier déja existant" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="15,0,0,0"/>
+		</StackPanel>
+		<Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,20" Width="60" Height="30" Name="leave" BorderBrush="Black" Background="#f1efee" Classes="ErrorBtn">
+			<TextBlock Foreground="Black" HorizontalAlignment="Center" Text="Ok"/>
+		</Button>
+	</Grid>
+</Window>

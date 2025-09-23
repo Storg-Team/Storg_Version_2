@@ -1,0 +1,13 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        WindowStartupLocation="CenterOwner" Background="#363b48" Width="320" Height="150" CanResize="False" x:Class="StorgUI.OptionPopUp" Title="Gestion fichier" Icon="/Resources/Icon_Storg.ico">
+  <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel Orientation="Horizontal">
+            <Button Foreground="Black" Content="Exporter" Name="Exporter" HorizontalAlignment="Center" VerticalAlignment="Center" Classes="Button_Clicked_File" Margin="10,0,10,0"/>
+            <Button Foreground="Black" Content="Telecharger" Name="Telecharger" HorizontalAlignment="Center" VerticalAlignment="Center" Classes="Button_Clicked_File" Margin="10,0,10,0"/>
+            <Button Foreground="Black" Content="Supprimer" Name="Supprimer" HorizontalAlignment="Center" VerticalAlignment="Center" Classes="Button_Clicked_File" Margin="10,0,10,0"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -4,7 +4,54 @@
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
-    <Application.Styles>
-        <FluentTheme />
-    </Application.Styles>
+	<Application.Styles>
+		<FluentTheme/>
+		<Style Selector="Button.Button_Clicked_File">
+			<Setter Property="Background" Value="#d6bebe"/>
+			<Setter Property="Template">
+				<ControlTemplate>
+					<ContentPresenter x:Name="PART_ContentPresenter" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" Padding="{TemplateBinding Padding}" RecognizesAccessKey="True" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+				</ControlTemplate>
+			</Setter>
+		</Style>
+		<Style Selector="Button.Button_Clicked_File:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="#c4b0b0"/>
+			<Setter Property="TextBlock.Foreground" Value="Black"/>
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
+		<Style Selector="Button.DefaultBt:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="#c4b0b0"/>
+			<Setter Property="TextBlock.Foreground" Value="Black"/>
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
+		<Style Selector="TextBox.Search">
+			<Setter Property="Background" Value="#d6bebe"/>
+			<Setter Property="Foreground" Value="Black"/>
+			<Setter Property="Opacity" Value="1"/>
+			<Setter Property="BorderThickness" Value="0"/>
+		</Style>
+		<Style Selector="TextBox.Search:pointerover /template/ Border#PART_BorderElement">
+			<Setter Property="Background">
+				<SolidColorBrush Color="#c4b0b0"/>
+			</Setter>
+			<Setter Property="Opacity" Value="1"/>
+			<Setter Property="BorderThickness" Value="0"/>
+		</Style>
+		<Style Selector="TextBox.Search:focus /template/ Border#PART_BorderElement">
+			<Setter Property="Background" Value="#bcafaf"/>
+			<Setter Property="Opacity" Value="1"/>
+			<Setter Property="BorderThickness" Value="0"/>
+		</Style>
+		<Style Selector="Button.ErrorBtn:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="#d3d1cf"/>
+			<Setter Property="TextBlock.Foreground" Value="Black"/>
+			<Setter Property="Opacity" Value="1"/>
+			<Setter Property="BorderBrush" Value="Black"/>
+		</Style>
+		<Style Selector="Button.File:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background">
+				<SolidColorBrush Color="#36516d" Opacity="0.6"/>
+			</Setter>
+		</Style>
+	</Application.Styles>
 </Application>

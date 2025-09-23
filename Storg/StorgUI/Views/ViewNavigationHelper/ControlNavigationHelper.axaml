@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             Background="#6d717a"
+             x:Class="StorgUI.ControlNavigationHelper">
+	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+			<Button Content="Navigation" CornerRadius="0" Classes="DefaultBt" Foreground="Black" Name="Nav" Focusable="True" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+			<Button Content="Fonctionnalités d&apos;utilisation" CornerRadius="0" Classes="DefaultBt" Background="#d6bebe" Foreground="Black" Name="Fonc" Focusable="True" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+		</StackPanel>
+		<ContentControl x:Name="MainContentNav">
+			<ScrollViewer VerticalScrollBarVisibility="Visible" Name="ScollBar" Margin="20, 40,0,0">
+				<Grid>
+					<StackPanel Orientation="Vertical" Margin="0,20,0,0">
+						<TextBlock Text="Accueil :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+						<StackPanel Orientation="Horizontal">
+							<Image Source="/Resources/ImageHelper/bouton_Accueil.png" Width="400" Height="300" VerticalAlignment="Top"/>
+							<TextBlock Text="Le bouton Accueil vous permet de revenir sur la page principale de Storg." Foreground="Black" VerticalAlignment="Top" MaxWidth="290" TextWrapping="Wrap" Margin="20,0,0,0" Classes="Text"/>
+						</StackPanel>
+						<TextBlock Text="Contact :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+						<StackPanel Orientation="Horizontal">
+							<Image Source="/Resources/ImageHelper/bouton_Contact.png" Width="400" Height="300" VerticalAlignment="Top"/>
+							<TextBlock Text="Le bouton “Contact” vous oriente vers le site si vous souhaitez entrer en contact avec nous." Foreground="Black" VerticalAlignment="Top" MaxWidth="290" TextWrapping="Wrap" Margin="20,0,0,0" Classes="Text"/>
+						</StackPanel>
+						<TextBlock Text="A propos de :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+						<StackPanel Orientation="Horizontal">
+							<Image Source="/Resources/ImageHelper/bouton_A_propos_de.png" Width="400" Height="300" VerticalAlignment="Top"/>
+							<TextBlock Text="Le bouton “A propos de” vous permet de prendre connaissance de l’utilité de Storg, de savoir pourquoi il a été créé, par qui et pour qui." Foreground="Black" VerticalAlignment="Top" MaxWidth="290" TextWrapping="Wrap" Margin="20,0,0,0"/>
+						</StackPanel>
+						<TextBlock Text="Paramètres :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+						<StackPanel Orientation="Horizontal">
+							<Image Source="/Resources/ImageHelper/bouton_Parametres.png" Width="400" Height="300" VerticalAlignment="Top"/>
+							<TextBlock Text="Le bouton “Paramètres” vous permet d’accéder aux différents réglages que vous pouvez effectuer selon vos préférences d’utilisation du logiciel." Foreground="Black" VerticalAlignment="Top" MaxWidth="290" TextWrapping="Wrap" Margin="20,0,0,0"/>
+						</StackPanel>
+					</StackPanel>
+				</Grid>
+			</ScrollViewer>
+		</ContentControl>
+	</Grid>
+	
+</UserControl>
