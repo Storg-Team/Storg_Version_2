@@ -11,20 +11,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Avalonia.Layout;
+using StorgLibs;
+using StorgCommon;
 
 namespace StorgUI
 {
     public partial class MainWindow : Window
     {
 
-        private static MainWindow MainWindowRef = new MainWindow();  // R�ferance de la class de base pour les fonctions en static.
-
+        private LibsGlobal _libsglobal = new LibsGlobal();
+        private string CurrentExecDirectory = "";
         private Control? Page_tmp;
+        public static OptionPopUp OptionPopUpWindows = new OptionPopUp(); // Fenetre PopUp Globale pour Exprter / Telecharger / Supprimer un fichier.
+
 
         public MainWindow()
         {
             InitializeComponent();
-
+            CurrentExecDirectory = AppDomain.CurrentDomain.BaseDirectory;
             refresh(); // Permet d'afficher tout les fichiers d�ja pr�sent dans la BDD
 
             AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'�venement pour d�clancher la fonction de Drag and Drop
@@ -34,9 +38,9 @@ namespace StorgUI
             Page_tmp = MainContent.Content as Control;
 
 
-            //////// D�clancheur ///////
+            #region declencheur
 
-            var buttonA = this.FindControl<Button>("BtAccueil"); // Si un boutton avec en parametre le Nom = BtAcueil, alors �a d�clache l'action qui se passe quand on click dessus.
+            Button? buttonA = this.FindControl<Button>("BtAccueil"); // Si un boutton avec en parametre le Nom = BtAcueil, alors �a d�clache l'action qui se passe quand on click dessus.
             if (buttonA != null)
             {
                 this.Loaded += (sender, e) =>
@@ -55,7 +59,7 @@ namespace StorgUI
                 buttonA.Click += OnClickAccueil;
             }
 
-            var buttonC = this.FindControl<Button>("BtContact");
+            Button? buttonC = this.FindControl<Button>("BtContact");
             if (buttonC != null)
             {
                 buttonC.GotFocus += (sender, e) =>
@@ -69,7 +73,7 @@ namespace StorgUI
                 buttonC.Click += OnClickContact;
             }
 
-            var buttonAide = this.FindControl<Button>("BtAide");
+            Button? buttonAide = this.FindControl<Button>("BtAide");
             if (buttonAide != null)
             {
                 buttonAide.GotFocus += (sender, e) =>
@@ -83,7 +87,7 @@ namespace StorgUI
                 buttonAide.Click += OnClickAide;
             }
 
-            var buttonP = this.FindControl<Button>("BtAProps");
+            Button? buttonP = this.FindControl<Button>("BtAProps");
             if (buttonP != null)
             {
                 buttonP.GotFocus += (sender, e) =>
@@ -108,52 +112,15 @@ namespace StorgUI
                 button.Click += OnClickSettings;
             }
 
-
-            ///// D�clancheur ////
-
         }
 
+        #endregion declencheur
 
-
-
+        #region trigger
         private void OnClickSettings(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-
-
             MainContent.Content = new ControlSettings();
-
         }
-
-
-
-
-
-
-
-
-
-
-        private void Dynamic_Change_Size(object? sender, SizeChangedEventArgs e)  // Permet de changer dynamiquement la taille de la section de scoll en fonction de la taille de l'�cran.
-        {
-            var WindowHeight = this.Height;
-            if (WindowHeight > 283)
-            {
-                ScollBar.Height = WindowHeight - 283;
-            }
-
-
-        }
-
-
-
-
-
-
-
-
-        ////// Action ///////
-
-
 
         private void OnClickAccueil(object? sender, RoutedEventArgs e) // Une fois le boutton clicker �a d�clanche les fonctions associer � chaque boutton pour effectuer ce qu'il faut.
         {
@@ -175,9 +142,66 @@ namespace StorgUI
             Console.WriteLine("Aprops");
         }
 
+        private void OnClickReload(object? sender, RoutedEventArgs e) // Appelle la fonction refresh.
+        {
+            refresh();
+        }
+        private void OnDrop(object? sender, DragEventArgs e) // Fonction de Drag and Drop
+        {
+
+            IEnumerable<IStorageItem>? items = e.Data.GetFiles(); // R�cup�re le ou les objects d�poser
+            if (items != null)
+            {
+                foreach (IStorageFile item in items) // R�cup�re les objets un part un.
+                {
+                    var file = item as IStorageFile; // R�cup�re le fichier depuis l'objet
+
+                    if (file is null)
+                    {
+                        return;
+                    }
+
+                    Add_File(file); // Le donne � la fonction de cr�ation de fichier.
+                }
+            }
+        }
+
+        #endregion trigger
+
+        private void Dynamic_Change_Size(object? sender, SizeChangedEventArgs e)  // Permet de changer dynamiquement la taille de la section de scoll en fonction de la taille de l'�cran.
+        {
+            double WindowHeight = this.Height;
+            if (WindowHeight > 283)
+            {
+                ScollBar.Height = WindowHeight - 283;
+            }
+        }
 
 
-        ////////   Action  //////
+        #region Methode
+
+        private void refresh()  // Permet de refresh la liste des fichier.
+        {
+            IList<ModelFile> FilesList = _libsglobal.LoadStoredFile();
+
+            ColumnFichier.Children.Clear(); // Vide la liste afficher.
+            foreach (ModelFile file in FilesList)
+            {
+
+                var btn = Create_btn(file.Name, file.Date, file.Time, file.Weight.ToString()); //creation dynamique des boutton
+
+                btn.Click += OnClickFichierDl; // Affectation de la fonction OnClickFichierDl lors du click
+
+                ColumnFichier.Children.Add(btn);
+            }
+        }
+
+        #endregion Methode
+
+
+
+
+
 
 
 
@@ -188,7 +212,6 @@ namespace StorgUI
 
 
         public static string? Boutton_Name_File;  // R�cup�re globalement le nom du fichier clicker.
-        public static OptionPopUp OptionPopUpWindows = new OptionPopUp(); // Fenetre PopUp Globale pour Exprter / Telecharger / Supprimer un fichier.
 
         public async void OnClickFichierDl(object? sender, RoutedEventArgs e) // Permet d'ouvrir la fenetre PopUp
         {
@@ -210,89 +233,6 @@ namespace StorgUI
 
 
 
-        private void OnClickReload(object? sender, RoutedEventArgs e) // Appelle la fonction refresh.
-        {
-            refresh();
-        }
-
-
-
-
-
-        private void refresh()  // Permet de refresh la liste des fichier.
-        {
-
-
-            // List<string[]> File_List = new List<string[]>();
-
-            // string exec_py = Path.Combine(Get_Current_Directory(), "Gestion_BDD.exe");
-
-            // if (Os() == "Linux")
-            // {
-            //     exec_py = "/usr/share/storg/Gestion_BDD";
-
-            // }
-
-
-
-            // Process process = new Process();
-            // process.StartInfo.FileName = exec_py;
-            // process.StartInfo.Arguments = "load_file";
-            // process.StartInfo.RedirectStandardOutput = true;
-
-            // process.StartInfo.UseShellExecute = false;
-            // process.StartInfo.CreateNoWindow = true;
-
-
-            // process.Start();
-
-
-            // if (process == null)
-            // {
-            //     return;
-            // }
-            // using (System.IO.StreamReader reader = process.StandardOutput)
-            // {
-
-            //     string output = reader.ReadToEnd();
-
-            //     // Le script python r�cup�re tout les fichier stocker dans la BDD pour les afficher //
-            //     List<List<string>>? pythonList = JsonConvert.DeserializeObject<List<List<string>>>(output);
-            //     if (pythonList == null)
-            //     {
-            //         return;
-            //     }
-
-            //     foreach (var i in pythonList)
-            //     {
-            //         List<string> Element = new List<string>();
-            //         foreach (var value in i)
-            //         {
-            //             Element.Add(value.ToString());
-            //         }
-            //         File_List.Add(Element.ToArray());
-            //     }
-
-
-            // }
-
-
-            // File_List.Reverse(); // Inverse la liste pour avoir le fichier le plus r�cent en haut
-            // ColumnFichier.Children.Clear(); // Vide la liste afficher.
-            // foreach (var i in File_List)
-            // {
-
-            //     // On recr�� tout les bouttons //
-
-            //     var btn = Create_btn(i[0], i[1], i[2], i[3]);
-
-            //     btn.Click += OnClickFichierDl; // Affectation de la fonction OnClickFichierDl lors du click
-
-            //     ColumnFichier.Children.Add(btn);
-            // }
-
-
-        }
 
 
 
@@ -302,56 +242,6 @@ namespace StorgUI
 
 
 
-        public static string Get_Current_Directory()  // R�cup�re le dossier du projet pour naviger dans les diff�rent r�pertoir de ressource
-        {
-            string Current_File = AppDomain.CurrentDomain.BaseDirectory;
-            // if (Current_File == null)
-            // {
-            //     return "";
-            // }
-
-
-            // var FolderInfo = new DirectoryInfo(Current_File); // Remonte dans les r�pertoir, �quivalmant � : ../../../
-            // var ParentFolder = FolderInfo.Parent;
-
-            // if (ParentFolder == null || ParentFolder.Parent == null || ParentFolder.Parent.Parent == null || ParentFolder.Parent.Parent.Parent == null)
-            // {
-            //     return "";
-            // }
-            //ParentFolder.Parent.Parent.Parent.FullName
-
-            return new(Current_File); // Renvoie le chemin du dosser du projet
-        }
-
-
-
-
-
-
-
-
-
-
-        private void OnDrop(object? sender, DragEventArgs e) // Fonction de Drag and Drop
-        {
-
-            var items = e.Data.GetFiles(); // R�cup�re le ou les objects d�poser
-            if (items != null)
-            {
-
-                foreach (var item in items) // R�cup�re les objets un part un.
-                {
-                    var file = item as IStorageFile; // R�cup�re le fichier depuis l'objet
-
-                    if (file is null)
-                    {
-                        return;
-                    }
-
-                    Add_File(file); // Le donne � la fonction de cr�ation de fichier.
-                }
-            }
-        }
 
 
 
@@ -370,169 +260,130 @@ namespace StorgUI
         private async void Add_File(IStorageFile file) // Permet de cr�� et d'ajouter un fichier � la BDD
         {
 
-            // R�cup�re les infos sur la date et l'heur de cr�ation //
 
-            // DateTime date = DateTime.Now;
-            // int day = date.Day;
-            // int mounth = date.Month;
-            // int year = date.Year;
-            // int hour = date.Hour;
-            // int min = date.Minute;
-            // string minute = Convert.ToString(min);
-            // if (min < 10)
-            // {
-            //     minute = "0" + min;
-            // }
+            DateTime date = DateTime.Now;
+
+            string minute = Convert.ToString(date.Minute);
+            if (date.Minute < 10) minute = "0" + date.Minute;
+            
+            string complet_date = $"{date.Day}/{date.Month}/{date.Year}";
+            string complet_time = $"{date.Hour}:{minute}";
 
 
-            // string complet_date = ($"{day}/{mounth}/{year}");
-            // string complet_time = ($"{hour}:{minute}");
+            // R�cup�re les infos importante du fichier (Nom, chemin, taille)
 
-            // ////////
-
-            // // R�cup�re les infos importante du fichier (Nom, chemin, taille)
-
-            // string Name_file = file.Name;
-            // Name_file = Name_file.Replace(' ', '_');
+            string NameFile = file.Name.Replace(' ', '_');
 
 
-            // string? Existe = "False";
+            if (_libsglobal.CheckIfFileExist(NameFile))
+            {
 
-            // string exec_py = Path.Combine(Get_Current_Directory(), "Gestion_BDD");
+                FrmErrorPopUp PopUpWindows = new FrmErrorPopUp(); 
 
-            // if (Os() == "Linux")
-            // {
-            //     exec_py = "/usr/share/storg/Gestion_BDD";
+                await PopUpWindows.ShowDialog(this);
 
-            // }
+            }
+            else
+            {
 
-
-            // Process process = new Process();
-            // process.StartInfo.FileName = exec_py;
-            // process.StartInfo.Arguments = $"verif_file_exist {Name_file}";
-            // process.StartInfo.RedirectStandardOutput = true;
-
-            // process.StartInfo.UseShellExecute = false;
-            // process.StartInfo.CreateNoWindow = true;
-
-            // process.Start();
-
-
-            // if (process == null)
-            // {
-            //     return;
-            // }
-            // using (System.IO.StreamReader reader = process.StandardOutput)
-            // {
-
-            //     string output = reader.ReadToEnd();
-
-            //     Existe = JsonConvert.DeserializeObject<string>(output);
-            // }
+                var FilePath = file.Path;
+                string FileSize;
+                using (var stream = await file.OpenReadAsync())
+                    FileSize = Convert.ToString($"{stream.Length / 1024} Ko"); // Converti l'octet en Ko (et en string)
+                
 
 
 
 
-            // if (Existe == "True")
-            // {
 
-            //     PopUp PopUpWindows = new PopUp(); // Fenetre PopUp Globale pour Exprter / Telecharger / Supprimer un fichier.
-
-            //     await PopUpWindows.ShowDialog(this);
-
-
-            // }
-            // else if (Existe == "False")
-            // {
-
-            //     var File_Path = file.Path;
-            //     string file_Size;
-            //     using (var stream = await file.OpenReadAsync()) // R�cup�re le nombre d'Octet du fichier.
-            //     {
-            //         long Size = stream.Length;
-            //         file_Size = Convert.ToString($"{(Size / 1024)} Ko"); // Converti l'octet en Ko (et en string)
-            //     }
-            //     ////////
+                #region A continuer
 
 
 
-            //     // Permet de cr�� le boutton et l'ajouter � la liste des fichier.
-            //     string ProjectFile = "";
-            //     string Folder = "";
-            //     if (Os() == "Windows")
-            //     {
-            //         ProjectFile = Get_Current_Directory();
-            //         Folder = "Saved_File";
-            //     }
-            //     else if (Os() == "Linux")
-            //     {
-            //         ProjectFile = "/usr/share/storg";
-            //         Folder = "Saved_File";
-
-            //     }
-
-            //     string Destination_Folder = Path.Combine(ProjectFile, Folder);
-            //     string Destination_Path = Path.Combine(Destination_Folder, Name_file); // Cr�� les chemin pour enregistrer les fichiers
 
 
 
-            //     // Permet de copier le fichier //
-
-            //     await using (var InputStream = await file.OpenReadAsync())
-            //     await using (var OutputStream = File.Create(Destination_Path))
-            //     {
-            //         await InputStream.CopyToAsync(OutputStream);
-            //     }
-
-            //     var btn = Create_btn(Name_file, complet_date, complet_time, file_Size);
-
-            //     btn.Click += OnClickFichierDl; // Ajoute de la fonction OnClickFichierDl quand le boutton est clicker
-
-            //     ColumnFichier.Children.Add(btn); // Ajoute le boutton � la liste des fichiers.
 
 
 
-            //     // Permet d'executer le script python pour ajouter un fichier � la BDD //
-
-            //     exec_py = Path.Combine(Get_Current_Directory(), "Gestion_BDD");
-
-            //     if (Os() == "Linux")
-            //     {
-            //         exec_py = "/usr/share/storg/Gestion_BDD";
-
-            //     }
-
-            //     process.StartInfo.FileName = exec_py;
-            //     process.StartInfo.Arguments = $"store_file {Name_file} {complet_date} {complet_time} {file_Size}";
-            //     process.StartInfo.RedirectStandardOutput = true;
-            //     process.StartInfo.UseShellExecute = false;
-            //     process.StartInfo.CreateNoWindow = true;
 
 
-            //     process.Start();
+                // Permet de cr�� le boutton et l'ajouter � la liste des fichier.
+                string ProjectFile = "";
+                string Folder = "";
+                if (Os() == "Windows")
+                {
+                    ProjectFile = Get_Current_Directory();
+                    Folder = "Saved_File";
+                }
+                else if (Os() == "Linux")
+                {
+                    ProjectFile = "/usr/share/storg";
+                    Folder = "Saved_File";
 
+                }
 
-            //     if (process == null)
-            //     {
-            //         return;
-            //     }
-            //     using (System.IO.StreamReader reader = process.StandardOutput)
-            //     {
-
-            //         string output = reader.ReadToEnd();
-
-            //     }
+                string Destination_Folder = Path.Combine(ProjectFile, Folder);
+                string Destination_Path = Path.Combine(Destination_Folder, Name_file); // Cr�� les chemin pour enregistrer les fichiers
 
 
 
-            // }
+                // Permet de copier le fichier //
 
-            // //////
+                await using (var InputStream = await file.OpenReadAsync())
+                await using (var OutputStream = File.Create(Destination_Path))
+                {
+                    await InputStream.CopyToAsync(OutputStream);
+                }
+
+                var btn = Create_btn(Name_file, complet_date, complet_time, file_Size);
+
+                btn.Click += OnClickFichierDl; // Ajoute de la fonction OnClickFichierDl quand le boutton est clicker
+
+                ColumnFichier.Children.Add(btn); // Ajoute le boutton � la liste des fichiers.
 
 
-            // // string File_To_Delete = Uri.UnescapeDataString(File_Path.AbsolutePath); // Retire les espaces d'un chemin
-            // // File.Delete(File_To_Delete); // Supprime le fichier automatiquement une fois copier
-            // refresh(); // Refresh pour que le nouveau fichier soit en haut
+
+                // Permet d'executer le script python pour ajouter un fichier � la BDD //
+
+                exec_py = Path.Combine(Get_Current_Directory(), "Gestion_BDD");
+
+                if (Os() == "Linux")
+                {
+                    exec_py = "/usr/share/storg/Gestion_BDD";
+
+                }
+
+                process.StartInfo.FileName = exec_py;
+                process.StartInfo.Arguments = $"store_file {Name_file} {complet_date} {complet_time} {file_Size}";
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+
+
+                process.Start();
+
+
+                if (process == null)
+                {
+                    return;
+                }
+                using (System.IO.StreamReader reader = process.StandardOutput)
+                {
+
+                    string output = reader.ReadToEnd();
+
+                }
+
+
+
+            }
+
+            //////
+
+
+           
+            refresh(); // Refresh pour que le nouveau fichier soit en haut
 
         }
 
@@ -989,30 +840,6 @@ namespace StorgUI
                 }
 
             }
-
-        }
-
-
-
-        public static string Os()
-        {
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) == true) // V�rifie si l'utilisateur est sous windows
-            {
-
-                return "Windows";
-
-
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) == true) // V�rifie si l'utilisateur est sous Linux
-            {
-                return "Linux";
-
-            }
-            throw new PlatformNotSupportedException("OS non support� !");
-
-
-
 
         }
 

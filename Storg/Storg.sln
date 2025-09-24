@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorgLibs", "StorgLibs\Stor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorgCommon", "StorgCommon\StorgCommon.csproj", "{5E81BC55-A651-4311-BCEC-2AAB1ADAA531}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorgTestUnitaire", "StorgTestUnitaire\StorgTestUnitaire.csproj", "{C8CE43A4-D2E6-4BEB-A1ED-EE8959BF58EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{5E81BC55-A651-4311-BCEC-2AAB1ADAA531}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E81BC55-A651-4311-BCEC-2AAB1ADAA531}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E81BC55-A651-4311-BCEC-2AAB1ADAA531}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8CE43A4-D2E6-4BEB-A1ED-EE8959BF58EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8CE43A4-D2E6-4BEB-A1ED-EE8959BF58EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8CE43A4-D2E6-4BEB-A1ED-EE8959BF58EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8CE43A4-D2E6-4BEB-A1ED-EE8959BF58EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

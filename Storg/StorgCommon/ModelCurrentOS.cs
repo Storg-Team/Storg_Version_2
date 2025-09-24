@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace StorgCommon
 {
-    internal class ModelCurrentOS
+    public class ModelCurrentOS
     {
+        public required string OS { get; set; }
     }
 }
