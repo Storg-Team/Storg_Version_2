@@ -11,20 +11,17 @@ public partial class FrmErrorPopUp : Window
     {
         InitializeComponent();
 
-        //var btn = this.FindControl<Button>("leave");
-        //if (btn != null)
-        //{
-        //    btn.Click += Leave;
-        //}
-
-
+        var btn = this.FindControl<Button>("leave");
+        if (btn != null)
+        {
+           btn.Click += Leave;
+        }
     }
 
 
-    //private void Leave(object? sender, RoutedEventArgs e)
-    //{
-
-    //    this.Close();
-    //}
+    private void Leave(object? sender, RoutedEventArgs e)
+    {
+       this.Close();
+    }
 
 }

@@ -11,18 +11,18 @@ public partial class ControlWorkingHelper : UserControl
     {
         InitializeComponent();
 
-        //this.SizeChanged += Dynamic_Change_Size;
+        this.SizeChanged += Dynamic_Change_Size;
 
 
     }
 
-    //private void Dynamic_Change_Size(object? sender, RoutedEventArgs e)
-    //{
-    //    var scoll_find = this.FindControl<ScrollViewer>("ScrollBar");
-    //    if (scoll_find != null)
-    //    {
-    //        scoll_find.Height = Height - 300;
-    //    }
+    private void Dynamic_Change_Size(object? sender, RoutedEventArgs e)
+    {
+       var scoll_find = this.FindControl<ScrollViewer>("ScrollBar");
+       if (scoll_find != null)
+       {
+           scoll_find.Height = Height - 300;
+       }
 
-    //}
+    }
 }

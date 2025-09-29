@@ -17,18 +17,19 @@ namespace StorgLibs
         private string _connectionString = "";
         private bool _IsAlreadyCheck = false;
         private LibsGlobal _libsglobal = new LibsGlobal();
+        private ModelCurrentOS _currentOs = new ModelCurrentOS();
 
 
         public void IsBddExisting()
         {
             string DirPath = "";
-            if (_libsglobal.GetCurrentOS().OS == "Windows")
+            if (_libsglobal.GetCurrentOS() == _currentOs!.Windows)
             {
                 string CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 DirPath = Path.Combine(CurrentDirectory, ".data");
                 _BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
             }
-            else if (_libsglobal.GetCurrentOS().OS == "Linux")
+            else if (_libsglobal.GetCurrentOS() == _currentOs!.Linux)
             {
                 string CurrentDirectory = "/usr/share/storg/";
                 DirPath = Path.Combine(CurrentDirectory, ".data");
@@ -50,7 +51,7 @@ namespace StorgLibs
             }
 
 
-            string sqlcreatetable = @"CREATE TABLE IF NOT EXISTS Files (Name TEXT NOT NULL, Date TEXT NOT NULL, Time TEXT NOT NULL, Weight INTEGER, StoredFolder TEXT NOT NULL)";
+            string sqlcreatetable = @"CREATE TABLE IF NOT EXISTS Files (Name TEXT NOT NULL, Date TEXT NOT NULL, Time TEXT NOT NULL, Weight TEXT NOT NULL, StoredFolder TEXT NOT NULL)";
             using (SqliteConnection conn = new SqliteConnection(_connectionString))
             {
                 conn.Open();
@@ -88,7 +89,7 @@ namespace StorgLibs
                                 Name = reader["Name"].ToString()!,
                                 Date = reader["Date"].ToString()!,
                                 Time = reader["Time"].ToString()!,
-                                Weight = Convert.ToInt32(reader["Weight"])!,
+                                Weight = reader["Weight"].ToString()!,
                                 StoredFolder = reader["StoredFolder"].ToString()!,
 
                             };
@@ -123,10 +124,66 @@ namespace StorgLibs
         }
 
 
+        public void StoreFileToBDD(ModelFile file)
+        {
+            string sqlselectall = @$"INSERT INTO Files (Name, Date, Time, Weight, StoredFolder) VALUES(@name, @date, @time, @weight, @storedfolder)";
+            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqliteCommand command = new SqliteCommand(sqlselectall, conn))
+                {
+                    command.Parameters.AddWithValue("@name", file.Name);
+                    command.Parameters.AddWithValue("@date", file.Date);
+                    command.Parameters.AddWithValue("@time", file.Time);
+                    command.Parameters.AddWithValue("@weight", file.Weight);
+                    command.Parameters.AddWithValue("@storedfolder", file.StoredFolder);
+                    command.ExecuteNonQuery();
+                }
+                conn.Close();
+            }
+        }
+
+
+
+        public string GetStoredPath(string FileName)
+        {
+            string StoredFolder = "";
+            string sqlselectall = @$"SELECT StoredFolder FROM Files WHERE Name = @NameFile";
+            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqliteCommand command = new SqliteCommand(sqlselectall, conn))
+                {
+                    command.Parameters.AddWithValue("@NameFile", FileName);
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            StoredFolder = reader["StoredFolder"].ToString()!;
+                        }
+                    }
+                }
+                conn.Close();
+            }
+            return StoredFolder;
+        }
+
+        public void DeleteFileInBDD(string FileName)
+        {
+            string sqlselectall = @$"DELETE FROM Files WHERE Name = @NameFile";
+            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqliteCommand command = new SqliteCommand(sqlselectall, conn))
+                {
+                    command.Parameters.AddWithValue("@NameFile", FileName);
+                    command.ExecuteNonQuery();
+                }
+                conn.Close();
+            }
+        }
 
 
     }
-
-
 }
 

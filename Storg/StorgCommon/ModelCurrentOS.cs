@@ -8,6 +8,9 @@ namespace StorgCommon
 {
     public class ModelCurrentOS
     {
-        public required string OS { get; set; }
+        public string Windows { get; set; } = "Windows";
+        public string Linux { get; set; } = "Linux";
+        public string OSX { get; set; } = "MacOS";
+
     }
 }
