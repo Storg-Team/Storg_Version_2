@@ -5,16 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
 using StorgCommon;
+using System.Runtime.CompilerServices;
 
 
 namespace StorgLibs
 {
     public class GestionFileHelper
     {
-        private LibsGlobal _libsglobal = new LibsGlobal();
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private string _savedFolder = ConfigurationManager.AppSettings.Get("SavedFolder")!;
         private string _currentExecDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        private SystemHelper _systemhelper = new SystemHelper();
+        private BDDHelper _bddhelper = new BDDHelper();
+        
 
 
         public void StoreFile(string FileName, string FilePath, string FileSize)
@@ -22,11 +25,11 @@ namespace StorgLibs
 
             string Destination_Folder = "";
 
-            if (_libsglobal.GetCurrentOS() == _currentOs.Windows) // Créé les chemin pour enregistrer les fichiers
+            if (_systemhelper.GetCurrentOS() == _currentOs.Windows) // Créé les chemin pour enregistrer les fichiers
             {
                 Destination_Folder = Path.Combine(_currentExecDirectory, _savedFolder);
             }
-            else if (_libsglobal.GetCurrentOS() == _currentOs.Linux)
+            else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
             {
                 Destination_Folder = Path.Combine(ConfigurationManager.AppSettings.Get("LinuxStoragePath")!, _savedFolder);
             }
@@ -37,36 +40,56 @@ namespace StorgLibs
 
             // Permet de copier le fichier //
             string DestinationFilePath = Path.Combine(Destination_Path, FileName);
-            File.Copy(FilePath, DestinationFilePath);
 
-            _libsglobal.StoreFileToBDD(new ModelFile
+            _bddhelper.StoreFileToBDD(new ModelFile
             {
                 Name = FileName,
-                Date = _libsglobal.GetDateTime().Date!,
-                Time = _libsglobal.GetDateTime().Date!,
+                Date = _systemhelper.GetDateTime().Date!,
+                Time = _systemhelper.GetDateTime().Date!,
                 Weight = FileSize,
                 StoredFolder = DestinationFilePath,
             });
+            File.Copy(FilePath, DestinationFilePath);
 
         }
 
         public void DownloadFile(string FileName)
         {
-            string DownloadFolder = _libsglobal.GetDownloadFolder();
+            string DownloadFolder = _systemhelper.GetDownloadFolder();
 
-            File.Copy(_libsglobal.GetStoredPath(FileName), Path.Combine(DownloadFolder, FileName));
+            File.Move(_bddhelper.GetStoredPath(FileName), Path.Combine(DownloadFolder, FileName));
 
-            _libsglobal.DeleteFileInBDD(FileName);
+            _bddhelper.DeleteFileInBDD(FileName);
         }
 
-        public void DeleteFile(string StoredFilePath)
+        public void DeleteFile(string FileName)
         {
-           
-            
+            string StoredFilePath = _bddhelper.GetStoredPath(FileName);
 
+            Directory.Delete(GetParentPath(StoredFilePath));
 
+            _bddhelper.DeleteFileInBDD(FileName);
         }
 
+        public string GetParentPath(string StoredFilePath)
+        {
+            List<string> ParentPath = StoredFilePath.Split('/', StringSplitOptions.RemoveEmptyEntries).ToList();
+            ParentPath.RemoveAt(ParentPath.Count - 1);
+            return String.Join("/", ParentPath);
+        }
+
+        public void ExportFile(string FileName)
+        {
+            string DownloadFolder = _systemhelper.GetDownloadFolder();
+            string DownloadFileFolder = Path.Combine(DownloadFolder, FileName);
+            Directory.CreateDirectory(DownloadFileFolder);
+
+            if (!File.Exists(Path.Combine(DownloadFileFolder, FileName)))
+            {
+                File.Copy(_bddhelper.GetStoredPath(FileName), Path.Combine(DownloadFileFolder, FileName));
+            }
+
+        }
 
     }
 }

@@ -12,8 +12,6 @@ public partial class ControlWorkingHelper : UserControl
         InitializeComponent();
 
         this.SizeChanged += Dynamic_Change_Size;
-
-
     }
 
     private void Dynamic_Change_Size(object? sender, RoutedEventArgs e)

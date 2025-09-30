@@ -6,12 +6,13 @@ namespace StorgTestUnitaire
     public sealed class TestUnit
     {
 
-        BDDHelper bddhelper = new BDDHelper();
+        private BDDHelper _bddhelper = new BDDHelper();
+        private GestionFileHelper _gestionfilehelper = new GestionFileHelper();
 
         [TestMethod]
         public void TestBDDFileExist()
         {
-            bddhelper.IsBddExisting();
+            _bddhelper.IsBddExisting();
             string CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string DirPath = Path.Combine(CurrentDirectory, ".data");
             string BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
@@ -22,7 +23,14 @@ namespace StorgTestUnitaire
         [TestMethod]
         public void TestDeleteFileByPath()
         {
-            
+            string test1 = "user/appdata/data/file";
+            string test2 = "C:/document/folder/file";
+            string test3 = "user/space folder/file";
+
+            Assert.AreEqual(_gestionfilehelper.GetParentPath(test1), "user/appdata/data");
+            Assert.AreEqual(_gestionfilehelper.GetParentPath(test2), "C:/document/folder");
+            Assert.AreEqual(_gestionfilehelper.GetParentPath(test3), "user/space folder");
+
         }
 
     }

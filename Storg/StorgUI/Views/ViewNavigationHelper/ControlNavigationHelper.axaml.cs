@@ -50,12 +50,7 @@ public partial class ControlNavigationHelper : UserControl
            };
            btnNav.Click += SetAideNav;
         }
-
-
-
-
     }
-
 
     private void Dynamic_Change_Size(object? sender, RoutedEventArgs e)
     {
@@ -64,22 +59,16 @@ public partial class ControlNavigationHelper : UserControl
        {
            scoll_find.Height = Height - 300;
        }
-
     }
 
     private void GoToFonc(object? sender, RoutedEventArgs e)
     {
-
-       MainContentNav.Content = new AideFonc();
-
-
+       MainContentNav.Content = new ControlWorkingHelper();
     }
 
     private void SetAideNav(object? sender, RoutedEventArgs e)
     {
        MainContentNav.Content = tmp_page;
-
-
     }
 
 }

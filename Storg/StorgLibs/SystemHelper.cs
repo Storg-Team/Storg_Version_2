@@ -11,14 +11,14 @@ namespace StorgLibs
     public class SystemHelper
     {
 
-        private ModelCurrentOS? _currentOS;
+        private ModelCurrentOS _currentOS = new ModelCurrentOS();
 
         public string GetCurrentOS()
         {
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return _currentOS!.Windows;
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return _currentOS!.Linux;
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) return _currentOS!.OSX;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return _currentOS.Windows;
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return _currentOS.Linux;
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) return _currentOS.OSX;
             throw new PlatformNotSupportedException("OS non supporté !");
 
         }

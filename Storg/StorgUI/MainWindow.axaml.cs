@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using Avalonia.Layout;
 using StorgLibs;
 using StorgCommon;
+using System.Linq;
 
 namespace StorgUI
 {
@@ -22,21 +23,16 @@ namespace StorgUI
 
         #region Variable
         private LibsGlobal _libsglobal = new LibsGlobal();
-        private string CurrentExecDirectory = "";
         private Control? Page_tmp;
-        private static OptionPopUp OptionPopUpWindows = new OptionPopUp(); // Fenetre PopUp Globale pour Exprter / Telecharger / Supprimer un fichier.
-        private string _savedFolder;
 
         #endregion Variable
-
 
 
 
         public MainWindow()
         {
             InitializeComponent();
-            CurrentExecDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            _savedFolder = Path.Combine(CurrentExecDirectory, ConfigurationManager.AppSettings.Get("SavedFolder")!);
+            
             refresh(); // Permet d'afficher tout les fichiers d�ja pr�sent dans la BDD
 
             AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'�venement pour d�clancher la fonction de Drag and Drop
@@ -134,7 +130,7 @@ namespace StorgUI
             MainContent.Content = new ControlSettings();
         }
 
-        private void OnClickAccueil(object? sender, RoutedEventArgs e) // Une fois le boutton clicker �a d�clanche les fonctions associer � chaque boutton pour effectuer ce qu'il faut.
+        private void OnClickAccueil(object? sender, RoutedEventArgs e) // Une fois le boutton clicker ca declanche les fonctions associer a chaque boutton pour effectuer ce qu'il faut.
         {
             MainContent.Content = Page_tmp;
         }
@@ -161,19 +157,19 @@ namespace StorgUI
         private void OnDrop(object? sender, DragEventArgs e) // Fonction de Drag and Drop
         {
 
-            IEnumerable<IStorageItem>? items = e.Data.GetFiles(); // R�cup�re le ou les objects d�poser
+            IEnumerable<IStorageItem>? items = e.Data.GetFiles(); // Recupere le ou les objects deposer
             if (items != null)
             {
-                foreach (IStorageFile item in items) // R�cup�re les objets un part un.
+                foreach (IStorageFile item in items) // Recupere les objets un part un.
                 {
-                    var file = item as IStorageFile; // R�cup�re le fichier depuis l'objet
+                    var file = item as IStorageFile; // Recupere le fichier depuis l'objet
 
                     if (file is null)
                     {
                         return;
                     }
 
-                    Add_File(file); // Le donne � la fonction de cr�ation de fichier.
+                    Add_File(file); // Le donne a la fonction de creation de fichier.
                 }
             }
         }
@@ -182,7 +178,7 @@ namespace StorgUI
         {
             if (sender is Button button)
             {
-                OptionPopUpWindows = new OptionPopUp(button.Name);
+                OptionPopUp OptionPopUpWindows = new OptionPopUp(button.Name!);
                 OptionPopUpWindows.Closed += (s, e) => refresh();  // Quand elle ce ferme on refresh la list des fichiers.
                 await OptionPopUpWindows.ShowDialog(this);
             }
@@ -278,174 +274,25 @@ namespace StorgUI
             };
         }
 
-
-        #endregion Methode
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public void Research(object? sender, KeyEventArgs e) // Faire une recherche de fichier
         {
-            if (e.Key == Key.Enter) // V�rifi si la touche entrer est presser
+            if (e.Key == Key.Enter) // Verifi si la touche entrer est presser
             {
-                string research_file_text = "";
-                if (Search.Text != null) // Si c'est le cas on r�cup�re le texte �crit
+                if (Search.Text == null) // Si c'est le cas on recupere le texte ecrit
                 {
-                    research_file_text = Search.Text;
+                    return;
                 }
+                string research_file_text = Search.Text;
 
-                if (research_file_text != "")
+                ColumnFichier.Children.Clear(); // Vide la liste afficher.
+                foreach (ModelFile file in _libsglobal.ResearchFileByName(research_file_text).Reverse())
                 {
+                    // On recree tout les bouttons //
 
-                    List<string[]> File_List = new List<string[]>();
-
-                    string exec_py = Path.Combine(Get_Current_Directory(), "Gestion_BDD");
-
-                    if (Os() == "Linux")
-                    {
-                        exec_py = "/usr/share/storg/Gestion_BDD";
-
-                    }
-
-                    Process process = new Process();
-                    process.StartInfo.FileName = exec_py;
-                    process.StartInfo.Arguments = $"research_file {research_file_text}";
-                    process.StartInfo.RedirectStandardOutput = true;
-
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.CreateNoWindow = true;
-
-
-                    process.Start();
-
-
-                    if (process == null)
-                    {
-                        return;
-                    }
-                    using (System.IO.StreamReader reader = process.StandardOutput)
-                    {
-
-                        string output = reader.ReadToEnd();
-
-                        // Le script python r�cup�re tout les fichier stocker dans la BDD pour les afficher //
-                        List<List<string>>? pythonList = JsonConvert.DeserializeObject<List<List<string>>>(output);
-                        if (pythonList == null)
-                        {
-                            return;
-                        }
-
-                        foreach (var i in pythonList)
-                        {
-                            List<string> Element = new List<string>();
-                            foreach (var value in i)
-                            {
-                                Element.Add(value.ToString());
-                            }
-                            File_List.Add(Element.ToArray());
-                        }
-
-
-                    }
-
-
-
-                    File_List.Reverse(); // Inverse la liste pour avoir le fichier le plus r�cent en haut
-                    ColumnFichier.Children.Clear(); // Vide la liste afficher.
-                    foreach (var i in File_List)
-                    {
-
-                        // On recr�� tout les bouttons //
-
-                        var btn = Create_btn(i[0], i[1], i[2], i[3]);
-
-                        btn.Click += OnClickFichierDl; // Affectation de la fonction OnClickFichierDl lors du click
-
-                        ColumnFichier.Children.Add(btn);
-                    }
-
-
+                    Button btn = Create_btn(file);
+                    btn.Click += OnClickFichierDl; // Affectation de la fonction OnClickFichierDl lors du click
+                    ColumnFichier.Children.Add(btn);
                 }
-
                 Focus();
             }
             if (e.Key == Key.Escape) // si escape est presser alors on quitte la zone de recherche
@@ -455,63 +302,11 @@ namespace StorgUI
             }
         }
 
+        #endregion Methode
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-        private async void OpenFileBorwser(object? sender, PointerPressedEventArgs e) // Permet d'ouvrir l'explorateur de fichier
-        {
-
-            var topLevel = TopLevel.GetTopLevel(this);
-            if (topLevel?.StorageProvider != null)
-            {
-                var items = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions // R�cup�re le ou les fichiers selectionner
-                {
-                    Title = "Sélection votre fichier", // Titre de la fenetre
-                    AllowMultiple = true,  // Permet de selectionner plusieur fichier
-                    FileTypeFilter = new List<FilePickerFileType>
-                {
-                    new("Tous les fichiers") { Patterns = new[] {"*"} }, // Permet de choisir le type de fichier
-
-
-                }
-
-
-                });
-
-                if (items.Count > 0)
-                {
-
-                    foreach (var files in items) // Parcourir tout les fichiers selectionner
-                    {
-
-                        var file = files as IStorageFile;
-                        if (file != null)
-                        {
-
-                            Add_File(file); // Ajouter les fichier selectionner a la BBD et a la liste
-                        }
-                    }
-                }
-
-            }
-
-        }
-
-
-
-
-#region GestionFocusSearch
+        #region GestionFocusSearch
         private void Focus(object sender, RoutedEventArgs e) // Permet de vider le texte de la TextBox quand on click dedans
         {
             if (Search.Text == "Rechercher des fichiers compressés")
@@ -536,15 +331,46 @@ namespace StorgUI
             }
         }
 
-
-#endregion GestionFocusSearch
-
+        #endregion GestionFocusSearch
 
 
+        #region FileBrowser
 
+        private async void OpenFileBorwser(object? sender, PointerPressedEventArgs e) // Permet d'ouvrir l'explorateur de fichier
+        {
+            TopLevel topLevel = TopLevel.GetTopLevel(this)!;
+            if (topLevel.StorageProvider == null)
+            {
+                return;
+            }
+            IReadOnlyList<IStorageFile> items = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions // Recupere le ou les fichiers selectionner
+            {
+                Title = "Sélection votre fichier", // Titre de la fenetre
+                AllowMultiple = true,  // Permet de selectionner plusieur fichier
+                FileTypeFilter = new List<FilePickerFileType>
+                {
+                    new("Tous les fichiers") { Patterns = new[] {"*"} }, // Permet de choisir le type de fichier
+                }
+            });
 
+            if (items.Count > 0)
+            {
+                foreach (var files in items) // Parcourir tout les fichiers selectionner
+                {
+
+                    var file = files as IStorageFile;
+                    if (file != null)
+                    {
+
+                        Add_File(file); // Ajouter les fichier selectionner a la BBD et a la liste
+                    }
+                }
+            }
+
+        }
+
+        #endregion FileBrowser
 
     }
 }
-
 

@@ -64,101 +64,23 @@ namespace StorgUI
             this.Close(); // Ferme automatiquement le PopUp quand le fichier est supprimer 
         }
 
-
-
-
         private void Delete() // Permet de supprimer un fichier
         {
-            _libsglobal.DeleteFile(_libsglobal.GetStoredPath(FileName));
+            _libsglobal.DeleteFile(FileName);
             
-            string exec_py = Path.Combine(Get_Current_Directory(), "Gestion_BDD");
-
-            if (Os() == "Linux")
-            {
-                exec_py = "/usr/share/storg/Gestion_BDD";
-
-            }
-
-            Process process = new Process();
-            process.StartInfo.FileName = exec_py;
-            process.StartInfo.Arguments = $"delete_file {Boutton_Name_File}";
-            process.StartInfo.RedirectStandardOutput = true;
-
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-
-
-            process.Start();
-
-
-            if (process == null)
-            {
-                return;
-            }
-            using (System.IO.StreamReader reader = process.StandardOutput)
-            {
-
-                string output = reader.ReadToEnd();
-
-            }
-
             this.Close(); // Ferme automatiquement le PopUp quand le fichier est supprimer 
         }
 
-
-
-
-
-
-
-
-
-
         private void Export()  // Exporter mes fichier compresser
         {
+            _libsglobal.ExportFile(FileName);
 
-            string Download_Folder = Get_Download_Folder();
-
-            string exec_py = Path.Combine(Get_Current_Directory(), "Gestion_BDD");
-
-            if (Os() == "Linux")
-            {
-                exec_py = "/usr/share/storg/Gestion_BDD";
-
-            }
-
-            Process process = new Process();
-            process.StartInfo.FileName = exec_py;
-            process.StartInfo.Arguments = $"export_file {Boutton_Name_File} {Download_Folder}";
-            process.StartInfo.RedirectStandardOutput = true;
-
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = true;
-
-
-            process.Start();
-
-
-            if (process == null)
-            {
-                return;
-            }
-            using (System.IO.StreamReader reader = process.StandardOutput)
-            {
-
-                string output = reader.ReadToEnd();
-
-            }
-
-
-            OptionPopUpWindows.Close(); // Ferme automatiquement le PopUp quand le fichier est supprimer 
+            this.Close(); // Ferme automatiquement le PopUp quand le fichier est supprimer 
 
         }
 
 
         #endregion Methode
-
-
 
 
     }

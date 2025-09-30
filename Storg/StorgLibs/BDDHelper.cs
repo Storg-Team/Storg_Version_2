@@ -14,28 +14,43 @@ namespace StorgLibs
     public class BDDHelper
     {
         private string _BDDFilePath = "";
-        private string _connectionString = "";
         private bool _IsAlreadyCheck = false;
-        private LibsGlobal _libsglobal = new LibsGlobal();
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
+        private SystemHelper _systemhelper = new SystemHelper();
 
 
+
+        private string SetConnectionString()
+        {
+            if (_systemhelper.GetCurrentOS() == _currentOs.Windows)
+            {
+                string CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                _BDDFilePath = Path.Combine(Path.Combine(CurrentDirectory, ".data"), "BDD_Files_Info.db");
+            }
+            else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
+            {
+                string CurrentDirectory = "/usr/share/storg/";
+                _BDDFilePath = Path.Combine(Path.Combine(CurrentDirectory, ".data"), "BDD_Files_Info.db");
+            }
+            return @$"Data Source={_BDDFilePath};";
+        }
+        
         public void IsBddExisting()
         {
             string DirPath = "";
-            if (_libsglobal.GetCurrentOS() == _currentOs!.Windows)
+            if (_systemhelper.GetCurrentOS() == _currentOs.Windows)
             {
                 string CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 DirPath = Path.Combine(CurrentDirectory, ".data");
                 _BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
             }
-            else if (_libsglobal.GetCurrentOS() == _currentOs!.Linux)
+            else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
             {
                 string CurrentDirectory = "/usr/share/storg/";
                 DirPath = Path.Combine(CurrentDirectory, ".data");
                 _BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
             }
-            _connectionString = @$"Data Source={_BDDFilePath};";
+
             if (Directory.Exists(DirPath))
             {
                 if (!File.Exists(_BDDFilePath))
@@ -52,14 +67,13 @@ namespace StorgLibs
 
 
             string sqlcreatetable = @"CREATE TABLE IF NOT EXISTS Files (Name TEXT NOT NULL, Date TEXT NOT NULL, Time TEXT NOT NULL, Weight TEXT NOT NULL, StoredFolder TEXT NOT NULL)";
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
                 using (SqliteCommand cmd = new SqliteCommand(sqlcreatetable, conn))
                 {
                     cmd.ExecuteNonQuery();
                 }
-                conn.Close();
             }
             _IsAlreadyCheck = true;
         }
@@ -74,11 +88,11 @@ namespace StorgLibs
                 this.IsBddExisting();
             }
 
-            string sqlselectall = @$"SELECT * FROM Files";
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            string sqlrequest = @$"SELECT * FROM Files";
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
-                using (SqliteCommand command = new SqliteCommand(sqlselectall, conn))
+                using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
                 {
                     using (SqliteDataReader reader = command.ExecuteReader())
                     {
@@ -97,7 +111,6 @@ namespace StorgLibs
                         }
                     }
                 }
-                conn.Close();
             }
             return listFile;
 
@@ -106,11 +119,11 @@ namespace StorgLibs
 
         public bool CheckIfFileExist(string NameFIle)
         {
-            string sqlselectall = @$"SELECT * FROM Files WHERE Name = @NameFile";
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            string sqlrequest = @$"SELECT * FROM Files WHERE Name = @NameFile";
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
-                using (SqliteCommand command = new SqliteCommand(sqlselectall, conn))
+                using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
                 {
                     command.Parameters.AddWithValue("@NameFile", NameFIle);
                     using (SqliteDataReader reader = command.ExecuteReader())
@@ -118,7 +131,6 @@ namespace StorgLibs
                         if (reader.Read()) return true;
                     }
                 }
-                conn.Close();
             }
             return false;
         }
@@ -126,11 +138,11 @@ namespace StorgLibs
 
         public void StoreFileToBDD(ModelFile file)
         {
-            string sqlselectall = @$"INSERT INTO Files (Name, Date, Time, Weight, StoredFolder) VALUES(@name, @date, @time, @weight, @storedfolder)";
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            string sqlrequest = @$"INSERT INTO files (Name, Date, Time, Weight, StoredFolder) VALUES(@name, @date, @time, @weight, @storedfolder)";
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
-                using (SqliteCommand command = new SqliteCommand(sqlselectall, conn))
+                using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
                 {
                     command.Parameters.AddWithValue("@name", file.Name);
                     command.Parameters.AddWithValue("@date", file.Date);
@@ -139,7 +151,6 @@ namespace StorgLibs
                     command.Parameters.AddWithValue("@storedfolder", file.StoredFolder);
                     command.ExecuteNonQuery();
                 }
-                conn.Close();
             }
         }
 
@@ -148,11 +159,11 @@ namespace StorgLibs
         public string GetStoredPath(string FileName)
         {
             string StoredFolder = "";
-            string sqlselectall = @$"SELECT StoredFolder FROM Files WHERE Name = @NameFile";
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            string sqlrequest = @$"SELECT StoredFolder FROM Files WHERE Name = @NameFile";
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
-                using (SqliteCommand command = new SqliteCommand(sqlselectall, conn))
+                using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
                 {
                     command.Parameters.AddWithValue("@NameFile", FileName);
                     using (SqliteDataReader reader = command.ExecuteReader())
@@ -163,24 +174,51 @@ namespace StorgLibs
                         }
                     }
                 }
-                conn.Close();
             }
             return StoredFolder;
         }
 
         public void DeleteFileInBDD(string FileName)
         {
-            string sqlselectall = @$"DELETE FROM Files WHERE Name = @NameFile";
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            string sqlrequest = @$"DELETE FROM Files WHERE Name = @NameFile";
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
-                using (SqliteCommand command = new SqliteCommand(sqlselectall, conn))
+                using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
                 {
                     command.Parameters.AddWithValue("@NameFile", FileName);
                     command.ExecuteNonQuery();
                 }
-                conn.Close();
             }
+        }
+
+        public IList<ModelFile> ResearchFileByName(string ResearchText)
+        {
+            IList<ModelFile> FileList = new List<ModelFile>();
+            string sqlrequest = "SELECT * FROM Files WHERE Name LIKE @search";
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
+            {
+                conn.Open();
+                using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
+                {
+                    command.Parameters.AddWithValue("@search", @$"%{ResearchText}%");
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            FileList.Add(new ModelFile()
+                            {
+                                Name = reader["Name"].ToString()!,
+                                Date = reader["Date"].ToString()!,
+                                Time = reader["Time"].ToString()!,
+                                Weight = reader["Weight"].ToString()!,
+                                StoredFolder = reader["StoredFolder"].ToString()!,
+                            });
+                        }
+                    }
+                }
+            }
+            return FileList;
         }
 
 

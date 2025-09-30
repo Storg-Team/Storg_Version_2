@@ -64,5 +64,15 @@ namespace StorgLibs
             _gestionfilehelper.DeleteFile(StoredFilePath);
         }
 
+        public void ExportFile(string FileName)
+        {
+            _gestionfilehelper.ExportFile(FileName);
+        }
+
+        public IList<ModelFile> ResearchFileByName(string ResearchText)
+        {
+            return _bddhelper.ResearchFileByName(ResearchText);
+        }
+
     }
 }
