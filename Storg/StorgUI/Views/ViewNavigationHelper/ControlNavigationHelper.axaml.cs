@@ -20,13 +20,12 @@ public partial class ControlNavigationHelper : UserControl
         this.SizeChanged += Dynamic_Change_Size;
 
 
-        var btnFonc = this.FindControl<Button>("Fonc");
+        Button btnFonc = this.FindControl<Button>("Fonc")!;
         if (btnFonc != null)
         {
            btnFonc.Click += GoToFonc;
            btnFonc.GotFocus += (sender, e) =>
            {
-
                btnFonc.Background = new SolidColorBrush(Color.Parse("#bca7a7"));
            };
            btnFonc.LostFocus += (sender, e) =>
@@ -35,7 +34,7 @@ public partial class ControlNavigationHelper : UserControl
            };
 
         }
-        var btnNav = this.FindControl<Button>("Nav");
+        Button btnNav = this.FindControl<Button>("Nav")!;
         if (btnNav != null)
         {
            this.Loaded += (sender, e) => btnNav.Focus();
@@ -63,12 +62,12 @@ public partial class ControlNavigationHelper : UserControl
 
     private void GoToFonc(object? sender, RoutedEventArgs e)
     {
-       MainContentNav.Content = new ControlWorkingHelper();
+       MainContentNav.Content = new ControlWorkingHelper().Content;
     }
 
     private void SetAideNav(object? sender, RoutedEventArgs e)
     {
-       MainContentNav.Content = tmp_page;
+       MainContentNav.Content = new ControlNavigationHelper().Content;
     }
 
 }

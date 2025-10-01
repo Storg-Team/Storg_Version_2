@@ -21,19 +21,19 @@
 					<Button Name="BtContact" Margin="0,10,0,10" Background="#d6bebe" HorizontalAlignment="Center" Width="150" Classes="DefaultBt" Focusable="True">
 						<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 							<Image Source="/Resources/logo_contact.png" HorizontalAlignment="Left" Margin="0, 0, 10,0" Width="35" Height="35"/>
-							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins">Contact</TextBlock>
+							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Contact</TextBlock>
 						</StackPanel>
 					</Button>
 					<Button Name="BtAide" Margin="0,10,0,10" Background="#d6bebe" HorizontalAlignment="Center" Width="150" Classes="DefaultBt" Focusable="True">
 						<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 							<Image Source="/Resources/logo_help.png" HorizontalAlignment="Left" Margin="0, 0, 10,0" Width="35" Height="35"/>
-							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins">Aide</TextBlock>
+							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Aide</TextBlock>
 						</StackPanel>
 					</Button>
 					<Button Name="BtAProps" Margin="0,10,0,10" Background="#d6bebe" HorizontalAlignment="Center" Width="150" Classes="DefaultBt" Focusable="True">
 						<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 							<Image Source="/Resources/logo_a_propos.png" HorizontalAlignment="Left" Margin="0, 0, 10,0" Width="35" Height="35"/>
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins">A propos</TextBlock>
+							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">A propos</TextBlock>
 						</StackPanel>
 					</Button>
 				</StackPanel>
