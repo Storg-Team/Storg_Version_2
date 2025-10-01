@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Background="#5A6070" PointerPressed="Lost_Focus" Focusable="True" 
+			 x:Class="StorgUI.ControlMainPage">
+	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="250"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Background="#363b48" Width="250" Grid.Column="0">
+				<StackPanel VerticalAlignment="Top" Margin="0,50,0,0">
+					<Button Name="BtAccueil" Margin="0,10,0,10" Background="#d6bebe" HorizontalAlignment="Center" Width="150" Classes="DefaultBt" Focusable="True">
+						<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+							<Image Source="/Resources/logo_accueil.png" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0, 0, 10,0" Width="35" Height="35"/>
+							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Accueil</TextBlock>
+						</StackPanel>
+					</Button>
+					<Button Name="BtContact" Margin="0,10,0,10" Background="#d6bebe" HorizontalAlignment="Center" Width="150" Classes="DefaultBt" Focusable="True">
+						<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+							<Image Source="/Resources/logo_contact.png" HorizontalAlignment="Left" Margin="0, 0, 10,0" Width="35" Height="35"/>
+							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Contact</TextBlock>
+						</StackPanel>
+					</Button>
+					<Button Name="BtAide" Margin="0,10,0,10" Background="#d6bebe" HorizontalAlignment="Center" Width="150" Classes="DefaultBt" Focusable="True">
+						<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+							<Image Source="/Resources/logo_help.png" HorizontalAlignment="Left" Margin="0, 0, 10,0" Width="35" Height="35"/>
+							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Aide</TextBlock>
+						</StackPanel>
+					</Button>
+					<Button Name="BtAProps" Margin="0,10,0,10" Background="#d6bebe" HorizontalAlignment="Center" Width="150" Classes="DefaultBt" Focusable="True">
+						<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+							<Image Source="/Resources/logo_a_propos.png" HorizontalAlignment="Left" Margin="0, 0, 10,0" Width="35" Height="35"/>
+							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">A propos</TextBlock>
+						</StackPanel>
+					</Button>
+				</StackPanel>
+			</Grid>
+			<ContentControl x:Name="MainContent" Grid.Column="1">
+				<StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+					<Button Name="BtSettings" Width="50" Height="50" VerticalAlignment="Top" HorizontalAlignment="Right" CornerRadius="100" Background="#d6bebe" Margin="0,10,10,0" Classes="DefaultBt">
+						<Image Source="/Resources/icons100.png"/>
+					</Button>
+					<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,-40,0,0">
+						<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="325"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="30"/>
+							</Grid.RowDefinitions>
+							<TextBox Grid.Column="0" Grid.Row="0" Margin="0,0,10,0" CornerRadius="60" Foreground="Black" Classes="Search" x:Name="Search" GotFocus="Focus" LostFocus="NoFocus" KeyDown="Research" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins">
+								Rechercher des fichiers compressés
+							</TextBox>
+							<Image Grid.Column="0" Grid.Row="0" Margin="0,0,20,0" Source="/Resources/search.png" HorizontalAlignment="Right" Width="25" Height="25"/>
+						</Grid>
+						<Button Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Name="Reload" Background="#d6bebe" Classes="DefaultBt" Margin="330,-2,0,0">
+							<Image Width="30" Height="30" Source="/Resources/reload.png"/>
+						</Button>
+						<Grid Margin="50" HorizontalAlignment="Stretch">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Border Grid.Row="0" BorderBrush="#363b48" BorderThickness="2">
+								<Grid>
+									<Grid HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Top" Margin="0,0,0,20">
+										<TextBlock Height="30" Foreground="Black" Text=" Nom                                                                                                                          |     Date / Heure         |     Taille" VerticalAlignment="Top" Margin="20, 0,0,0" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
+									</Grid>
+									<ScrollViewer VerticalScrollBarVisibility="Visible" Name="ScollBar" Margin="0, 10, 0, 0">
+										<StackPanel x:Name="ColumnFichier" Orientation="Vertical" VerticalAlignment="Top"></StackPanel>
+									</ScrollViewer>
+								</Grid>
+							</Border>
+						</Grid>
+					</Grid>
+					<Grid Background="#d6bebe" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch" Height="190" Margin="0,-40,0,0" PointerPressed="OpenFileBorwser">
+						<Rectangle StrokeDashArray="5, 3" Stroke="Black" StrokeThickness="3"></Rectangle>
+						<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Déposez ici / Cliquez pour parcourir</TextBlock>
+					</Grid>
+				</StackPanel>
+			</ContentControl>
+		</Grid>
+	</Grid>
+</UserControl>

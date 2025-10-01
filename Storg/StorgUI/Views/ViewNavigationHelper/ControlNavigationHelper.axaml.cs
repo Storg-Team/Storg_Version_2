@@ -9,16 +9,12 @@ namespace StorgUI;
 public partial class ControlNavigationHelper : UserControl
 {
 
-    private Control? tmp_page;
 
     public ControlNavigationHelper()
     {
         InitializeComponent();
 
-        tmp_page = MainContentNav.Content as Control;
-
         this.SizeChanged += Dynamic_Change_Size;
-
 
         Button btnFonc = this.FindControl<Button>("Fonc")!;
         if (btnFonc != null)
@@ -67,7 +63,7 @@ public partial class ControlNavigationHelper : UserControl
 
     private void SetAideNav(object? sender, RoutedEventArgs e)
     {
-       MainContentNav.Content = new ControlNavigationHelper().Content;
+       MainContentNav.Content = new ControlNavigationHelper();
     }
 
 }
