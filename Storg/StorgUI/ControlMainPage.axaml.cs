@@ -37,11 +37,7 @@ namespace StorgUI
 
             AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'�venement pour d�clancher la fonction de Drag and Drop
 
-            ContentControl? parent = this.Parent as ContentControl;
-            if (parent != null)
-            {
-                parent.SizeChanged += Dynamic_Change_Size; //  Executer la fonction Dynamic_Change_Size d�s que la fenetre change de taille.
-            }
+            this.Loaded += SetDynSize;
 
 
             #region btntrigger
@@ -187,19 +183,43 @@ namespace StorgUI
             {
                 OptionPopUp OptionPopUpWindows = new OptionPopUp(button.Name!);
                 OptionPopUpWindows.Closed += (s, e) => refresh();  // Quand elle ce ferme on refresh la list des fichiers.
-                await OptionPopUpWindows.ShowDialog((Window) this.VisualRoot!);
+                await OptionPopUpWindows.ShowDialog((Window)this.VisualRoot!);
+            }
+        }
+
+        #endregion trigger
+
+        #region WindowsDynamicSize
+
+        private void SetDynSize(object? sender, RoutedEventArgs e)
+        {
+            if (this.Parent as ContentControl != null && this.Parent.Parent as ContentControl != null)
+            {
+                ContentControl? parent = this.Parent.Parent as ContentControl;
+                parent!.SizeChanged += Dynamic_Change_Size; //  Executer la fonction Dynamic_Change_Size d�s que la fenetre change de taille.
+                SizeDyn(parent!);
             }
         }
 
         private void Dynamic_Change_Size(object? sender, SizeChangedEventArgs e)  // Permet de changer dynamiquement la taille de la section de scoll en fonction de la taille de l'�cran.
         {
-            if (this.Height > 283)
+            if (this.Parent as ContentControl != null && this.Parent.Parent as ContentControl != null)
             {
-                ScollBar.Height = this.Height - 283;
+                ContentControl? parent = this.Parent.Parent as ContentControl;
+                SizeDyn(parent!);
             }
         }
 
-        #endregion trigger
+        private void SizeDyn(ContentControl parent)
+        {
+            if (parent!.Height > 283)
+            {
+                ScollBar.Height = parent.Height - 283;
+            }
+        }
+
+        #endregion WindowsDynamicSize
+
 
 
 
@@ -231,7 +251,7 @@ namespace StorgUI
             if (_libsglobal.CheckIfFileExist(NameFile))
             {
                 FrmErrorPopUp PopUpWindows = new FrmErrorPopUp();
-                await PopUpWindows.ShowDialog((Window) this.VisualRoot!);
+                await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
             }
             else
             {
