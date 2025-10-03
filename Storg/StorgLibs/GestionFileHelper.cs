@@ -45,7 +45,7 @@ namespace StorgLibs
             {
                 Name = FileName,
                 Date = _systemhelper.GetDateTime().Date!,
-                Time = _systemhelper.GetDateTime().Date!,
+                Time = _systemhelper.GetDateTime().Time!,
                 Weight = FileSize,
                 StoredFolder = DestinationFilePath,
             });

@@ -33,16 +33,19 @@ namespace StorgUI
 
             InitializeComponent();
 
-            refresh(); // Permet d'afficher tout les fichiers d�ja pr�sent dans la BDD
+            refresh(); // Permet d'afficher tout les fichiers deja present dans la BDD
 
-            AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'�venement pour d�clancher la fonction de Drag and Drop
+            AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop
 
             this.Loaded += SetDynSize;
 
 
             #region btntrigger
 
-            Button? buttonA = this.FindControl<Button>("BtAccueil"); // Si un boutton avec en parametre le Nom = BtAcueil, alors �a d�clache l'action qui se passe quand on click dessus.
+            string focus = "#bca7a7";
+            string lostfocus = "#d6bebe";
+
+            Button? buttonA = this.FindControl<Button>("BtAccueil"); // Si un boutton avec en parametre le Nom = BtAcueil, alors ca declanche l'action qui se passe quand on click dessus.
             if (buttonA != null)
             {
                 this.Loaded += (sender, e) =>
@@ -52,11 +55,11 @@ namespace StorgUI
                 };
                 buttonA.GotFocus += (sender, e) =>
                 {
-                    buttonA.Background = new SolidColorBrush(Color.Parse("#bca7a7"));
+                    buttonA.Background = new SolidColorBrush(Color.Parse(focus));
                 };
                 buttonA.LostFocus += (sender, e) =>
                 {
-                    buttonA.Background = new SolidColorBrush(Color.Parse("#d6bebe"));
+                    buttonA.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
                 buttonA.Click += OnClickAccueil;
             }
@@ -66,11 +69,11 @@ namespace StorgUI
             {
                 buttonC.GotFocus += (sender, e) =>
                 {
-                    buttonC.Background = new SolidColorBrush(Color.Parse("#bca7a7"));
+                    buttonC.Background = new SolidColorBrush(Color.Parse(focus));
                 };
                 buttonC.LostFocus += (sender, e) =>
                 {
-                    buttonC.Background = new SolidColorBrush(Color.Parse("#d6bebe"));
+                    buttonC.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
                 buttonC.Click += OnClickContact;
             }
@@ -80,11 +83,11 @@ namespace StorgUI
             {
                 buttonAide.GotFocus += (sender, e) =>
                 {
-                    buttonAide.Background = new SolidColorBrush(Color.Parse("#bca7a7"));
+                    buttonAide.Background = new SolidColorBrush(Color.Parse(focus));
                 };
                 buttonAide.LostFocus += (sender, e) =>
                 {
-                    buttonAide.Background = new SolidColorBrush(Color.Parse("#d6bebe"));
+                    buttonAide.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
                 buttonAide.Click += OnClickAide;
             }
@@ -94,11 +97,11 @@ namespace StorgUI
             {
                 buttonP.GotFocus += (sender, e) =>
                 {
-                    buttonP.Background = new SolidColorBrush(Color.Parse("#bca7a7"));
+                    buttonP.Background = new SolidColorBrush(Color.Parse(focus));
                 };
                 buttonP.LostFocus += (sender, e) =>
                 {
-                    buttonP.Background = new SolidColorBrush(Color.Parse("#d6bebe"));
+                    buttonP.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
                 buttonP.Click += OnClickAProps;
             }
@@ -196,7 +199,7 @@ namespace StorgUI
             if (this.Parent as ContentControl != null && this.Parent.Parent as ContentControl != null)
             {
                 ContentControl? parent = this.Parent.Parent as ContentControl;
-                parent!.SizeChanged += Dynamic_Change_Size; //  Executer la fonction Dynamic_Change_Size d�s que la fenetre change de taille.
+                parent!.SizeChanged += Dynamic_Change_Size; //  Executer la fonction Dynamic_Change_Size quand la fenetre change de taille.
                 SizeDyn(parent!);
             }
         }
@@ -241,7 +244,7 @@ namespace StorgUI
             }
         }
 
-        private async void Add_File(IStorageFile file) // Permet de cr�� et d'ajouter un fichier � la BDD
+        private async void Add_File(IStorageFile file) // Permet de cree et d'ajouter un fichier a la BDD
         {
 
             // R�cup�re les infos importante du fichier (Nom, chemin, taille)
@@ -263,10 +266,10 @@ namespace StorgUI
 
         }
 
-        private Button Create_btn(ModelFile file) // Permet de cr�� un boutton (Utiliser par fonction Ajout file + refresh)
+        private Button Create_btn(ModelFile file) // Permet de cree un boutton (Utiliser par fonction Ajout file + refresh)
         {
 
-            Button btn = new Button // Cr�ation d'un nouveau boutton
+            Button btn = new Button // Creation d'un nouveau boutton
             {
                 ///// Param�tre du boutton /////
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,

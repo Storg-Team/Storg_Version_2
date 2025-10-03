@@ -15,12 +15,10 @@ namespace StorgLibs
 
         public string GetCurrentOS()
         {
-
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return _currentOS.Windows;
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return _currentOS.Linux;
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) return _currentOS.OSX;
             throw new PlatformNotSupportedException("OS non supporté !");
-
         }
 
         public ModelTime GetDateTime()
