@@ -17,7 +17,6 @@ namespace StorgTestUnitaire
             string DirPath = Path.Combine(CurrentDirectory, ".data");
             string BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
             Assert.IsTrue(File.Exists(BDDFilePath));
-            Directory.Delete(DirPath);
         }
 
         [TestMethod]
@@ -27,9 +26,9 @@ namespace StorgTestUnitaire
             string test2 = "C:/document/folder/file";
             string test3 = "user/space folder/file";
 
-            Assert.AreEqual(_gestionfilehelper.GetParentPath(test1), "user/appdata/data");
-            Assert.AreEqual(_gestionfilehelper.GetParentPath(test2), "C:/document/folder");
-            Assert.AreEqual(_gestionfilehelper.GetParentPath(test3), "user/space folder");
+            Assert.AreEqual(_gestionfilehelper.GetParentPath(test1, "file"), "user/appdata/data/");
+            Assert.AreEqual(_gestionfilehelper.GetParentPath(test2, "file"), "C:/document/folder/");
+            Assert.AreEqual(_gestionfilehelper.GetParentPath(test3, "file"), "user/space folder/");
 
         }
 

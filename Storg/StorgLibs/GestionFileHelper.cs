@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using StorgCommon;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 
 namespace StorgLibs
@@ -66,16 +67,18 @@ namespace StorgLibs
         {
             string StoredFilePath = _bddhelper.GetStoredPath(FileName);
 
-            Directory.Delete(GetParentPath(StoredFilePath));
+            if (Directory.Exists(GetParentPath(StoredFilePath, FileName)))
+            {
+                Directory.Delete(GetParentPath(StoredFilePath, FileName), recursive: true);
+            }
 
             _bddhelper.DeleteFileInBDD(FileName);
         }
 
-        public string GetParentPath(string StoredFilePath)
+        public string GetParentPath(string StoredFilePath, string FileName)
         {
-            List<string> ParentPath = StoredFilePath.Split('/', StringSplitOptions.RemoveEmptyEntries).ToList();
-            ParentPath.RemoveAt(ParentPath.Count - 1);
-            return String.Join("/", ParentPath);
+            Regex regex = new Regex(@$"(.*?)(?={Regex.Escape($"{FileName}")}$)");
+            return regex.Match(StoredFilePath).Groups[1].Value;
         }
 
         public void ExportFile(string FileName)
