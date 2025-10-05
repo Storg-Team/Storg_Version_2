@@ -32,7 +32,6 @@ namespace StorgUI
         {
 
             InitializeComponent();
-
             refresh(); // Permet d'afficher tout les fichiers deja present dans la BDD
 
             AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop

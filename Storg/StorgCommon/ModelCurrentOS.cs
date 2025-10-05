@@ -10,7 +10,7 @@ namespace StorgCommon
     {
         public string Windows { get; set; } = "Windows";
         public string Linux { get; set; } = "Linux";
-        public string OSX { get; set; } = "MacOS";
+        public string OSX { get; set; } = "MacOs";
 
     }
 }

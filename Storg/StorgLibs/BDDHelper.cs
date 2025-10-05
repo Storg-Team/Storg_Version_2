@@ -14,7 +14,6 @@ namespace StorgLibs
     public class BDDHelper
     {
         private string _BDDFilePath = "";
-        private bool _IsAlreadyCheck = false;
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private SystemHelper _systemhelper = new SystemHelper();
 
@@ -34,7 +33,7 @@ namespace StorgLibs
             }
             return @$"Data Source={_BDDFilePath};";
         }
-        
+
         public void IsBddExisting()
         {
             string DirPath = "";
@@ -55,14 +54,14 @@ namespace StorgLibs
             {
                 if (!File.Exists(_BDDFilePath))
                 {
-                    File.Create(_BDDFilePath);
+                    using (File.Create(_BDDFilePath)) { }
                 }
             }
             else
             {
                 Directory.CreateDirectory(DirPath);
                 File.SetAttributes(DirPath, FileAttributes.Hidden);
-                File.Create(_BDDFilePath);
+                using (File.Create(_BDDFilePath)) { }
             }
 
 
@@ -75,18 +74,14 @@ namespace StorgLibs
                     cmd.ExecuteNonQuery();
                 }
             }
-            _IsAlreadyCheck = true;
         }
 
 
 
         public IList<ModelFile> LoadStoredFile()
         {
+            this.IsBddExisting();
             IList<ModelFile> listFile = new List<ModelFile>();
-            if (!_IsAlreadyCheck)
-            {
-                this.IsBddExisting();
-            }
 
             string sqlrequest = @$"SELECT * FROM Files";
             using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
@@ -138,7 +133,7 @@ namespace StorgLibs
 
         public void StoreFileToBDD(ModelFile file)
         {
-            string sqlrequest = @$"INSERT INTO files (Name, Date, Time, Weight, StoredFolder) VALUES(@name, @date, @time, @weight, @storedfolder)";
+            string sqlrequest = @$"INSERT INTO Files (Name, Date, Time, Weight, StoredFolder) VALUES(@name, @date, @time, @weight, @storedfolder)";
             using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
