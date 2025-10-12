@@ -16,6 +16,7 @@ namespace StorgLibs
         private string _BDDFilePath = "";
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private SystemHelper _systemhelper = new SystemHelper();
+        private string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
 
 
@@ -28,7 +29,7 @@ namespace StorgLibs
             }
             else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
             {
-                string CurrentDirectory = "/usr/share/storg/";
+                string CurrentDirectory = Path.Combine(home, "storg");
                 _BDDFilePath = Path.Combine(Path.Combine(CurrentDirectory, ".data"), "BDD_Files_Info.db");
             }
             return @$"Data Source={_BDDFilePath};";
@@ -45,7 +46,7 @@ namespace StorgLibs
             }
             else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
             {
-                string CurrentDirectory = "/usr/share/storg/";
+                string CurrentDirectory = Path.Combine(home, "storg");
                 DirPath = Path.Combine(CurrentDirectory, ".data");
                 _BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
             }

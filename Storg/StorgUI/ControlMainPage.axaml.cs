@@ -19,6 +19,7 @@ using System.Linq;
 
 namespace StorgUI
 {
+
     public partial class ControlMainPage : UserControl
     {
 
@@ -104,7 +105,7 @@ namespace StorgUI
                 };
                 buttonP.Click += OnClickAProps;
             }
-            var button = this.FindControl<Button>("Reload");
+            Button? button = this.FindControl<Button>("Reload");
             if (button != null)
             {
                 button.Click += OnClickReload;
@@ -114,6 +115,11 @@ namespace StorgUI
             if (button != null)
             {
                 button.Click += OnClickSettings;
+            }
+            Button? btnresearch = this.FindControl<Button>("BtResearch");
+            if (btnresearch != null)
+            {
+                btnresearch.Click += TriggerClickResearch;
             }
 
         }
@@ -157,6 +163,7 @@ namespace StorgUI
 
         private void OnClickReload(object? sender, RoutedEventArgs e) // Appelle la fonction refresh.
         {
+            Search.Text = "Rechercher des fichiers compressés";
             refresh();
         }
         private void OnDrop(object? sender, DragEventArgs e) // Fonction de Drag and Drop
@@ -187,6 +194,11 @@ namespace StorgUI
                 OptionPopUpWindows.Closed += (s, e) => refresh();  // Quand elle ce ferme on refresh la list des fichiers.
                 await OptionPopUpWindows.ShowDialog((Window)this.VisualRoot!);
             }
+        }
+
+        private void TriggerClickResearch(object? sender, RoutedEventArgs e)
+        {
+            Research();
         }
 
         #endregion trigger
@@ -302,32 +314,37 @@ namespace StorgUI
             };
         }
 
-        public void Research(object? sender, KeyEventArgs e) // Faire une recherche de fichier
+        public void TriggerKeyResearch(object? sender, KeyEventArgs e) // Faire une recherche de fichier
         {
             if (e.Key == Key.Enter) // Verifi si la touche entrer est presser
             {
-                if (Search.Text == null) // Si c'est le cas on recupere le texte ecrit
-                {
-                    return;
-                }
-                string research_file_text = Search.Text;
-
-                ColumnFichier.Children.Clear(); // Vide la liste afficher.
-                foreach (ModelFile file in _libsglobal.ResearchFileByName(research_file_text).Reverse())
-                {
-                    // On recree tout les bouttons //
-
-                    Button btn = Create_btn(file);
-                    btn.Click += OnClickFichierDl; // Affectation de la fonction OnClickFichierDl lors du click
-                    ColumnFichier.Children.Add(btn);
-                }
-                Focus();
+                Research();
             }
             if (e.Key == Key.Escape) // si escape est presser alors on quitte la zone de recherche
             {
                 Focus();
                 refresh();
             }
+        }
+
+        private void Research()
+        {
+            if (Search.Text == null) // Si c'est le cas on recupere le texte ecrit
+            {
+                return;
+            }
+            string research_file_text = Search.Text;
+
+            ColumnFichier.Children.Clear(); // Vide la liste afficher.
+            foreach (ModelFile file in _libsglobal.ResearchFileByName(research_file_text).Reverse())
+            {
+                // On recree tout les bouttons //
+
+                Button btn = Create_btn(file);
+                btn.Click += OnClickFichierDl; // Affectation de la fonction OnClickFichierDl lors du click
+                ColumnFichier.Children.Add(btn);
+            }
+            Focus();
         }
 
         #endregion Methode

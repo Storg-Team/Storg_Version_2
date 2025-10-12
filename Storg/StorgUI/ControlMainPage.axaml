@@ -52,10 +52,12 @@
 							<Grid.RowDefinitions>
 								<RowDefinition Height="30"/>
 							</Grid.RowDefinitions>
-							<TextBox Grid.Column="0" Grid.Row="0" Margin="0,0,10,0" CornerRadius="60" Foreground="Black" Classes="Search" x:Name="Search" GotFocus="Focus" LostFocus="NoFocus" KeyDown="Research" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins">
+							<TextBox Grid.Column="0" Grid.Row="0" Margin="0,0,10,0" CornerRadius="60" Foreground="Black" Classes="Search" x:Name="Search" GotFocus="Focus" LostFocus="NoFocus" KeyDown="TriggerKeyResearch" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins">
 								Rechercher des fichiers compressés
 							</TextBox>
+							<Button Name="BtResearch" HorizontalAlignment="Right" Width="40" Height="30" Padding="30, 0, 0, 0" Margin="0,0,10,0" CornerRadius="100" Classes="DefaultBt" Background="#d6bebe">
 							<Image Grid.Column="0" Grid.Row="0" Margin="0,0,20,0" Source="/Resources/search.png" HorizontalAlignment="Right" Width="25" Height="25"/>
+							</Button>
 						</Grid>
 						<Button Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Name="Reload" Background="#d6bebe" Classes="DefaultBt" Margin="330,-2,0,0">
 							<Image Width="30" Height="30" Source="/Resources/reload.png"/>

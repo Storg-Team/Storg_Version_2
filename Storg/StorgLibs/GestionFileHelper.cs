@@ -18,7 +18,7 @@ namespace StorgLibs
         private string _currentExecDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private SystemHelper _systemhelper = new SystemHelper();
         private BDDHelper _bddhelper = new BDDHelper();
-        
+        private string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
 
         public void StoreFile(string FileName, string FilePath, string FileSize)
@@ -32,7 +32,7 @@ namespace StorgLibs
             }
             else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
             {
-                Destination_Folder = Path.Combine(ConfigurationManager.AppSettings.Get("LinuxStoragePath")!, _savedFolder);
+                Destination_Folder = Path.Combine(Path.Combine(home, "storg"), _savedFolder);
             }
 
             string Destination_Path = Path.Combine(Destination_Folder, FileName);
@@ -58,9 +58,12 @@ namespace StorgLibs
         {
             string DownloadFolder = _systemhelper.GetDownloadFolder();
 
-            File.Move(_bddhelper.GetStoredPath(FileName), Path.Combine(DownloadFolder, FileName));
+            if (!File.Exists(Path.Combine(DownloadFolder, FileName)))
+            {
+                File.Move(_bddhelper.GetStoredPath(FileName), Path.Combine(DownloadFolder, FileName));
+                _bddhelper.DeleteFileInBDD(FileName);
+            }
 
-            _bddhelper.DeleteFileInBDD(FileName);
         }
 
         public void DeleteFile(string FileName)
@@ -84,7 +87,7 @@ namespace StorgLibs
         public void ExportFile(string FileName)
         {
             string DownloadFolder = _systemhelper.GetDownloadFolder();
-            string DownloadFileFolder = Path.Combine(DownloadFolder, FileName);
+            string DownloadFileFolder = Path.Combine(DownloadFolder, "Dir_" + FileName);
             Directory.CreateDirectory(DownloadFileFolder);
 
             if (!File.Exists(Path.Combine(DownloadFileFolder, FileName)))
