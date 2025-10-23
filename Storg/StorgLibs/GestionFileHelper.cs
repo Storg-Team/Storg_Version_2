@@ -16,6 +16,7 @@ namespace StorgLibs
     public class GestionFileHelper
     {
 
+        #region DLL import
         private const string _libsName = "Libs/libs_filecompression.so";
 
         [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
@@ -25,6 +26,7 @@ namespace StorgLibs
         private static extern bool DecompressFile(
             [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)]
             string[] filelist, int size, string dlpath);
+        #endregion DLL import
 
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private string _savedFolder = ConfigurationManager.AppSettings.Get("SavedFolder")!;
@@ -34,9 +36,9 @@ namespace StorgLibs
         private string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
 
+        #region Methode
         public bool StoreFile(string FileName, string FilePath, string FileSize)
         {
-
             string Destination_Folder = "";
 
             if (_systemhelper.GetCurrentOS() == _currentOs.Windows) // Cree les chemin pour enregistrer les fichiers
@@ -53,7 +55,6 @@ namespace StorgLibs
             Directory.CreateDirectory(Destination_Path);
 
             // Permet de copier le fichier //
-            string DestinationFilePath = Path.Combine(Destination_Path, FileName);
 
             if (CompressFile(FilePath, Destination_Path))
             {
@@ -70,7 +71,6 @@ namespace StorgLibs
                 return true;
             }
             return false;
-
         }
 
         public bool DownloadFile(string FileName)
@@ -93,16 +93,20 @@ namespace StorgLibs
             return false;
         }
 
-        public void DeleteFile(string FileName)
+        public bool DeleteFile(string FileName)
         {
             string StoredFilePath = _bddhelper.GetStoredPath(FileName);
 
             if (Directory.Exists(StoredFilePath))
             {
                 Directory.Delete(StoredFilePath, recursive: true);
+                _bddhelper.DeleteFileInBDD(FileName);
+                if (Directory.Exists(StoredFilePath))
+                {
+                    return false;
+                }
             }
-
-            _bddhelper.DeleteFileInBDD(FileName);
+            return true;
         }
 
         public string GetParentPath(string StoredFilePath, string FileName)
@@ -111,19 +115,24 @@ namespace StorgLibs
             return regex.Match(StoredFilePath).Groups[1].Value;
         }
 
-        public void ExportFile(string FileName)
+        public bool ExportFile(string FileName)
         {
             string DownloadFolder = _systemhelper.GetDownloadFolder();
             string DownloadFileFolder = Path.Combine(DownloadFolder, "Dir_" + FileName);
             Directory.CreateDirectory(DownloadFileFolder);
 
-            string[] FilePathList = Directory.GetFiles(_bddhelper.GetStoredPath(FileName));
-
-            for (int i = 0; i < FilePathList.Length; i++)
+            if (Directory.Exists(_bddhelper.GetStoredPath(FileName)))
             {
-                File.Copy(FilePathList[i], Path.Combine(DownloadFileFolder, "img" + i + ".webp"));
-            }
-        }
+                string[] FilePathList = Directory.GetFiles(_bddhelper.GetStoredPath(FileName));
 
+                for (int i = 0; i < FilePathList.Length; i++)
+                {
+                    File.Copy(FilePathList[i], Path.Combine(DownloadFileFolder, "img" + i + ".webp"));
+                }
+                return true;
+            }
+            return false;
+        }
+        #endregion Methode
     }
 }

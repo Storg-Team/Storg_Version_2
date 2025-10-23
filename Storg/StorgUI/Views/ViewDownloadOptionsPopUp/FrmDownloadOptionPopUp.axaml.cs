@@ -65,23 +65,27 @@ namespace StorgUI
                 FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec du téléchargement du ficher");
                         await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
             }
-
             this.Close(); // Ferme automatiquement le PopUp quand le fichier est supprimer 
         }
 
-        private void Delete() // Permet de supprimer un fichier
+        private async void Delete() // Permet de supprimer un fichier
         {
-            _libsglobal.DeleteFile(FileName);
-            
+            if (!_libsglobal.DeleteFile(FileName))
+            {
+                FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec de le suppression du ficher");
+                        await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+            }
             this.Close(); // Ferme automatiquement le PopUp quand le fichier est supprimer 
         }
 
-        private void Export()  // Exporter mes fichier compresser
+        private async void Export()  // Exporter mes fichier compresser
         {
-            _libsglobal.ExportFile(FileName);
-
+            if (!_libsglobal.ExportFile(FileName))
+            {
+                FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec de l'export du ficher");
+                        await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+            }
             this.Close(); // Ferme automatiquement le PopUp quand le fichier est supprimer 
-
         }
 
 

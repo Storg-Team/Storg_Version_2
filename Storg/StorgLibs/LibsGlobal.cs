@@ -60,14 +60,14 @@ namespace StorgLibs
             _bddhelper.DeleteFileInBDD(FileName);
         }
 
-        public void DeleteFile(string StoredFilePath)
+        public bool DeleteFile(string StoredFilePath)
         {
-            _gestionfilehelper.DeleteFile(StoredFilePath);
+            return _gestionfilehelper.DeleteFile(StoredFilePath);
         }
 
-        public void ExportFile(string FileName)
+        public bool ExportFile(string FileName)
         {
-            _gestionfilehelper.ExportFile(FileName);
+            return _gestionfilehelper.ExportFile(FileName);
         }
 
         public IList<ModelFile> ResearchFileByName(string ResearchText)
