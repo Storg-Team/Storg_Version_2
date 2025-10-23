@@ -7,7 +7,7 @@
 	<Grid>
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 			<Image Source="/Resources/erreur.png" Width="30" Height="30"/>
-			<TextBlock Text="Fichier déja existant" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="15,0,0,0"/>
+			<TextBlock Name="MessageErreur" Text="" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="15,0,0,0"/>
 		</StackPanel>
 		<Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,20" Width="60" Height="30" Name="leave" BorderBrush="Black" Background="#f1efee" Classes="ErrorBtn">
 			<TextBlock Foreground="Black" HorizontalAlignment="Center" Text="Ok"/>

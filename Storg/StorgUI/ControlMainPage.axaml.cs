@@ -264,13 +264,17 @@ namespace StorgUI
 
             if (_libsglobal.CheckIfFileExist(NameFile))
             {
-                FrmErrorPopUp PopUpWindows = new FrmErrorPopUp();
+                FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Fichier déja existant");
                 await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
             }
             else
             {
                 using (var stream = await file.OpenReadAsync())
-                    _libsglobal.StoreFile(file.Name, file.Path.AbsolutePath, Convert.ToString($"{stream.Length / 1024} Ko"));
+                    if (!_libsglobal.StoreFile(file.Name, file.Path.AbsolutePath, Convert.ToString($"{stream.Length / 1024} Ko")))
+                    {
+                        FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Import du fichier impossible");
+                        await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                    }
             }
 
             refresh(); // Refresh pour que le nouveau fichier soit en haut

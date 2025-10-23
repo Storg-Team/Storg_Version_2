@@ -7,9 +7,11 @@ namespace StorgUI;
 
 public partial class FrmErrorPopUp : Window
 {
-    public FrmErrorPopUp()
+    public FrmErrorPopUp(string message)
     {
         InitializeComponent();
+
+        MessageErreur.Text = message;
 
         var btn = this.FindControl<Button>("leave");
         if (btn != null)

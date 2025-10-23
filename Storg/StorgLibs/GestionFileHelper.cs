@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using StorgCommon;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 
@@ -13,6 +14,12 @@ namespace StorgLibs
 {
     public class GestionFileHelper
     {
+
+        private const string _libsName = "Libs/libs_filecompression.so";
+
+        [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern bool CompressFile(string namefile);
+
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private string _savedFolder = ConfigurationManager.AppSettings.Get("SavedFolder")!;
         private string _currentExecDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -21,7 +28,7 @@ namespace StorgLibs
         private string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
 
-        public void StoreFile(string FileName, string FilePath, string FileSize)
+        public bool StoreFile(string FileName, string FilePath, string FileSize)
         {
 
             string Destination_Folder = "";
@@ -42,15 +49,21 @@ namespace StorgLibs
             // Permet de copier le fichier //
             string DestinationFilePath = Path.Combine(Destination_Path, FileName);
 
-            _bddhelper.StoreFileToBDD(new ModelFile
+            if (CompressFile(FilePath))
             {
-                Name = FileName,
-                Date = _systemhelper.GetDateTime().Date!,
-                Time = _systemhelper.GetDateTime().Time!,
-                Weight = FileSize,
-                StoredFolder = DestinationFilePath,
-            });
-            File.Copy(FilePath, DestinationFilePath);
+
+                _bddhelper.StoreFileToBDD(new ModelFile
+                {
+                    Name = FileName,
+                    Date = _systemhelper.GetDateTime().Date!,
+                    Time = _systemhelper.GetDateTime().Time!,
+                    Weight = FileSize,
+                    StoredFolder = DestinationFilePath,
+                });
+                File.Copy(FilePath, DestinationFilePath);
+                return true;
+            }
+            return false;
 
         }
 
