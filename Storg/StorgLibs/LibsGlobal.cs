@@ -45,9 +45,9 @@ namespace StorgLibs
             return _systemhelper.GetDownloadFolder();
         }
 
-        public void DownloadFile(string FileName)
+        public bool DownloadFile(string FileName)
         {
-            _gestionfilehelper.DownloadFile(FileName);
+            return _gestionfilehelper.DownloadFile(FileName);
         }
 
         public string GetStoredPath(string FileName)

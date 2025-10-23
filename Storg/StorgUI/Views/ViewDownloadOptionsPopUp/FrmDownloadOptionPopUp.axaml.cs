@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -57,9 +58,13 @@ namespace StorgUI
 
         #region Methode
 
-        private void Download() // Re telecharger le fichier telle qu'il etait
+        private async void Download() // Re telecharger le fichier telle qu'il etait
         {
-            _libsglobal.DownloadFile(FileName);
+            if (!_libsglobal.DownloadFile(FileName))
+            {
+                FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec du téléchargement du ficher");
+                        await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+            }
 
             this.Close(); // Ferme automatiquement le PopUp quand le fichier est supprimer 
         }

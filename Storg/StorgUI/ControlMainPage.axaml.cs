@@ -258,7 +258,7 @@ namespace StorgUI
         private async void Add_File(IStorageFile file) // Permet de cree et d'ajouter un fichier a la BDD
         {
 
-            // R�cup�re les infos importante du fichier (Nom, chemin, taille)
+            // Récupére les infos importante du fichier (Nom, chemin, taille)
 
             string NameFile = file.Name.Replace(' ', '_');
 
@@ -286,7 +286,7 @@ namespace StorgUI
 
             Button btn = new Button // Creation d'un nouveau boutton
             {
-                ///// Param�tre du boutton /////
+                ///// Parametre du boutton /////
                 VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
                 Margin = new Thickness(0, 15, 0, 0),

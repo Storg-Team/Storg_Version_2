@@ -8,6 +8,7 @@ using StorgCommon;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Numerics;
 
 
 namespace StorgLibs
@@ -18,7 +19,12 @@ namespace StorgLibs
         private const string _libsName = "Libs/libs_filecompression.so";
 
         [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool CompressFile(string namefile);
+        private static extern bool CompressFile(string filepath, string savefilepath);
+
+        [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern bool DecompressFile(
+            [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)]
+            string[] filelist, int size, string dlpath);
 
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private string _savedFolder = ConfigurationManager.AppSettings.Get("SavedFolder")!;
@@ -33,7 +39,7 @@ namespace StorgLibs
 
             string Destination_Folder = "";
 
-            if (_systemhelper.GetCurrentOS() == _currentOs.Windows) // Créé les chemin pour enregistrer les fichiers
+            if (_systemhelper.GetCurrentOS() == _currentOs.Windows) // Cree les chemin pour enregistrer les fichiers
             {
                 Destination_Folder = Path.Combine(_currentExecDirectory, _savedFolder);
             }
@@ -49,7 +55,7 @@ namespace StorgLibs
             // Permet de copier le fichier //
             string DestinationFilePath = Path.Combine(Destination_Path, FileName);
 
-            if (CompressFile(FilePath))
+            if (CompressFile(FilePath, Destination_Path))
             {
 
                 _bddhelper.StoreFileToBDD(new ModelFile
@@ -58,34 +64,42 @@ namespace StorgLibs
                     Date = _systemhelper.GetDateTime().Date!,
                     Time = _systemhelper.GetDateTime().Time!,
                     Weight = FileSize,
-                    StoredFolder = DestinationFilePath,
+                    StoredFolder = Destination_Path,
                 });
-                File.Copy(FilePath, DestinationFilePath);
+                //File.Copy(FilePath, DestinationFilePath);
                 return true;
             }
             return false;
 
         }
 
-        public void DownloadFile(string FileName)
+        public bool DownloadFile(string FileName)
         {
             string DownloadFolder = _systemhelper.GetDownloadFolder();
 
             if (!File.Exists(Path.Combine(DownloadFolder, FileName)))
             {
-                File.Move(_bddhelper.GetStoredPath(FileName), Path.Combine(DownloadFolder, FileName));
-                _bddhelper.DeleteFileInBDD(FileName);
-            }
+                //File.Move(_bddhelper.GetStoredPath(FileName), Path.Combine(DownloadFolder, FileName));
+                string[] Filelist = Directory.GetFiles(_bddhelper.GetStoredPath(FileName)).ToArray();
 
+                if (DecompressFile(Filelist, Filelist.Length, Path.Combine(DownloadFolder, FileName)))
+                {
+                    DeleteFile(FileName);
+                    _bddhelper.DeleteFileInBDD(FileName);
+                }
+
+                return true;
+            }
+            return false;
         }
 
         public void DeleteFile(string FileName)
         {
             string StoredFilePath = _bddhelper.GetStoredPath(FileName);
 
-            if (Directory.Exists(GetParentPath(StoredFilePath, FileName)))
+            if (Directory.Exists(StoredFilePath))
             {
-                Directory.Delete(GetParentPath(StoredFilePath, FileName), recursive: true);
+                Directory.Delete(StoredFilePath, recursive: true);
             }
 
             _bddhelper.DeleteFileInBDD(FileName);
@@ -103,11 +117,12 @@ namespace StorgLibs
             string DownloadFileFolder = Path.Combine(DownloadFolder, "Dir_" + FileName);
             Directory.CreateDirectory(DownloadFileFolder);
 
-            if (!File.Exists(Path.Combine(DownloadFileFolder, FileName)))
-            {
-                File.Copy(_bddhelper.GetStoredPath(FileName), Path.Combine(DownloadFileFolder, FileName));
-            }
+            string[] FilePathList = Directory.GetFiles(_bddhelper.GetStoredPath(FileName));
 
+            for (int i = 0; i < FilePathList.Length; i++)
+            {
+                File.Copy(FilePathList[i], Path.Combine(DownloadFileFolder, "img" + i + ".webp"));
+            }
         }
 
     }
