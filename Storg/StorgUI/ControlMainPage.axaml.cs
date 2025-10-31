@@ -15,6 +15,10 @@ using Avalonia.Layout;
 using StorgLibs;
 using StorgCommon;
 using System.Linq;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel.DataAnnotations;
+using Avalonia.Data;
 
 
 namespace StorgUI
@@ -33,6 +37,7 @@ namespace StorgUI
         {
 
             InitializeComponent();
+
             refresh(); // Permet d'afficher tout les fichiers deja present dans la BDD
 
             AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop
@@ -228,7 +233,7 @@ namespace StorgUI
         {
             if (parent!.Height > 283)
             {
-                ScollBar.Height = parent.Height - 283;
+                FilesGrid.Height = parent.Height - 290;
             }
         }
 
@@ -239,20 +244,63 @@ namespace StorgUI
 
         #region Methode
 
-        private void refresh()  // Permet de refresh la liste des fichier.
+        private void InitDataGridFiles()
+        {
+            DataGridCheckBoxColumn colCheck = new DataGridCheckBoxColumn()
+            {
+                Header = " ",
+            };
+            DataGridTextColumn colName = new DataGridTextColumn()
+            {
+                Header = "Nom",
+                Width = new DataGridLength(1, DataGridLengthUnitType.Star),
+                CanUserResize = true,
+                MinWidth = 100,
+                Binding = new Binding("Name"),
+            };
+            DataGridTextColumn colDate = new DataGridTextColumn()
+            {
+                Header = "Date et Heure",
+                CanUserResize = true,
+                MinWidth = 100,
+                Binding = new Binding("Date"),
+            };
+            DataGridTextColumn colWeight = new DataGridTextColumn()
+            {
+                Header = "Taille",
+                CanUserResize = true,
+                MinWidth = 100,
+                Binding = new Binding("Weight"),
+            };
+
+            FilesGrid.Columns.Add(colCheck);
+            FilesGrid.Columns.Add(colName);
+            FilesGrid.Columns.Add(colDate);
+            FilesGrid.Columns.Add(colWeight);
+        }
+
+        private IList<ModelDisplayFiles> CastModelFile()
         {
             IList<ModelFile> FilesList = _libsglobal.LoadStoredFile();
+            IList<ModelDisplayFiles> displayFiles = [];
 
-            ColumnFichier.Children.Clear(); // Vide la liste afficher.
             foreach (ModelFile file in FilesList)
             {
-
-                var btn = Create_btn(file); //creation dynamique des boutton
-
-                btn.Click += OnClickFichierDl; // Affectation de la fonction OnClickFichierDl lors du click
-
-                ColumnFichier.Children.Add(btn);
+                displayFiles.Add(new ModelDisplayFiles() { Name = file.Name, Date = file.Date + " " + file.Time, Weight = file.Weight });
             }
+
+            return displayFiles;
+        }
+
+        private void refresh()  // Permet de refresh la liste des fichier.
+        {
+
+            FilesGrid.Columns.Clear(); // Vide la liste afficher.
+
+            this.InitDataGridFiles();
+
+            FilesGrid.ItemsSource = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile());
+
         }
 
         private async void Add_File(IStorageFile file) // Permet de cree et d'ajouter un fichier a la BDD
@@ -339,15 +387,19 @@ namespace StorgUI
             }
             string research_file_text = Search.Text;
 
-            ColumnFichier.Children.Clear(); // Vide la liste afficher.
-            foreach (ModelFile file in _libsglobal.ResearchFileByName(research_file_text).Reverse())
-            {
-                // On recree tout les bouttons //
+            // ColumnFichier.Children.Clear(); // Vide la liste afficher.
+            // foreach (ModelFile file in _libsglobal.ResearchFileByName(research_file_text).Reverse())
+            // {
+            //     // On recree tout les bouttons //
 
-                Button btn = Create_btn(file);
-                btn.Click += OnClickFichierDl; // Affectation de la fonction OnClickFichierDl lors du click
-                ColumnFichier.Children.Add(btn);
-            }
+            //     Button btn = Create_btn(file);
+            //     btn.Click += OnClickFichierDl; // Affectation de la fonction OnClickFichierDl lors du click
+            //     ColumnFichier.Children.Add(btn);
+            // }
+
+            FilesGrid.Columns.Clear();
+            FilesGrid.ItemsSource = new ObservableCollection<ModelFile>(_libsglobal.ResearchFileByName(research_file_text).Reverse());
+
             Focus();
         }
 
@@ -421,4 +473,5 @@ namespace StorgUI
         #endregion FileBrowser
 
     }
+
 }

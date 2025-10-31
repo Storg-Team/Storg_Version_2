@@ -66,16 +66,15 @@
 							<Grid.RowDefinitions>
 								<RowDefinition Height="*"/>
 							</Grid.RowDefinitions>
-							<Border Grid.Row="0" BorderBrush="#363b48" BorderThickness="2">
-								<Grid>
-									<Grid HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Top" Margin="0,0,0,20">
-										<TextBlock Height="30" Foreground="Black" Text=" Nom                                                                                                                          |     Date / Heure         |     Taille" VerticalAlignment="Top" Margin="20, 0,0,0" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
-									</Grid>
-									<ScrollViewer VerticalScrollBarVisibility="Visible" Name="ScollBar" Margin="0, 10, 0, 0">
-										<StackPanel x:Name="ColumnFichier" Orientation="Vertical" VerticalAlignment="Top"></StackPanel>
-									</ScrollViewer>
-								</Grid>
-							</Border>
+							<DataGrid x:Name="FilesGrid" 
+								VerticalAlignment="Stretch" 
+								BorderThickness="1"
+								IsReadOnly="True"
+								IsVisible="True"
+								Margin="0,10,0,10"
+								AutoGenerateColumns="False"
+								MinHeight="35">
+							</DataGrid>
 						</Grid>
 					</Grid>
 					<Grid Background="#d6bebe" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch" Height="190" Margin="0,-40,0,0" PointerPressed="OpenFileBorwser">
