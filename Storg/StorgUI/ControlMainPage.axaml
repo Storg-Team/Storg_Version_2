@@ -62,21 +62,27 @@
 						<Button Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Name="Reload" Background="#d6bebe" Classes="DefaultBt" Margin="330,-2,0,0">
 							<Image Width="30" Height="30" Source="/Resources/reload.png"/>
 						</Button>
-						<Grid Margin="50" HorizontalAlignment="Stretch">
-							<Grid.RowDefinitions>
-								<RowDefinition Height="*"/>
-							</Grid.RowDefinitions>
-							<DataGrid x:Name="FilesGrid" 
-								VerticalAlignment="Stretch" 
-								BorderThickness="1"
-								IsReadOnly="True"
-								IsVisible="True"
-								Margin="0,10,0,10"
-								AutoGenerateColumns="False"
-								MinHeight="35">
-							</DataGrid>
-						</Grid>
+						<Button Name="Telecharger" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="390,-2,0,0">
+							<Image Source="Resources/download.png" Width="25" Height="25" ></Image>
+						</Button>
+						<Button Name="Exporter" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="450,-2,0,0">
+							<Image Source="Resources/folder-input.png" Width="25" Height="25"></Image>
+						</Button>	
+						<Button Name="Supprimer" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="510,-2,0,0">
+							<Image Source="Resources/trash-2.png" Width="25" Height="25"></Image>
+						</Button>
 					</Grid>
+						<DataGrid x:Name="FilesGrid" 
+						          VerticalAlignment="Stretch" 
+						          BorderThickness="1"
+						          IsReadOnly="True"
+						          IsVisible="True"
+						          Margin="20,20,20,45"
+						          AutoGenerateColumns="False"
+						          MinHeight="35"
+						          VerticalScrollBarVisibility="Auto"
+						          LostFocus="UnselectFiles">
+						</DataGrid>
 					<Grid Background="#d6bebe" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch" Height="190" Margin="0,-40,0,0" PointerPressed="OpenFileBorwser">
 						<Rectangle StrokeDashArray="5, 3" Stroke="Black" StrokeThickness="3"></Rectangle>
 						<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Déposez ici / Cliquez pour parcourir</TextBlock>

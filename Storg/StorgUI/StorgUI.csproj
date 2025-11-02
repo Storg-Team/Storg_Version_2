@@ -35,9 +35,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Views\ViewDownloadOptionsPopUp\FrmDownloadOptionPopUp.axaml.cs">
-      <DependentUpon>FrmDownloadOptionPopUp.axaml</DependentUpon>
-    </Compile>
     <Compile Update="Views\ViewErrorPopUp\FrmErrorPopUp.axaml.cs">
       <DependentUpon>FrmErrorPopUp.axaml</DependentUpon>
     </Compile>

@@ -40,6 +40,7 @@ namespace StorgUI
 
             refresh(); // Permet d'afficher tout les fichiers deja present dans la BDD
 
+            FilesGrid.Tapped += DisplayBtnOptionFile;
             AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop
 
             this.Loaded += SetDynSize;
@@ -50,67 +51,67 @@ namespace StorgUI
             string focus = "#bca7a7";
             string lostfocus = "#d6bebe";
 
-            Button? buttonA = this.FindControl<Button>("BtAccueil"); // Si un boutton avec en parametre le Nom = BtAcueil, alors ca declanche l'action qui se passe quand on click dessus.
-            if (buttonA != null)
+            Button? button = this.FindControl<Button>("BtAccueil"); // Si un boutton avec en parametre le Nom = BtAcueil, alors ca declanche l'action qui se passe quand on click dessus.
+            if (button != null)
             {
                 this.Loaded += (sender, e) =>
                 {
-                    buttonA.Focus();
+                    button.Focus();
 
                 };
-                buttonA.GotFocus += (sender, e) =>
+                button.GotFocus += (sender, e) =>
                 {
-                    buttonA.Background = new SolidColorBrush(Color.Parse(focus));
+                    button.Background = new SolidColorBrush(Color.Parse(focus));
                 };
-                buttonA.LostFocus += (sender, e) =>
+                button.LostFocus += (sender, e) =>
                 {
-                    buttonA.Background = new SolidColorBrush(Color.Parse(lostfocus));
+                    button.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
-                buttonA.Click += OnClickAccueil;
+                button.Click += OnClickAccueil;
             }
 
-            Button? buttonC = this.FindControl<Button>("BtContact");
-            if (buttonC != null)
+            button = this.FindControl<Button>("BtContact");
+            if (button != null)
             {
-                buttonC.GotFocus += (sender, e) =>
+                button.GotFocus += (sender, e) =>
                 {
-                    buttonC.Background = new SolidColorBrush(Color.Parse(focus));
+                    button.Background = new SolidColorBrush(Color.Parse(focus));
                 };
-                buttonC.LostFocus += (sender, e) =>
+                button.LostFocus += (sender, e) =>
                 {
-                    buttonC.Background = new SolidColorBrush(Color.Parse(lostfocus));
+                    button.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
-                buttonC.Click += OnClickContact;
+                button.Click += OnClickContact;
             }
 
-            Button? buttonAide = this.FindControl<Button>("BtAide");
-            if (buttonAide != null)
+            button = this.FindControl<Button>("BtAide");
+            if (button != null)
             {
-                buttonAide.GotFocus += (sender, e) =>
+                button.GotFocus += (sender, e) =>
                 {
-                    buttonAide.Background = new SolidColorBrush(Color.Parse(focus));
+                    button.Background = new SolidColorBrush(Color.Parse(focus));
                 };
-                buttonAide.LostFocus += (sender, e) =>
+                button.LostFocus += (sender, e) =>
                 {
-                    buttonAide.Background = new SolidColorBrush(Color.Parse(lostfocus));
+                    button.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
-                buttonAide.Click += OnClickAide;
+                button.Click += OnClickAide;
             }
 
-            Button? buttonP = this.FindControl<Button>("BtAProps");
-            if (buttonP != null)
+            button = this.FindControl<Button>("BtAProps");
+            if (button != null)
             {
-                buttonP.GotFocus += (sender, e) =>
+                button.GotFocus += (sender, e) =>
                 {
-                    buttonP.Background = new SolidColorBrush(Color.Parse(focus));
+                    button.Background = new SolidColorBrush(Color.Parse(focus));
                 };
-                buttonP.LostFocus += (sender, e) =>
+                button.LostFocus += (sender, e) =>
                 {
-                    buttonP.Background = new SolidColorBrush(Color.Parse(lostfocus));
+                    button.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
-                buttonP.Click += OnClickAProps;
+                button.Click += OnClickAProps;
             }
-            Button? button = this.FindControl<Button>("Reload");
+            button = this.FindControl<Button>("Reload");
             if (button != null)
             {
                 button.Click += OnClickReload;
@@ -121,13 +122,31 @@ namespace StorgUI
             {
                 button.Click += OnClickSettings;
             }
-            Button? btnresearch = this.FindControl<Button>("BtResearch");
-            if (btnresearch != null)
+            button = this.FindControl<Button>("BtResearch");
+            if (button != null)
             {
-                btnresearch.Click += TriggerClickResearch;
+                button.Click += TriggerClickResearch;
+            }
+            button = this.FindControl<Button>("Exporter");
+            if (button != null)
+            {
+                button.Click += OnclickExp;
+            }
+
+            button = this.FindControl<Button>("Telecharger");
+            if (button != null)
+            {
+                button.Click += OnclickDl;
+            }
+
+            button = this.FindControl<Button>("Supprimer");
+            if (button != null)
+            {
+                button.Click += OnclickDel;
             }
 
         }
+
 
         #endregion btntrigger
 
@@ -171,6 +190,31 @@ namespace StorgUI
             Search.Text = "Rechercher des fichiers compressés";
             refresh();
         }
+
+        private void OnclickDel(object? sender, RoutedEventArgs e)
+        {
+            Delete();
+            Telecharger.IsVisible = false;
+            Exporter.IsVisible = false;
+            Supprimer.IsVisible = false;
+        }
+
+        private void OnclickDl(object? sender, RoutedEventArgs e)
+        {
+            Download();
+            Telecharger.IsVisible = false;
+            Exporter.IsVisible = false;
+            Supprimer.IsVisible = false;
+        }
+
+        private void OnclickExp(object? sender, RoutedEventArgs e)
+        {
+            Export();
+            Telecharger.IsVisible = false;
+            Exporter.IsVisible = false;
+            Supprimer.IsVisible = false;
+        }
+
         private void OnDrop(object? sender, DragEventArgs e) // Fonction de Drag and Drop
         {
 
@@ -191,19 +235,30 @@ namespace StorgUI
             }
         }
 
-        private async void OnClickFichierDl(object? sender, RoutedEventArgs e) // Permet d'ouvrir la fenetre PopUp
+        private void DisplayBtnOptionFile(object? sender, RoutedEventArgs e)
         {
-            if (sender is Button button)
+            if (FilesGrid.SelectedItems.Count != 0)
             {
-                OptionPopUp OptionPopUpWindows = new OptionPopUp(button.Name!);
-                OptionPopUpWindows.Closed += (s, e) => refresh();  // Quand elle ce ferme on refresh la list des fichiers.
-                await OptionPopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                Telecharger.IsVisible = true;
+                Exporter.IsVisible = true;
+                Supprimer.IsVisible = true;
             }
         }
 
         private void TriggerClickResearch(object? sender, RoutedEventArgs e)
         {
             Research();
+        }
+
+        private void UnselectFiles(object sender, RoutedEventArgs e)
+        {
+            if (!FilesGrid.IsKeyboardFocusWithin)
+            {
+                FilesGrid.SelectedItems.Clear();
+                Telecharger.IsVisible = false;
+                Exporter.IsVisible = false;
+                Supprimer.IsVisible = false;
+            }
         }
 
         #endregion trigger
@@ -233,7 +288,7 @@ namespace StorgUI
         {
             if (parent!.Height > 283)
             {
-                FilesGrid.Height = parent.Height - 290;
+                FilesGrid.Height = parent.Height - 275;
             }
         }
 
@@ -246,10 +301,6 @@ namespace StorgUI
 
         private void InitDataGridFiles()
         {
-            DataGridCheckBoxColumn colCheck = new DataGridCheckBoxColumn()
-            {
-                Header = " ",
-            };
             DataGridTextColumn colName = new DataGridTextColumn()
             {
                 Header = "Nom",
@@ -273,21 +324,14 @@ namespace StorgUI
                 Binding = new Binding("Weight"),
             };
 
-            FilesGrid.Columns.Add(colCheck);
             FilesGrid.Columns.Add(colName);
             FilesGrid.Columns.Add(colDate);
             FilesGrid.Columns.Add(colWeight);
         }
 
-        private IList<ModelDisplayFiles> CastModelFile()
+        private IEnumerable<ModelDisplayFiles> CastModelFile(IList<ModelFile> FilesList)
         {
-            IList<ModelFile> FilesList = _libsglobal.LoadStoredFile();
-            IList<ModelDisplayFiles> displayFiles = [];
-
-            foreach (ModelFile file in FilesList)
-            {
-                displayFiles.Add(new ModelDisplayFiles() { Name = file.Name, Date = file.Date + " " + file.Time, Weight = file.Weight });
-            }
+            IEnumerable<ModelDisplayFiles> displayFiles = from file in FilesList select new ModelDisplayFiles() { Name = file.Name, Date = file.Date + " " + file.Time, Weight = file.Weight };
 
             return displayFiles;
         }
@@ -299,8 +343,11 @@ namespace StorgUI
 
             this.InitDataGridFiles();
 
-            FilesGrid.ItemsSource = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile());
+            FilesGrid.ItemsSource = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsglobal.LoadStoredFile()));
 
+            Telecharger.IsVisible = false;
+            Exporter.IsVisible = false;
+            Supprimer.IsVisible = false;
         }
 
         private async void Add_File(IStorageFile file) // Permet de cree et d'ajouter un fichier a la BDD
@@ -329,43 +376,6 @@ namespace StorgUI
 
         }
 
-        private Button Create_btn(ModelFile file) // Permet de cree un boutton (Utiliser par fonction Ajout file + refresh)
-        {
-
-            Button btn = new Button // Creation d'un nouveau boutton
-            {
-                ///// Parametre du boutton /////
-                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
-                Margin = new Thickness(0, 15, 0, 0),
-                Height = 30,
-                Background = new SolidColorBrush(Color.Parse("#42505f")),
-                Name = file.Name,
-                /////
-            };
-            btn.Classes.Add("File");
-
-            Grid grid = new Grid();
-
-            grid.Children.Add(DesignButton(file.Date + " " + file.Time, 420));
-            grid.Children.Add(DesignButton(file.Weight, 580));
-            grid.Children.Add(DesignButton(file.Name, 10));
-
-            btn.Content = grid;
-
-            return btn;
-        }
-
-        private TextBlock DesignButton(string TextValue, int ThickValue)
-        {
-            return new TextBlock
-            {
-                Text = TextValue,
-                Margin = new Thickness(ThickValue, 0, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-        }
-
         public void TriggerKeyResearch(object? sender, KeyEventArgs e) // Faire une recherche de fichier
         {
             if (e.Key == Key.Enter) // Verifi si la touche entrer est presser
@@ -386,21 +396,55 @@ namespace StorgUI
                 return;
             }
             string research_file_text = Search.Text;
-
-            // ColumnFichier.Children.Clear(); // Vide la liste afficher.
-            // foreach (ModelFile file in _libsglobal.ResearchFileByName(research_file_text).Reverse())
-            // {
-            //     // On recree tout les bouttons //
-
-            //     Button btn = Create_btn(file);
-            //     btn.Click += OnClickFichierDl; // Affectation de la fonction OnClickFichierDl lors du click
-            //     ColumnFichier.Children.Add(btn);
-            // }
+            this.InitDataGridFiles();
 
             FilesGrid.Columns.Clear();
-            FilesGrid.ItemsSource = new ObservableCollection<ModelFile>(_libsglobal.ResearchFileByName(research_file_text).Reverse());
+            FilesGrid.ItemsSource = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsglobal.ResearchFileByName(research_file_text)).Reverse());
 
             Focus();
+        }
+
+        private async void Download() // Re telecharger le fichier telle qu'il etait
+        {
+            IList<ModelDisplayFiles> FilesList = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
+            foreach (ModelDisplayFiles file in FilesList)
+            {
+                if (!_libsglobal.DownloadFile(file.Name))
+                {
+                    FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec du téléchargement du ficher :" + file.Name);
+                    await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                }
+            }
+            this.refresh();
+        }
+
+        private async void Delete() // Permet de supprimer un fichier
+        {
+            IList<ModelDisplayFiles> FilesList = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
+            foreach (ModelDisplayFiles file in FilesList)
+            {
+                if (!_libsglobal.DeleteFile(file.Name))
+                {
+                    FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec de le suppression du ficher :" + file.Name);
+                    await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                }
+            }
+            this.refresh();
+
+        }
+
+        private async void Export()  // Exporter mes fichier compresser
+        {
+            IList<ModelDisplayFiles> FilesList = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
+            foreach (ModelDisplayFiles file in FilesList)
+            {
+                if (!_libsglobal.ExportFile(file.Name))
+                {
+                    FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec de l'export du ficher :" + file.Name);
+                    await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                }
+            }
+            this.refresh();
         }
 
         #endregion Methode
