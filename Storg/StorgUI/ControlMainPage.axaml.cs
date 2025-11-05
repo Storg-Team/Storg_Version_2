@@ -19,6 +19,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel.DataAnnotations;
 using Avalonia.Data;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace StorgUI
@@ -29,6 +30,7 @@ namespace StorgUI
 
         #region Variable
         private LibsGlobal _libsglobal = new LibsGlobal();
+        private static bool _isPaneOpen = false;
 
         #endregion Variable
 
@@ -38,6 +40,7 @@ namespace StorgUI
 
             InitializeComponent();
 
+            MainMenu.IsPaneOpen = _isPaneOpen;
             refresh(); // Permet d'afficher tout les fichiers deja present dans la BDD
 
             FilesGrid.Tapped += DisplayBtnOptionFile;
@@ -51,66 +54,73 @@ namespace StorgUI
             string focus = "#bca7a7";
             string lostfocus = "#d6bebe";
 
-            Button? button = this.FindControl<Button>("BtAccueil"); // Si un boutton avec en parametre le Nom = BtAcueil, alors ca declanche l'action qui se passe quand on click dessus.
-            if (button != null)
+            ListBoxItem? listbox = this.FindControl<ListBoxItem>("BtAccueil"); // Si un boutton avec en parametre le Nom = BtAcueil, alors ca declanche l'action qui se passe quand on click dessus.
+            if (listbox != null)
             {
                 this.Loaded += (sender, e) =>
                 {
-                    button.Focus();
+                    listbox.Focus();
 
                 };
-                button.GotFocus += (sender, e) =>
+                listbox.GotFocus += (sender, e) =>
                 {
-                    button.Background = new SolidColorBrush(Color.Parse(focus));
+                    listbox.Background = new SolidColorBrush(Color.Parse(focus));
                 };
-                button.LostFocus += (sender, e) =>
+                listbox.LostFocus += (sender, e) =>
                 {
-                    button.Background = new SolidColorBrush(Color.Parse(lostfocus));
+                    listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
-                button.Click += OnClickAccueil;
+                listbox.Tapped += OnClickAccueil;
             }
 
-            button = this.FindControl<Button>("BtContact");
+            listbox = this.FindControl<ListBoxItem>("BtContact");
+            if (listbox != null)
+            {
+                listbox.GotFocus += (sender, e) =>
+                {
+                    listbox.Background = new SolidColorBrush(Color.Parse(focus));
+                };
+                listbox.LostFocus += (sender, e) =>
+                {
+                    listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
+                };
+                listbox.Tapped += OnClickContact;
+            }
+
+            listbox = this.FindControl<ListBoxItem>("BtAide");
+            if (listbox != null)
+            {
+                listbox.GotFocus += (sender, e) =>
+                {
+                    listbox.Background = new SolidColorBrush(Color.Parse(focus));
+                };
+                listbox.LostFocus += (sender, e) =>
+                {
+                    listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
+                };
+                listbox.Tapped += OnClickAide;
+            }
+
+            listbox = this.FindControl<ListBoxItem>("BtAProps");
+            if (listbox != null)
+            {
+                listbox.GotFocus += (sender, e) =>
+                {
+                    listbox.Background = new SolidColorBrush(Color.Parse(focus));
+                };
+                listbox.LostFocus += (sender, e) =>
+                {
+                    listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
+                };
+                listbox.Tapped += OnClickAProps;
+            }
+            Button? button = this.FindControl<Button>("BtExpend");
             if (button != null)
             {
-                button.GotFocus += (sender, e) =>
-                {
-                    button.Background = new SolidColorBrush(Color.Parse(focus));
-                };
-                button.LostFocus += (sender, e) =>
-                {
-                    button.Background = new SolidColorBrush(Color.Parse(lostfocus));
-                };
-                button.Click += OnClickContact;
+                button.Click += ToggleExpendMenu;
             }
-
-            button = this.FindControl<Button>("BtAide");
-            if (button != null)
-            {
-                button.GotFocus += (sender, e) =>
-                {
-                    button.Background = new SolidColorBrush(Color.Parse(focus));
-                };
-                button.LostFocus += (sender, e) =>
-                {
-                    button.Background = new SolidColorBrush(Color.Parse(lostfocus));
-                };
-                button.Click += OnClickAide;
-            }
-
-            button = this.FindControl<Button>("BtAProps");
-            if (button != null)
-            {
-                button.GotFocus += (sender, e) =>
-                {
-                    button.Background = new SolidColorBrush(Color.Parse(focus));
-                };
-                button.LostFocus += (sender, e) =>
-                {
-                    button.Background = new SolidColorBrush(Color.Parse(lostfocus));
-                };
-                button.Click += OnClickAProps;
-            }
+            
+            
             button = this.FindControl<Button>("Reload");
             if (button != null)
             {
@@ -261,6 +271,19 @@ namespace StorgUI
             }
         }
 
+        private void ToggleExpendMenu (object? sender, RoutedEventArgs e)
+        {
+            if (MainMenu.IsPaneOpen)
+            {
+                MainMenu.IsPaneOpen = false;
+            }
+            else
+            {
+                MainMenu.IsPaneOpen = true;
+            }
+            _isPaneOpen = MainMenu.IsPaneOpen;
+        }
+
         #endregion trigger
 
         #region WindowsDynamicSize
@@ -396,9 +419,7 @@ namespace StorgUI
                 return;
             }
             string research_file_text = Search.Text;
-            this.InitDataGridFiles();
 
-            FilesGrid.Columns.Clear();
             FilesGrid.ItemsSource = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsglobal.ResearchFileByName(research_file_text)).Reverse());
 
             Focus();

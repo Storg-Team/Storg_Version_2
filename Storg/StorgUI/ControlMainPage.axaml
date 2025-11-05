@@ -6,41 +6,52 @@
              Background="#5A6070" PointerPressed="Lost_Focus" Focusable="True" 
 			 x:Class="StorgUI.ControlMainPage">
 	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="250"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
-			<Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Background="#363b48" Width="250" Grid.Column="0">
-				<StackPanel VerticalAlignment="Top" Margin="0,50,0,0">
-					<Button Name="BtAccueil" Margin="0,10,0,10" Background="#d6bebe" HorizontalAlignment="Center" Width="150" Classes="DefaultBt" Focusable="True">
-						<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-							<Image Source="/Resources/logo_accueil.png" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0, 0, 10,0" Width="35" Height="35"/>
-							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Accueil</TextBlock>
-						</StackPanel>
-					</Button>
-					<Button Name="BtContact" Margin="0,10,0,10" Background="#d6bebe" HorizontalAlignment="Center" Width="150" Classes="DefaultBt" Focusable="True">
-						<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-							<Image Source="/Resources/logo_contact.png" HorizontalAlignment="Left" Margin="0, 0, 10,0" Width="35" Height="35"/>
-							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Contact</TextBlock>
-						</StackPanel>
-					</Button>
-					<Button Name="BtAide" Margin="0,10,0,10" Background="#d6bebe" HorizontalAlignment="Center" Width="150" Classes="DefaultBt" Focusable="True">
-						<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-							<Image Source="/Resources/logo_help.png" HorizontalAlignment="Left" Margin="0, 0, 10,0" Width="35" Height="35"/>
-							<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Aide</TextBlock>
-						</StackPanel>
-					</Button>
-					<Button Name="BtAProps" Margin="0,10,0,10" Background="#d6bebe" HorizontalAlignment="Center" Width="150" Classes="DefaultBt" Focusable="True">
-						<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-							<Image Source="/Resources/logo_a_propos.png" HorizontalAlignment="Left" Margin="0, 0, 10,0" Width="35" Height="35"/>
-							<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">A propos</TextBlock>
-						</StackPanel>
-					</Button>
+			<Grid VerticalAlignment="Stretch" HorizontalAlignment="Left" Background="#363b48">
+				<SplitView Name="MainMenu"
+							IsPaneOpen="False"
+				           OpenPaneLength="250"
+				           CompactPaneLength="70"
+				           Background="#363b48"
+				           PaneBackground="#363b48"
+				           DisplayMode="CompactInline">
+					<SplitView.Pane>
+						<StackPanel VerticalAlignment="Top" Margin="5,50,5,0">
+							<Button Name="BtExpend" Margin="12,-25,0,30" Background="#d6bebe" HorizontalAlignment="Left" Width="35" Height="35" Classes="DefaultBt" Focusable="True" >
+									<Image Source="/Resources/menu.png" VerticalAlignment="Center" HorizontalAlignment="Left" Width="20" Height="30" Margin="-1,5,5,5"/>
+							</Button>
+							<ListBox>
+								<ListBoxItem Name="BtAccueil" Background="#d6bebe"  Classes="DefaultBt" Focusable="True">
+									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+										<Image Source="/Resources/logo_accueil.png" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
+										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Accueil</TextBlock>
+									</StackPanel>
+								</ListBoxItem>
+								<ListBoxItem Name="BtContact"  Background="#d6bebe"  Classes="DefaultBt" Focusable="True">
+									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+										<Image Source="/Resources/logo_contact.png" HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
+										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Contact</TextBlock>
+									</StackPanel>
+								</ListBoxItem>
+								<ListBoxItem Name="BtAide"  Background="#d6bebe"  Classes="DefaultBt" Focusable="True">
+									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+										<Image Source="/Resources/logo_help.png" HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
+										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Aide</TextBlock>
+									</StackPanel>
+								</ListBoxItem>
+								<ListBoxItem Name="BtAProps" Background="#d6bebe"  Classes="DefaultBt" Focusable="True">
+									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+										<Image Source="/Resources/logo_a_propos.png" HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
+										<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">A propos</TextBlock>
+									</StackPanel>
+								</ListBoxItem>
+							</ListBox>
 				</StackPanel>
-			</Grid>
-			<ContentControl x:Name="MainContent" Grid.Column="1">
-				<StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+					</SplitView.Pane>
+					<SplitView.Content>
+						<Border CornerRadius="15, 0, 0, 0" Background="#5A6070">
+							<ContentControl x:Name="MainContent" >
+							
+							<StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 					<Button Name="BtSettings" Width="50" Height="50" VerticalAlignment="Top" HorizontalAlignment="Right" CornerRadius="100" Background="#d6bebe" Margin="0,10,10,0" Classes="DefaultBt">
 						<Image Source="/Resources/icons100.png"/>
 					</Button>
@@ -59,16 +70,16 @@
 							<Image Grid.Column="0" Grid.Row="0" Margin="0,0,20,0" Source="/Resources/search.png" HorizontalAlignment="Right" Width="25" Height="25"/>
 							</Button>
 						</Grid>
-						<Button Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Name="Reload" Background="#d6bebe" Classes="DefaultBt" Margin="330,-2,0,0">
+						<Button Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Name="Reload" Background="#d6bebe" Classes="DefaultBt" Margin="330,-2,0,0" ToolTip.Tip="Actualiser">
 							<Image Width="30" Height="30" Source="/Resources/reload.png"/>
 						</Button>
-						<Button Name="Telecharger" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="390,-2,0,0">
+						<Button Name="Telecharger" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="390,-2,0,0" ToolTip.Tip="Télécharger">
 							<Image Source="Resources/download.png" Width="25" Height="25" ></Image>
 						</Button>
-						<Button Name="Exporter" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="450,-2,0,0">
+						<Button Name="Exporter" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="450,-2,0,0" ToolTip.Tip="Exporter">
 							<Image Source="Resources/folder-input.png" Width="25" Height="25"></Image>
 						</Button>	
-						<Button Name="Supprimer" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="510,-2,0,0">
+						<Button Name="Supprimer" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="510,-2,0,0" ToolTip.Tip="Supprimer">
 							<Image Source="Resources/trash-2.png" Width="25" Height="25"></Image>
 						</Button>
 					</Grid>
@@ -88,7 +99,13 @@
 						<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Déposez ici / Cliquez pour parcourir</TextBlock>
 					</Grid>
 				</StackPanel>
+							
 			</ContentControl>
+						</Border>
+					</SplitView.Content>
+					
+				</SplitView>
+			</Grid>
+			
 		</Grid>
-	</Grid>
 </UserControl>
