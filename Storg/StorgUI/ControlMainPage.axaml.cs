@@ -70,6 +70,7 @@ namespace StorgUI
                 {
                     listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
+                listbox.IsSelected = true;
                 listbox.Tapped += OnClickAccueil;
             }
 
@@ -182,7 +183,7 @@ namespace StorgUI
 
         private void OnClickContact(object? sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Contact");
+            MainContent.Content = new FrmContact();
         }
 
         private void OnClickAide(object? sender, RoutedEventArgs e)

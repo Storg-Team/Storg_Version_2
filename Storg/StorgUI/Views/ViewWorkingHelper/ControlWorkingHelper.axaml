@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 Background="#6d717a"
              x:Class="StorgUI.ControlWorkingHelper">
-	<Grid>
-		<ScrollViewer VerticalScrollBarVisibility="Visible" Name="ScollBar" Margin="20, 40,0,0">
+		<ScrollViewer VerticalScrollBarVisibility="Visible" Name="ScollBar" Margin="20, 40,0,0" HorizontalAlignment="Stretch">
 			<Grid>
 				<StackPanel Orientation="Vertical" Margin="0,20,0,0">
 					<TextBlock Text="Rechercher :" FontSize="30" Foreground="Black" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins"/>
@@ -46,5 +45,4 @@
 				</StackPanel>
 			</Grid>
 		</ScrollViewer>
-	</Grid>
 </UserControl>
