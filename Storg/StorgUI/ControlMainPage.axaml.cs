@@ -165,7 +165,7 @@ namespace StorgUI
 
 
         #region trigger
-        private void OnClickSettings(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void OnClickSettings(object? sender, RoutedEventArgs e)
         {
             MainContent.Content = new ControlSettings();
         }
