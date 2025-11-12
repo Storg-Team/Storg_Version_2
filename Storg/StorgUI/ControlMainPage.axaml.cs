@@ -120,8 +120,8 @@ namespace StorgUI
             {
                 button.Click += ToggleExpendMenu;
             }
-            
-            
+
+
             button = this.FindControl<Button>("Reload");
             if (button != null)
             {
@@ -193,10 +193,10 @@ namespace StorgUI
 
         private void OnClickAProps(object? sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Aprops");
+            MainContent.Content = new FrmAPropos();
         }
 
-        private void OnClickReload(object? sender, RoutedEventArgs e) // Appelle la fonction refresh.
+        private void OnClickReload(object? sender, RoutedEventArgs e) // Appel la fonction refresh.
         {
             Search.Text = "Rechercher des fichiers compressés";
             refresh();
@@ -261,18 +261,7 @@ namespace StorgUI
             Research();
         }
 
-        private void UnselectFiles(object sender, RoutedEventArgs e)
-        {
-            if (!FilesGrid.IsKeyboardFocusWithin)
-            {
-                FilesGrid.SelectedItems.Clear();
-                Telecharger.IsVisible = false;
-                Exporter.IsVisible = false;
-                Supprimer.IsVisible = false;
-            }
-        }
-
-        private void ToggleExpendMenu (object? sender, RoutedEventArgs e)
+        private void ToggleExpendMenu(object? sender, RoutedEventArgs e)
         {
             if (MainMenu.IsPaneOpen)
             {
@@ -428,6 +417,7 @@ namespace StorgUI
 
         private async void Download() // Re telecharger le fichier telle qu'il etait
         {
+
             IList<ModelDisplayFiles> FilesList = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
             foreach (ModelDisplayFiles file in FilesList)
             {
@@ -473,7 +463,7 @@ namespace StorgUI
 
 
 
-        #region GestionFocusSearch
+        #region GestionFocus
         private void Focus(object sender, RoutedEventArgs e) // Permet de vider le texte de la TextBox quand on click dedans
         {
             if (Search.Text == "Rechercher des fichiers compressés")
@@ -492,13 +482,23 @@ namespace StorgUI
 
         private void Lost_Focus(object sender, PointerPressedEventArgs e) // Si on click a coter alors on quitte la TextBox
         {
+            // Gestion du focus de la barre de recherche
             if (!Search.IsPointerOver)
             {
                 Focus();
             }
+
+            //Gestion du focus de la datagrid au click sur le MainControl
+            if (!FilesGrid.IsKeyboardFocusWithin)
+            {
+                FilesGrid.SelectedItems.Clear();
+                Telecharger.IsVisible = false;
+                Exporter.IsVisible = false;
+                Supprimer.IsVisible = false;
+            }
         }
 
-        #endregion GestionFocusSearch
+        #endregion GestionFocus
 
 
         #region FileBrowser

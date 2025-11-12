@@ -92,8 +92,7 @@
 						          Margin="20,20,20,45"
 						          AutoGenerateColumns="False"
 						          MinHeight="35"
-						          VerticalScrollBarVisibility="Auto"
-						          LostFocus="UnselectFiles">
+						          VerticalScrollBarVisibility="Auto">
 						</DataGrid>
 					<Grid Background="#d6bebe" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch" Height="190" Margin="0,-40,0,0" PointerPressed="OpenFileBorwser">
 						<Rectangle StrokeDashArray="5, 3" Stroke="Black" StrokeThickness="3"></Rectangle>

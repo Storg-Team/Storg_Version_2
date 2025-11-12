@@ -23,6 +23,7 @@ _UpgradeReport_Files/
 ###############
 # Directories #
 ###############
+.vscode/
 .idea/
 bin/
 obj/
