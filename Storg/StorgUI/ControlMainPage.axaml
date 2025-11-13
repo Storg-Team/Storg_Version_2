@@ -17,9 +17,6 @@
 							HorizontalContentAlignment="Stretch">
 					<SplitView.Pane>
 						<StackPanel VerticalAlignment="Top" Margin="5,50,5,0">
-							<Button Name="BtExpend" Margin="12,-25,0,30" Background="#d6bebe" HorizontalAlignment="Left" Width="35" Height="35" Classes="DefaultBt" Focusable="True" >
-									<Image Source="/Resources/menu.png" VerticalAlignment="Center" HorizontalAlignment="Left" Width="20" Height="30" Margin="-1,5,5,5"/>
-							</Button>
 							<ListBox>
 								<ListBoxItem Name="BtAccueil" Background="#d6bebe"  Classes="DefaultBt" Focusable="True">
 									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">

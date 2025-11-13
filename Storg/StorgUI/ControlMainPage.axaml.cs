@@ -72,6 +72,8 @@ namespace StorgUI
                 };
                 listbox.IsSelected = true;
                 listbox.Tapped += OnClickAccueil;
+                listbox.PointerEntered += ExpendMenuEnter;
+                listbox.PointerExited += ExpendMenuLeave;
             }
 
             listbox = this.FindControl<ListBoxItem>("BtContact");
@@ -86,6 +88,8 @@ namespace StorgUI
                     listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
                 listbox.Tapped += OnClickContact;
+                listbox.PointerEntered += ExpendMenuEnter;
+                listbox.PointerExited += ExpendMenuLeave;
             }
 
             listbox = this.FindControl<ListBoxItem>("BtAide");
@@ -100,6 +104,8 @@ namespace StorgUI
                     listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
                 listbox.Tapped += OnClickAide;
+                listbox.PointerEntered += ExpendMenuEnter;
+                listbox.PointerExited += ExpendMenuLeave;
             }
 
             listbox = this.FindControl<ListBoxItem>("BtAProps");
@@ -114,15 +120,11 @@ namespace StorgUI
                     listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
                 listbox.Tapped += OnClickAProps;
-            }
-            Button? button = this.FindControl<Button>("BtExpend");
-            if (button != null)
-            {
-                button.Click += ToggleExpendMenu;
+                listbox.PointerEntered += ExpendMenuEnter;
+                listbox.PointerExited += ExpendMenuLeave;
             }
 
-
-            button = this.FindControl<Button>("Reload");
+            Button? button = this.FindControl<Button>("Reload");
             if (button != null)
             {
                 button.Click += OnClickReload;
@@ -261,16 +263,28 @@ namespace StorgUI
             Research();
         }
 
-        private void ToggleExpendMenu(object? sender, RoutedEventArgs e)
+        // private void ToggleExpendMenu(object? sender, RoutedEventArgs e)
+        // {
+        //     if (MainMenu.IsPaneOpen)
+        //     {
+        //         MainMenu.IsPaneOpen = false;
+        //     }
+        //     else
+        //     {
+        //         MainMenu.IsPaneOpen = true;
+        //     }
+        //     _isPaneOpen = MainMenu.IsPaneOpen;
+        // }
+
+        private void ExpendMenuEnter(object? sender, RoutedEventArgs e)
         {
-            if (MainMenu.IsPaneOpen)
-            {
-                MainMenu.IsPaneOpen = false;
-            }
-            else
-            {
-                MainMenu.IsPaneOpen = true;
-            }
+            MainMenu.IsPaneOpen = true;
+            _isPaneOpen = MainMenu.IsPaneOpen;
+        }
+
+        private void ExpendMenuLeave(object? sender, RoutedEventArgs e)
+        {
+            MainMenu.IsPaneOpen = false;
             _isPaneOpen = MainMenu.IsPaneOpen;
         }
 
