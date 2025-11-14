@@ -20,6 +20,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.ComponentModel.DataAnnotations;
 using Avalonia.Data;
 using System.Security.Cryptography.X509Certificates;
+using StorgUI.Views.ViewDownloadPopUp;
 
 
 namespace StorgUI
@@ -140,11 +141,6 @@ namespace StorgUI
             {
                 button.Click += TriggerClickResearch;
             }
-            button = this.FindControl<Button>("Exporter");
-            if (button != null)
-            {
-                button.Click += OnclickExp;
-            }
 
             button = this.FindControl<Button>("Telecharger");
             if (button != null)
@@ -208,7 +204,6 @@ namespace StorgUI
         {
             Delete();
             Telecharger.IsVisible = false;
-            Exporter.IsVisible = false;
             Supprimer.IsVisible = false;
         }
 
@@ -216,15 +211,6 @@ namespace StorgUI
         {
             Download();
             Telecharger.IsVisible = false;
-            Exporter.IsVisible = false;
-            Supprimer.IsVisible = false;
-        }
-
-        private void OnclickExp(object? sender, RoutedEventArgs e)
-        {
-            Export();
-            Telecharger.IsVisible = false;
-            Exporter.IsVisible = false;
             Supprimer.IsVisible = false;
         }
 
@@ -253,7 +239,6 @@ namespace StorgUI
             if (FilesGrid.SelectedItems.Count != 0)
             {
                 Telecharger.IsVisible = true;
-                Exporter.IsVisible = true;
                 Supprimer.IsVisible = true;
             }
         }
@@ -262,19 +247,6 @@ namespace StorgUI
         {
             Research();
         }
-
-        // private void ToggleExpendMenu(object? sender, RoutedEventArgs e)
-        // {
-        //     if (MainMenu.IsPaneOpen)
-        //     {
-        //         MainMenu.IsPaneOpen = false;
-        //     }
-        //     else
-        //     {
-        //         MainMenu.IsPaneOpen = true;
-        //     }
-        //     _isPaneOpen = MainMenu.IsPaneOpen;
-        // }
 
         private void ExpendMenuEnter(object? sender, RoutedEventArgs e)
         {
@@ -373,7 +345,6 @@ namespace StorgUI
             FilesGrid.ItemsSource = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsglobal.LoadStoredFile()));
 
             Telecharger.IsVisible = false;
-            Exporter.IsVisible = false;
             Supprimer.IsVisible = false;
         }
 
@@ -433,14 +404,10 @@ namespace StorgUI
         {
 
             IList<ModelDisplayFiles> FilesList = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
-            foreach (ModelDisplayFiles file in FilesList)
-            {
-                if (!_libsglobal.DownloadFile(file.Name))
-                {
-                    FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec du téléchargement du ficher :" + file.Name);
-                    await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
-                }
-            }
+
+            FrmDownloadPopup frmDownloadPopup = new FrmDownloadPopup(FilesList);
+            await frmDownloadPopup.ShowDialog((Window)this.VisualRoot!);
+
             this.refresh();
         }
 
@@ -457,20 +424,6 @@ namespace StorgUI
             }
             this.refresh();
 
-        }
-
-        private async void Export()  // Exporter mes fichier compresser
-        {
-            IList<ModelDisplayFiles> FilesList = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
-            foreach (ModelDisplayFiles file in FilesList)
-            {
-                if (!_libsglobal.ExportFile(file.Name))
-                {
-                    FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec de l'export du ficher :" + file.Name);
-                    await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
-                }
-            }
-            this.refresh();
         }
 
         #endregion Methode
@@ -507,7 +460,6 @@ namespace StorgUI
             {
                 FilesGrid.SelectedItems.Clear();
                 Telecharger.IsVisible = false;
-                Exporter.IsVisible = false;
                 Supprimer.IsVisible = false;
             }
         }

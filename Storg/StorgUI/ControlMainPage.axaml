@@ -74,10 +74,7 @@
 						<Button Name="Telecharger" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="390,-2,0,0" ToolTip.Tip="Télécharger">
 							<Image Source="Resources/download.png" Width="25" Height="25" ></Image>
 						</Button>
-						<Button Name="Exporter" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="450,-2,0,0" ToolTip.Tip="Exporter">
-							<Image Source="Resources/folder-input.png" Width="25" Height="25"></Image>
-						</Button>	
-						<Button Name="Supprimer" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="510,-2,0,0" ToolTip.Tip="Supprimer">
+						<Button Name="Supprimer" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="450,-2,0,0" ToolTip.Tip="Supprimer">
 							<Image Source="Resources/trash-2.png" Width="25" Height="25"></Image>
 						</Button>
 					</Grid>
