@@ -35,9 +35,9 @@ namespace StorgLibs
             return _gestionfilehelper.StoreFile(FileName, FilePath, FileSize);
         }
 
-        public void StoreFileToBDD(ModelFile file)
+        public bool StoreFileToBDD(ModelFile file)
         {
-            _bddhelper.StoreFileToBDD(file);
+            return _bddhelper.StoreFileToBDD(file);
         }
 
         public string GetDownloadFolder()

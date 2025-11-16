@@ -8,12 +8,13 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.Data.Sqlite;
 using StorgCommon;
 using System.Runtime.CompilerServices;
+using System.Configuration;
 
 namespace StorgLibs
 {
     public class BDDHelper
     {
-        private string _BDDFilePath = "";
+        private static string _BDDFilePath = "";
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private SystemHelper _systemhelper = new SystemHelper();
         private string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -38,15 +39,16 @@ namespace StorgLibs
         public void IsBddExisting()
         {
             string DirPath = "";
+            string CurrentDirectory = "";
             if (_systemhelper.GetCurrentOS() == _currentOs.Windows)
             {
-                string CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 DirPath = Path.Combine(CurrentDirectory, ".data");
                 _BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
             }
             else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
             {
-                string CurrentDirectory = Path.Combine(home, "storg");
+                CurrentDirectory = Path.Combine(home, "storg");
                 DirPath = Path.Combine(CurrentDirectory, ".data");
                 _BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
             }
@@ -55,17 +57,17 @@ namespace StorgLibs
             {
                 if (!File.Exists(_BDDFilePath))
                 {
-                    using (File.Create(_BDDFilePath)) { }
+                    using (File.Create(_BDDFilePath)) { };
                 }
             }
             else
             {
                 Directory.CreateDirectory(DirPath);
                 File.SetAttributes(DirPath, FileAttributes.Hidden);
-                using (File.Create(_BDDFilePath)) { }
+                using (File.Create(_BDDFilePath)) { };
             }
 
-
+         
             string sqlcreatetable = @"CREATE TABLE IF NOT EXISTS Files (Name TEXT NOT NULL, Date TEXT NOT NULL, Time TEXT NOT NULL, Weight TEXT NOT NULL, StoredFolder TEXT NOT NULL)";
             using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
@@ -132,9 +134,10 @@ namespace StorgLibs
         }
 
 
-        public void StoreFileToBDD(ModelFile file)
+        public bool StoreFileToBDD(ModelFile file)
         {
             string sqlrequest = @$"INSERT INTO Files (Name, Date, Time, Weight, StoredFolder) VALUES(@name, @date, @time, @weight, @storedfolder)";
+            
             using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
@@ -145,9 +148,14 @@ namespace StorgLibs
                     command.Parameters.AddWithValue("@time", file.Time);
                     command.Parameters.AddWithValue("@weight", file.Weight);
                     command.Parameters.AddWithValue("@storedfolder", file.StoredFolder);
-                    command.ExecuteNonQuery();
+                    
+                    if (command.ExecuteNonQuery() == 1)
+                    {
+                        return true;
+                    }
                 }
             }
+            return false;
         }
 
 

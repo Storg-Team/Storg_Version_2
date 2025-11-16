@@ -26,11 +26,15 @@ namespace StorgLibs
         private static extern bool DecompressFile(
             [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)]
             string[] filelist, int size, string dlpath);
+
+        // [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
+        // private static extern void GetFileData(byte[] buffer, int bufferSize);
+
         #endregion DLL import
 
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
-        private string _savedFolder = ConfigurationManager.AppSettings.Get("SavedFolder")!;
-        private string _currentExecDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        private static string _savedFolder = ConfigurationManager.AppSettings.Get("SavedFolder")!;
+        private static string _currentExecDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private SystemHelper _systemhelper = new SystemHelper();
         private BDDHelper _bddhelper = new BDDHelper();
         private string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -47,28 +51,25 @@ namespace StorgLibs
             }
             else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
             {
-                Destination_Folder = Path.Combine(Path.Combine(home, "storg"), _savedFolder);
+                Destination_Folder = Path.Combine(Path.Combine(home, "storg"), ".data/SavedFolder");
             }
 
             string Destination_Path = Path.Combine(Destination_Folder, FileName);
 
             Directory.CreateDirectory(Destination_Path);
 
-            // Permet de copier le fichier //
-
             if (CompressFile(FilePath, Destination_Path))
             {
 
-                _bddhelper.StoreFileToBDD(new ModelFile
+                if (_bddhelper.StoreFileToBDD(new ModelFile
                 {
                     Name = FileName,
                     Date = _systemhelper.GetDateTime().Date!,
                     Time = _systemhelper.GetDateTime().Time!,
                     Weight = FileSize,
                     StoredFolder = Destination_Path,
-                });
-                //File.Copy(FilePath, DestinationFilePath);
-                return true;
+                })) return true;
+                return false;
             }
             return false;
         }
@@ -80,6 +81,11 @@ namespace StorgLibs
             if (!File.Exists(Path.Combine(DownloadFolder, FileName)))
             {
                 string[] Filelist = Directory.GetFiles(_bddhelper.GetStoredPath(FileName)).ToArray();
+
+                // int size = DecompressFile(Filelist, Filelist.Length, Path.Combine(DownloadFolder, FileName));
+                // byte[] result = new byte[size];
+                // GetFileData(result, size);
+                // File.WriteAllBytes(Path.Combine(DownloadFolder, FileName), result);
 
                 if (DecompressFile(Filelist, Filelist.Length, Path.Combine(DownloadFolder, FileName)))
                 {
