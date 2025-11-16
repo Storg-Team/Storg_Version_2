@@ -79,7 +79,6 @@ namespace StorgLibs
 
             if (!File.Exists(Path.Combine(DownloadFolder, FileName)))
             {
-                //File.Move(_bddhelper.GetStoredPath(FileName), Path.Combine(DownloadFolder, FileName));
                 string[] Filelist = Directory.GetFiles(_bddhelper.GetStoredPath(FileName)).ToArray();
 
                 if (DecompressFile(Filelist, Filelist.Length, Path.Combine(DownloadFolder, FileName)))
