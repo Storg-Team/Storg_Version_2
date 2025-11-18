@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Numerics;
+using System.Text.Unicode;
 
 
 namespace StorgLibs
@@ -20,15 +21,15 @@ namespace StorgLibs
         private const string _libsName = "Libs/libs_filecompression.so";
 
         [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool CompressFile(string filepath, string savefilepath);
+        private static extern bool CompressFile(string filepath, string savefilepath, string data);
 
         [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool DecompressFile(
+        private static extern int DecompressFile(
             [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)]
             string[] filelist, int size, string dlpath);
 
-        // [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
-        // private static extern void GetFileData(byte[] buffer, int bufferSize);
+        [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void GetFileData(byte[] buffer, int bufferSize);
 
         #endregion DLL import
 
@@ -58,7 +59,10 @@ namespace StorgLibs
 
             Directory.CreateDirectory(Destination_Path);
 
-            if (CompressFile(FilePath, Destination_Path))
+            byte[] filedata = File.ReadAllBytes(FilePath);
+            string encodedBase64 = Convert.ToBase64String(filedata);
+
+            if (CompressFile(FilePath, Destination_Path, encodedBase64))
             {
 
                 if (_bddhelper.StoreFileToBDD(new ModelFile
@@ -82,16 +86,16 @@ namespace StorgLibs
             {
                 string[] Filelist = Directory.GetFiles(_bddhelper.GetStoredPath(FileName)).ToArray();
 
-                // int size = DecompressFile(Filelist, Filelist.Length, Path.Combine(DownloadFolder, FileName));
-                // byte[] result = new byte[size];
-                // GetFileData(result, size);
-                // File.WriteAllBytes(Path.Combine(DownloadFolder, FileName), result);
+                int size = DecompressFile(Filelist, Filelist.Length, Path.Combine(DownloadFolder, FileName));
+            
+                byte[] result = new byte[size];
+                GetFileData(result, size);
+                string encodedBase64 = Encoding.UTF8.GetString(result, 0, size);
+                byte[] decodedBase64 = Convert.FromBase64String(encodedBase64);
+                File.WriteAllBytes(Path.Combine(DownloadFolder, FileName), decodedBase64);
 
-                if (DecompressFile(Filelist, Filelist.Length, Path.Combine(DownloadFolder, FileName)))
-                {
-                    DeleteFile(FileName);
-                    _bddhelper.DeleteFileInBDD(FileName);
-                }
+                DeleteFile(FileName);
+                _bddhelper.DeleteFileInBDD(FileName);
 
                 return true;
             }

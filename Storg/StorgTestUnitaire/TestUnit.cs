@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Buffers.Text;
+using System.Text;
 using StorgCommon;
 using StorgLibs;
 
@@ -121,6 +122,26 @@ namespace StorgTestUnitaire
             Assert.IsTrue(_gestionfilehelper.DeleteFile(testfile.Name));
 
             File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "testdelete.pdf"));
+        }
+
+        [TestMethod]
+        public void TestCreationFile()
+        {
+            // byte[] result = File.ReadAllBytes("/home/lucas/Bureau/testdoc.odt");
+            // string encoded = "";
+            // string[] test = File.ReadAllLines("/home/lucas/Bureau/result.txt");
+            // foreach (string item in test)
+            // {   
+            //     encoded += item;
+            // }
+
+
+            // string encoded = Convert.ToBase64String(result);
+
+            // byte[] decoded = Convert.FromBase64String(encoded);
+
+            // File.WriteAllBytes("/home/lucas/Bureau/result.odt", decoded);
+
         }
 
     }
