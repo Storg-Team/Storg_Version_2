@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Numerics;
 using System.Text.Unicode;
+using System.Buffers.Text;
 
 
 namespace StorgLibs
@@ -84,10 +85,10 @@ namespace StorgLibs
 
             if (!File.Exists(Path.Combine(DownloadFolder, FileName)))
             {
-                string[] Filelist = Directory.GetFiles(_bddhelper.GetStoredPath(FileName)).ToArray();
+                string[] Filelist = GetFileImageListe(FileName);
 
                 int size = DecompressFile(Filelist, Filelist.Length, Path.Combine(DownloadFolder, FileName));
-            
+
                 byte[] result = new byte[size];
                 GetFileData(result, size);
                 string encodedBase64 = Encoding.UTF8.GetString(result, 0, size);
@@ -132,7 +133,7 @@ namespace StorgLibs
 
             if (Directory.Exists(_bddhelper.GetStoredPath(FileName)))
             {
-                string[] FilePathList = Directory.GetFiles(_bddhelper.GetStoredPath(FileName));
+                string[] FilePathList = GetFileImageListe(FileName);
 
                 for (int i = 0; i < FilePathList.Length; i++)
                 {
@@ -142,6 +143,23 @@ namespace StorgLibs
             }
             return false;
         }
+
+
+        private string[] GetFileImageListe(string FileName)
+        {
+            IList<KeyValuePair<int, string>> ImageListeKeyValue = new List<KeyValuePair<int, string>>();
+
+            Regex regex = new Regex(@"/img(\d{0,}).webp");
+
+            foreach (string imageName in Directory.GetFiles(_bddhelper.GetStoredPath(FileName)))
+            {
+                int imageNumber = Int16.Parse(regex.Match(imageName).Groups[1].Value);
+                ImageListeKeyValue.Add(new KeyValuePair<int, string>(imageNumber, $"{imageName}"));
+            }
+            return ImageListeKeyValue.OrderBy(f => f.Key).Select(f => f.Value).ToArray();
+        }
+
+
         #endregion Methode
     }
 }

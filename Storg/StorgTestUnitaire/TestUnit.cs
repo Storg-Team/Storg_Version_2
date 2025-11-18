@@ -1,5 +1,6 @@
 ﻿using System.Buffers.Text;
 using System.Text;
+using System.Text.RegularExpressions;
 using StorgCommon;
 using StorgLibs;
 
@@ -91,6 +92,7 @@ namespace StorgTestUnitaire
                 byte[] text = new UTF8Encoding(true).GetBytes("c2pkaGZranNoZGZrZGVjZGV6ZGZlZmVkZmZlZGZmZmZmZmZmZmZmZmZmZmZmZmZmZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVl");
                 fs.Write(text);
                 LengthRef = fs.Length;
+                fs.Close();
             }
 
             ModelFile testfile = new ModelFile()
@@ -108,7 +110,7 @@ namespace StorgTestUnitaire
 
             Assert.IsTrue(_gestionfilehelper.ExportFile(testfile.Name));
 
-            Assert.IsTrue(Directory.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_"+testfile.Name)));
+            Assert.IsTrue(Directory.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_" + testfile.Name)));
 
             Assert.IsTrue(_gestionfilehelper.DownloadFile(testfile.Name));
 
@@ -142,6 +144,35 @@ namespace StorgTestUnitaire
 
             // File.WriteAllBytes("/home/lucas/Bureau/result.odt", decoded);
 
+
+            // for (int i = 0; i < 200; i++)
+            // {
+            //     test.Add(new KeyValuePair<int, string>(i, $"{i}"));
+            // }
+            // IList<KeyValuePair<int, string>> test = new List<KeyValuePair<int, string>>();
+            
+            // string[] Filelist = Directory.GetFiles(_bddhelper.GetStoredPath("fichier_client_big.csv"));
+            // Regex regex = new Regex(@"/img(\d{0,}).webp");
+
+            // foreach (string FileName in Filelist)
+            // {
+            //     var result = regex.Match(FileName);
+            //     int test2 = Int16.Parse(result.Groups[1].Value);
+            //     test.Add(new KeyValuePair<int, string>(test2, $"{FileName}"));
+            // }
+            
+            // string[] test3 = test.OrderBy(f => f.Key).Select(f => f.Value).ToArray();
+
+            // foreach (KeyValuePair<int, string> item in test.OrderBy(f => f.Key))
+            // {
+            //     Console.WriteLine(item.Key +" / "+item.Value);
+            // }
+
+            // foreach (var item in test3)
+            // {
+            //     Console.WriteLine(item);
+            // }
+            // Console.WriteLine(test3.Length);
         }
 
     }
