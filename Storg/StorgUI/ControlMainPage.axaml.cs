@@ -346,12 +346,9 @@ namespace StorgUI
         private async void Add_File(IStorageFile file, float gap) // Permet de cree et d'ajouter un fichier a la BDD
         {
 
-            // Récupére les infos importante du fichier (Nom, chemin, taille)
-
-            string NameFile = file.Name.Replace(' ', '_');
             string FileWeight = "";
 
-            if (_libsglobal.CheckIfFileExist(NameFile))
+            if (_libsglobal.CheckIfFileExistInBDD(file.Name))
             {
                 FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Fichier déja existant");
                 await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
@@ -360,7 +357,15 @@ namespace StorgUI
             {
                 using (var stream = await file.OpenReadAsync())
                     FileWeight = Convert.ToString($"{stream.Length / 1024} Ko");
-                if (!await _libsglobal.StoreFile(file.Name, file.Path.AbsolutePath, FileWeight))
+                if (file.TryGetLocalPath() != null)
+                {
+                    if (!await _libsglobal.StoreFile(file.Name, file.TryGetLocalPath()!, FileWeight))
+                    {
+                        FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Import du fichier impossible");
+                        await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                    }
+                }
+                else
                 {
                     FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Import du fichier impossible");
                     await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
@@ -473,6 +478,7 @@ namespace StorgUI
             {
                 return;
             }
+
             IReadOnlyList<IStorageFile> items = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions // Recupere le ou les fichiers selectionner
             {
                 Title = "Sélection votre fichier", // Titre de la fenetre

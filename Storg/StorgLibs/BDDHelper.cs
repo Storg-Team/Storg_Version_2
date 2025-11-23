@@ -115,7 +115,7 @@ namespace StorgLibs
         }
 
 
-        public bool CheckIfFileExist(string NameFIle)
+        public bool CheckIfFileExistInBDD(string NameFIle)
         {
             string sqlrequest = @$"SELECT * FROM Files WHERE Name = @NameFile";
             using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))

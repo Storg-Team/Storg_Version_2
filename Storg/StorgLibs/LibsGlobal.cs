@@ -21,9 +21,9 @@ namespace StorgLibs
             return _systemhelper.GetCurrentOS();
         }
 
-        public bool CheckIfFileExist(string NameFIle)
+        public bool CheckIfFileExistInBDD(string NameFIle)
         {
-            return _bddhelper.CheckIfFileExist(NameFIle);
+            return _bddhelper.CheckIfFileExistInBDD(NameFIle);
         }
 
         public ModelTime GetDateTime()

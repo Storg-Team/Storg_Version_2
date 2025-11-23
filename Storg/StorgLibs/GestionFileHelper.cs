@@ -46,7 +46,7 @@ namespace StorgLibs
         public async Task<bool> StoreFile(string FileName, string FilePath, string FileSize)
         {
             string Destination_Folder = "";
-
+      
             if (_systemhelper.GetCurrentOS() == _currentOs.Windows) // Cree les chemin pour enregistrer les fichiers
             {
                 Destination_Folder = Path.Combine(_currentExecDirectory, _savedFolder);
