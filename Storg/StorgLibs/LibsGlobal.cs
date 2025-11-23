@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using StorgCommon;
 
 namespace StorgLibs
@@ -45,9 +46,9 @@ namespace StorgLibs
             return _systemhelper.GetDownloadFolder();
         }
 
-        public bool DownloadFile(string FileName)
+        public async Task<bool> DownloadFile(string FileName)
         {
-            return _gestionfilehelper.DownloadFile(FileName);
+            return await _gestionfilehelper.DownloadFile(FileName);
         }
 
         public string GetStoredPath(string FileName)
@@ -65,9 +66,9 @@ namespace StorgLibs
             return _gestionfilehelper.DeleteFile(StoredFilePath);
         }
 
-        public bool ExportFile(string FileName)
+        public async Task<bool> ExportFile(string FileName)
         {
-            return _gestionfilehelper.ExportFile(FileName);
+            return await _gestionfilehelper.ExportFile(FileName);
         }
 
         public IList<ModelFile> ResearchFileByName(string ResearchText)

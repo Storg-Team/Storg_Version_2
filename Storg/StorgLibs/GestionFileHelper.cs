@@ -79,7 +79,7 @@ namespace StorgLibs
             return false;
         }
 
-        public bool DownloadFile(string FileName)
+        public async Task<bool> DownloadFile(string FileName)
         {
             string DownloadFolder = _systemhelper.GetDownloadFolder();
 
@@ -125,7 +125,7 @@ namespace StorgLibs
             return regex.Match(StoredFilePath).Groups[1].Value;
         }
 
-        public bool ExportFile(string FileName)
+        public async Task<bool> ExportFile(string FileName)
         {
             string DownloadFolder = _systemhelper.GetDownloadFolder();
             string DownloadFileFolder = Path.Combine(DownloadFolder, "Dir_" + FileName);

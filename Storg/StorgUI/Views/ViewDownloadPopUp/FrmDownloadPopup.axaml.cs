@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -17,6 +18,7 @@ public partial class FrmDownloadPopup : Window
     {
         InitializeComponent();
         _filesList = FilesList;
+        LoadingBar.IsVisible = false;
 
         #region btntrigger
 
@@ -43,48 +45,71 @@ public partial class FrmDownloadPopup : Window
         this.Close();
     }
 
-    private void DownloadOptions(object? sender, RoutedEventArgs e)
+    private async void DownloadOptions(object? sender, RoutedEventArgs e)
     {
         if (chkDl.IsChecked != null && chkExp.IsChecked != null)
         {
             if (chkDl.IsChecked.Value && chkExp.IsChecked.Value)
             {
-                Export();
-                Download();
-            }else if (!chkDl.IsChecked.Value && chkExp.IsChecked.Value)
+                await Export();
+                await Download();
+            }
+            else if (!chkDl.IsChecked.Value && chkExp.IsChecked.Value)
             {
-                Export();
-            }else if (chkDl.IsChecked.Value && !chkExp.IsChecked.Value)
+                await Export();
+            }
+            else if (chkDl.IsChecked.Value && !chkExp.IsChecked.Value)
             {
-                Download();
+                await Download();
             }
         }
 
         this.Close();
     }
 
-    private async void Download()
+    private async Task Download()
     {
+        LoadingBar.IsVisible = true;
+        LoadingBar.Value = 0;
+        LoadingBar.ProgressTextFormat = "Téléchargement en cours...";
+        float gap = 100 / _filesList.Count;
+        await Task.Delay(10);
         foreach (ModelDisplayFiles file in _filesList)
         {
-            if (!_libsglobal.DownloadFile(file.Name))
+            if (!await _libsglobal.DownloadFile(file.Name))
             {
                 FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec du téléchargement du ficher :" + file.Name);
                 await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
             }
+            LoadingBar.Value += gap;
+            await Task.Delay(1);
         }
+
+        LoadingBar.ProgressTextFormat = "Terminé";
+        await Task.Delay(500);
+        LoadingBar.IsVisible = false;
     }
 
-    private async void Export()
+    private async Task Export()
     {
+        LoadingBar.IsVisible = true;
+        LoadingBar.Value = 0;
+        LoadingBar.ProgressTextFormat = "Export en cours...";
+        float gap = 100 / _filesList.Count;
         foreach (ModelDisplayFiles file in _filesList)
         {
-            if (!_libsglobal.ExportFile(file.Name))
+            if (!await _libsglobal.ExportFile(file.Name))
             {
                 FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec de l'export du ficher :" + file.Name);
                 await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
             }
+            LoadingBar.Value += gap;
+            await Task.Delay(1);
         }
+
+        LoadingBar.ProgressTextFormat = "Terminé";
+        await Task.Delay(500);
+        LoadingBar.IsVisible = false;
     }
 
 
