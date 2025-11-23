@@ -43,7 +43,7 @@ namespace StorgLibs
 
 
         #region Methode
-        public bool StoreFile(string FileName, string FilePath, string FileSize)
+        public async Task<bool> StoreFile(string FileName, string FilePath, string FileSize)
         {
             string Destination_Folder = "";
 

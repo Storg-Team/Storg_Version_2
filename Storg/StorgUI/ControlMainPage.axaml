@@ -88,6 +88,9 @@
 						          MinHeight="35"
 						          VerticalScrollBarVisibility="Auto">
 						</DataGrid>
+
+						<ProgressBar Name="LoadingBar" Minimum="0" Maximum="100" Margin="10, -100 , 10, 10" ShowProgressText="True" Height="20" Value="0" Foreground="#0eba2f" IsVisible="True"/>
+
 					<Grid Background="#d6bebe" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch" Height="190" Margin="0,-40,0,0" PointerPressed="OpenFileBorwser">
 						<Rectangle StrokeDashArray="5, 3" Stroke="Black" StrokeThickness="3"></Rectangle>
 						<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Déposez ici / Cliquez pour parcourir</TextBlock>

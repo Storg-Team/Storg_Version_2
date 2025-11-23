@@ -30,9 +30,9 @@ namespace StorgLibs
             return _systemhelper.GetDateTime();
         }
 
-        public bool StoreFile(string FileName, string FilePath, string FileSize)
+        public async Task<bool> StoreFile(string FileName, string FilePath, string FileSize)
         {
-            return _gestionfilehelper.StoreFile(FileName, FilePath, FileSize);
+            return await _gestionfilehelper.StoreFile(FileName, FilePath, FileSize);
         }
 
         public bool StoreFileToBDD(ModelFile file)

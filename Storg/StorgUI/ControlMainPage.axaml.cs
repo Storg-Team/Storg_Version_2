@@ -21,6 +21,8 @@ using System.ComponentModel.DataAnnotations;
 using Avalonia.Data;
 using System.Security.Cryptography.X509Certificates;
 using StorgUI.Views.ViewDownloadPopUp;
+using HarfBuzzSharp;
+using System.Threading.Tasks;
 
 
 namespace StorgUI
@@ -32,6 +34,7 @@ namespace StorgUI
         #region Variable
         private LibsGlobal _libsglobal = new LibsGlobal();
         private static bool _isPaneOpen = false;
+        private ObservableCollection<ModelDisplayFiles> _dataGridItems = new ObservableCollection<ModelDisplayFiles>();
 
         #endregion Variable
 
@@ -41,6 +44,7 @@ namespace StorgUI
 
             InitializeComponent();
 
+            LoadingBar.IsVisible = false;
             MainMenu.IsPaneOpen = _isPaneOpen;
             refresh(); // Permet d'afficher tout les fichiers deja present dans la BDD
 
@@ -214,23 +218,13 @@ namespace StorgUI
             Supprimer.IsVisible = false;
         }
 
-        private void OnDrop(object? sender, DragEventArgs e) // Fonction de Drag and Drop
+        private async Task OnDrop(object? sender, DragEventArgs e) // Fonction de Drag and Drop
         {
 
-            IEnumerable<IStorageItem>? items = e.Data.GetFiles(); // Recupere le ou les objects deposer
+            IReadOnlyList<IStorageFile>? items = (IReadOnlyList<IStorageFile>?)e.Data.GetFiles(); // Recupere le ou les objects deposer
             if (items != null)
             {
-                foreach (IStorageFile item in items) // Recupere les objets un part un.
-                {
-                    var file = item as IStorageFile; // Recupere le fichier depuis l'objet
-
-                    if (file is null)
-                    {
-                        return;
-                    }
-
-                    Add_File(file); // Le donne a la fonction de creation de fichier.
-                }
+                await LoopOnFileToAdd(items);
             }
         }
 
@@ -342,18 +336,20 @@ namespace StorgUI
 
             this.InitDataGridFiles();
 
-            FilesGrid.ItemsSource = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsglobal.LoadStoredFile()));
+            _dataGridItems = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsglobal.LoadStoredFile()));
+            FilesGrid.ItemsSource = _dataGridItems;
 
             Telecharger.IsVisible = false;
             Supprimer.IsVisible = false;
         }
 
-        private async void Add_File(IStorageFile file) // Permet de cree et d'ajouter un fichier a la BDD
+        private async void Add_File(IStorageFile file, float gap) // Permet de cree et d'ajouter un fichier a la BDD
         {
 
             // Récupére les infos importante du fichier (Nom, chemin, taille)
 
             string NameFile = file.Name.Replace(' ', '_');
+            string FileWeight = "";
 
             if (_libsglobal.CheckIfFileExist(NameFile))
             {
@@ -363,14 +359,15 @@ namespace StorgUI
             else
             {
                 using (var stream = await file.OpenReadAsync())
-                    if (!_libsglobal.StoreFile(file.Name, file.Path.AbsolutePath, Convert.ToString($"{stream.Length / 1024} Ko")))
-                    {
-                        FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Import du fichier impossible");
-                        await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
-                    }
+                    FileWeight = Convert.ToString($"{stream.Length / 1024} Ko");
+                if (!await _libsglobal.StoreFile(file.Name, file.Path.AbsolutePath, FileWeight))
+                {
+                    FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Import du fichier impossible");
+                    await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                }
             }
-
-            refresh(); // Refresh pour que le nouveau fichier soit en haut
+            _dataGridItems.Add(new ModelDisplayFiles() { Name = file.Name, Date = _libsglobal.GetDateTime().Date + " " + _libsglobal.GetDateTime().Time, Weight = FileWeight });
+            LoadingBar.Value += gap;
 
         }
 
@@ -488,18 +485,37 @@ namespace StorgUI
 
             if (items.Count > 0)
             {
-                foreach (var files in items) // Parcourir tout les fichiers selectionner
-                {
+                LoadingBar.ProgressTextFormat = "Import en cours...";
+                LoadingBar.Value = 0;
+                LoadingBar.IsVisible = true;
+                await Task.Delay(10);
+                await LoopOnFileToAdd(items);
 
-                    var file = files as IStorageFile;
-                    if (file != null)
-                    {
+                LoadingBar.ProgressTextFormat = "Terminé";
+                await Task.Delay(500);
+                LoadingBar.IsVisible = false;
 
-                        Add_File(file); // Ajouter les fichier selectionner a la BBD et a la liste
-                    }
-                }
             }
 
+        }
+
+        private async Task LoopOnFileToAdd(IReadOnlyList<IStorageFile> items)
+        {
+            float gap = 100.0f / items.Count;
+            foreach (var files in items) // Parcourir tout les fichiers selectionner
+            {
+
+                var file = files as IStorageFile;
+                if (file != null)
+                {
+
+                    Add_File(file, gap); // Ajouter les fichier selectionner a la BBD et a la liste
+                    await Task.Delay(1);
+
+                }
+            }
+            // LoadingBar.IsVisible = false;
+            refresh(); // Refresh pour que le nouveau fichier soit en haut
         }
 
         #endregion FileBrowser
