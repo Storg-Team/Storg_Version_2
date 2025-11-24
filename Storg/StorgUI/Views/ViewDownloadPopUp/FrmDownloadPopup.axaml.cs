@@ -82,7 +82,7 @@ public partial class FrmDownloadPopup : Window
         {
             if (_libsglobal.CheckIfExistInDownloadFolder(file.Name))
             {
-                FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp("Le fichier existe déjà dans le dossier de destination, voulez vous remplacer le fichier existant par ce fichier ?", true, file.Name);
+                FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp($"Le fichier {file.Name} existe déjà dans le dossier de destination, voulez vous remplacer le fichier existant par ce fichier ?", true, file.Name);
                 await frmErrorPopUp.ShowDialog((Window) this.VisualRoot!);
                 LoadingBar.Value += gap;
                 await Task.Delay(1);
@@ -114,7 +114,7 @@ public partial class FrmDownloadPopup : Window
         {
             if (_libsglobal.CheckIfExistInDownloadFolder(file.Name, false))
             {
-                FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp("Le dossier que vous essayer d'exporter existe déjà dans le dossier de destination, voulez vous remplacer le dossier existant par ce dossier ?", true, file.Name, true);
+                FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp($"Le dossier Dir_{file.Name} existe déjà dans le dossier de destination, voulez vous remplacer le dossier existant par ce dossier ?", true, file.Name, true);
                 await frmErrorPopUp.ShowDialog((Window) this.VisualRoot!);
                 LoadingBar.Value += gap;
                 await Task.Delay(1);

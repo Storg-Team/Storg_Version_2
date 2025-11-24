@@ -61,7 +61,10 @@ public partial class FrmErrorPopUp : Window
             {
                 this.Height = 170;
             }
-
+            else
+            {
+                this.Height = 150;
+            }
         }
     }
 
