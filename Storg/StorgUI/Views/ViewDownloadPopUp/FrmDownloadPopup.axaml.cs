@@ -11,12 +11,16 @@ namespace StorgUI.Views.ViewDownloadPopUp;
 
 public partial class FrmDownloadPopup : Window
 {
-    private IList<ModelDisplayFiles> _filesList;
+    private IList<ModelDisplayFiles> _filesList = new List<ModelDisplayFiles>();
     private LibsGlobal _libsglobal = new LibsGlobal();
 
-    public FrmDownloadPopup(IList<ModelDisplayFiles> FilesList)
+    public FrmDownloadPopup()
     {
         InitializeComponent();
+    }
+
+    public FrmDownloadPopup(IList<ModelDisplayFiles> FilesList) : this()
+    {
         _filesList = FilesList;
         LoadingBar.IsVisible = false;
 
@@ -34,8 +38,8 @@ public partial class FrmDownloadPopup : Window
             button.Click += DownloadOptions;
         }
 
-
         #endregion btntrigger
+
     }
 
     #region  Methode
@@ -76,13 +80,23 @@ public partial class FrmDownloadPopup : Window
         await Task.Delay(10);
         foreach (ModelDisplayFiles file in _filesList)
         {
-            if (!await _libsglobal.DownloadFile(file.Name))
+            if (_libsglobal.CheckIfExistInDownloadFolder(file.Name))
             {
-                FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec du téléchargement du ficher :" + file.Name);
-                await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp("Le fichier existe déjà dans le dossier de destination, voulez vous remplacer le fichier existant par ce fichier ?", true, file.Name);
+                await frmErrorPopUp.ShowDialog((Window) this.VisualRoot!);
+                LoadingBar.Value += gap;
+                await Task.Delay(1);
+            }   
+            else
+            {
+                if (!await _libsglobal.DownloadFile(file.Name))
+                {
+                    FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec du téléchargement du ficher :" + file.Name);
+                    await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                }
+                LoadingBar.Value += gap;
+                await Task.Delay(1);
             }
-            LoadingBar.Value += gap;
-            await Task.Delay(1);
         }
 
         LoadingBar.ProgressTextFormat = "Terminé";
@@ -98,13 +112,23 @@ public partial class FrmDownloadPopup : Window
         float gap = 100 / _filesList.Count;
         foreach (ModelDisplayFiles file in _filesList)
         {
-            if (!await _libsglobal.ExportFile(file.Name))
+            if (_libsglobal.CheckIfExistInDownloadFolder(file.Name, false))
             {
-                FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec de l'export du ficher :" + file.Name);
-                await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp("Le dossier que vous essayer d'exporter existe déjà dans le dossier de destination, voulez vous remplacer le dossier existant par ce dossier ?", true, file.Name, true);
+                await frmErrorPopUp.ShowDialog((Window) this.VisualRoot!);
+                LoadingBar.Value += gap;
+                await Task.Delay(1);
             }
-            LoadingBar.Value += gap;
-            await Task.Delay(1);
+            else
+            {
+                if (!await _libsglobal.ExportFile(file.Name))
+                {
+                    FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec de l'export du ficher :" + file.Name);
+                    await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                }
+                LoadingBar.Value += gap;
+                await Task.Delay(1);
+            }
         }
 
         LoadingBar.ProgressTextFormat = "Terminé";

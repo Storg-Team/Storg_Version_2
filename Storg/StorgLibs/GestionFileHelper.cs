@@ -46,7 +46,7 @@ namespace StorgLibs
         public async Task<bool> StoreFile(string FileName, string FilePath, string FileSize)
         {
             string Destination_Folder = "";
-      
+
             if (_systemhelper.GetCurrentOS() == _currentOs.Windows) // Cree les chemin pour enregistrer les fichiers
             {
                 Destination_Folder = Path.Combine(_currentExecDirectory, _savedFolder);
@@ -129,6 +129,7 @@ namespace StorgLibs
         {
             string DownloadFolder = _systemhelper.GetDownloadFolder();
             string DownloadFileFolder = Path.Combine(DownloadFolder, "Dir_" + FileName);
+
             Directory.CreateDirectory(DownloadFileFolder);
 
             if (Directory.Exists(_bddhelper.GetStoredPath(FileName)))
@@ -141,9 +142,41 @@ namespace StorgLibs
                 }
                 return true;
             }
+
             return false;
         }
 
+        public async Task ReplaceOnExportOrDownload(string fileName, bool isFile = true)
+        {
+            if (isFile)
+            {
+                string DownloadFilePath = Path.Combine(_systemhelper.GetDownloadFolder(), fileName);
+                File.Delete(DownloadFilePath);
+                await DownloadFile(fileName);
+            }
+            else
+            {
+                string DownloadFolderPath = Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_" + fileName);
+                Directory.Delete(DownloadFolderPath, recursive:true);
+                await ExportFile(fileName);                
+            }
+        }
+
+        public bool CheckIfExistInDownloadFolder(string fileName, bool isFile = true)
+        {
+            if (isFile)
+            {
+                if (File.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), fileName)))
+                    return true;
+            }
+            else
+            {
+                if (Directory.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_" + fileName)))
+                    return true;
+            }
+
+            return false;
+        }
 
         private string[] GetFileImageListe(string FileName)
         {

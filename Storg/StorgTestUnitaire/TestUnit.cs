@@ -1,6 +1,7 @@
 ﻿using System.Buffers.Text;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using StorgCommon;
 using StorgLibs;
 
@@ -67,7 +68,7 @@ namespace StorgTestUnitaire
             Assert.AreEqual(_bddhelper.ResearchFileByName("testbdd")[0].StoredFolder, "User/appdate/test");
 
 
-            Assert.IsTrue(_bddhelper.CheckIfFileExist("testbdd"));
+            Assert.IsTrue(_bddhelper.CheckIfFileExistInBDD("testbdd"));
 
             Assert.AreEqual(_bddhelper.GetStoredPath("testbdd"), "User/appdate/test");
 
@@ -78,12 +79,12 @@ namespace StorgTestUnitaire
 
 
             _bddhelper.DeleteFileInBDD("testbdd");
-            Assert.IsFalse(_bddhelper.CheckIfFileExist("testbdd"));
+            Assert.IsFalse(_bddhelper.CheckIfFileExistInBDD("testbdd"));
 
         }
 
         [TestMethod]
-        public void TestFileDelete()
+        public async Task TestFileDelete()
         {
             long LengthRef;
             using (FileStream fs = File.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "testdelete.pdf")))
@@ -104,15 +105,15 @@ namespace StorgTestUnitaire
                 StoredFolder = "User/appdate/test"
             };
 
-            Assert.IsTrue(_gestionfilehelper.StoreFile(testfile.Name, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "testdelete.pdf"), "100"));
+            Assert.IsTrue(await _gestionfilehelper.StoreFile(testfile.Name, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "testdelete.pdf"), "100"));
 
             Assert.IsTrue(Directory.Exists(_bddhelper.GetStoredPath(testfile.Name)));
 
-            Assert.IsTrue(_gestionfilehelper.ExportFile(testfile.Name));
+            Assert.IsTrue(await _gestionfilehelper.ExportFile(testfile.Name));
 
             Assert.IsTrue(Directory.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_" + testfile.Name)));
 
-            Assert.IsTrue(_gestionfilehelper.DownloadFile(testfile.Name));
+            Assert.IsTrue(await _gestionfilehelper.DownloadFile(testfile.Name));
 
             Assert.IsTrue(File.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), testfile.Name)));
 

@@ -44,6 +44,7 @@ namespace StorgUI
 
             InitializeComponent();
 
+
             LoadingBar.IsVisible = false;
             MainMenu.IsPaneOpen = _isPaneOpen;
             refresh(); // Permet d'afficher tout les fichiers deja present dans la BDD
@@ -370,10 +371,9 @@ namespace StorgUI
                     FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Import du fichier impossible");
                     await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
                 }
+                _dataGridItems.Add(new ModelDisplayFiles() { Name = file.Name, Date = _libsglobal.GetDateTime().Date + " " + _libsglobal.GetDateTime().Time, Weight = FileWeight });
+                LoadingBar.Value += gap;
             }
-            _dataGridItems.Add(new ModelDisplayFiles() { Name = file.Name, Date = _libsglobal.GetDateTime().Date + " " + _libsglobal.GetDateTime().Time, Weight = FileWeight });
-            LoadingBar.Value += gap;
-
         }
 
         public void TriggerKeyResearch(object? sender, KeyEventArgs e) // Faire une recherche de fichier

@@ -76,5 +76,15 @@ namespace StorgLibs
             return _bddhelper.ResearchFileByName(ResearchText);
         }
 
+        public async Task ReplaceOnExportOrDownload(string fileName, bool isFile = true)
+        {
+            await _gestionfilehelper.ReplaceOnExportOrDownload(fileName, isFile);
+        }
+
+        public bool CheckIfExistInDownloadFolder(string fileName, bool isFile = true)
+        {
+            return _gestionfilehelper.CheckIfExistInDownloadFolder(fileName, isFile);
+        }
+
     }
 }
