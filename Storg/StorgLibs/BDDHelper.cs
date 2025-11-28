@@ -39,16 +39,15 @@ namespace StorgLibs
         public void IsBddExisting()
         {
             string DirPath = "";
-            string CurrentDirectory = "";
             if (_systemhelper.GetCurrentOS() == _currentOs.Windows)
             {
-                CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 DirPath = Path.Combine(CurrentDirectory, ".data");
                 _BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
             }
             else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
             {
-                CurrentDirectory = Path.Combine(home, "storg");
+                string CurrentDirectory = Path.Combine(home, "storg");
                 DirPath = Path.Combine(CurrentDirectory, ".data");
                 _BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
             }
