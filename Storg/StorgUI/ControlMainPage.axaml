@@ -24,10 +24,10 @@
 										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Accueil</TextBlock>
 									</StackPanel>
 								</ListBoxItem>
-								<ListBoxItem Name="BtContact"  Background="#d6bebe"  Classes="DefaultBt" Focusable="True">
+								<ListBoxItem Name="BtSettings"  Background="#d6bebe"  Classes="DefaultBt" Focusable="True">
 									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-										<Image Source="/Resources/logo_contact.png" HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
-										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Contact</TextBlock>
+										<Image Source="/Resources/settings.png" HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
+										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Paramètres</TextBlock>
 									</StackPanel>
 								</ListBoxItem>
 								<ListBoxItem Name="BtAide"  Background="#d6bebe"  Classes="DefaultBt" Focusable="True">
@@ -50,21 +50,18 @@
 							<ContentControl x:Name="MainContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 							
 							<StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-					<Button Name="BtSettings" Width="50" Height="50" VerticalAlignment="Top" HorizontalAlignment="Right" CornerRadius="100" Background="#d6bebe" Margin="0,10,10,0" Classes="DefaultBt">
-						<Image Source="/Resources/icons100.png"/>
-					</Button>
-					<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,-40,0,0">
-						<Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,10,0">
+					<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,22,0,0">
+						<Grid HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,10,0">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="325"/>
 							</Grid.ColumnDefinitions>
 							<Grid.RowDefinitions>
 								<RowDefinition Height="30"/>
 							</Grid.RowDefinitions>
-							<TextBox Grid.Column="0" Grid.Row="0" Margin="0,0,10,0" CornerRadius="60" Foreground="Black" Classes="Search" x:Name="Search" GotFocus="Focus" LostFocus="NoFocus" KeyDown="TriggerKeyResearch" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins">
+							<TextBox VerticalContentAlignment="Center" Height="40" Grid.Column="0" Grid.Row="0" Margin="0,0,10,0" CornerRadius="60" Foreground="Black" Classes="Search" x:Name="Search" GotFocus="Focus" LostFocus="NoFocus" KeyDown="TriggerKeyResearch" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins">
 								Rechercher des fichiers compressés
 							</TextBox>
-							<Button Name="BtResearch" HorizontalAlignment="Right" Width="40" Height="30" Padding="30, 0, 0, 0" Margin="0,0,10,0" CornerRadius="100" Classes="DefaultBt" Background="#d6bebe">
+							<Button Name="BtResearch" HorizontalAlignment="Right" Width="40" Height="40" Padding="30, 0, 0, 0" Margin="0,0,10,0" CornerRadius="100" Classes="DefaultBt" Background="#d6bebe">
 							<Image Grid.Column="0" Grid.Row="0" Margin="0,0,20,0" Source="/Resources/search.png" HorizontalAlignment="Right" Width="25" Height="25"/>
 							</Button>
 						</Grid>

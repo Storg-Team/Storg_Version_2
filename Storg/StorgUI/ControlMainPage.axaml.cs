@@ -23,6 +23,7 @@ using System.Security.Cryptography.X509Certificates;
 using StorgUI.Views.ViewDownloadPopUp;
 using HarfBuzzSharp;
 using System.Threading.Tasks;
+using Avalonia.Themes.Fluent;
 
 
 namespace StorgUI
@@ -43,6 +44,7 @@ namespace StorgUI
         {
 
             InitializeComponent();
+
 
 
             LoadingBar.IsVisible = false;
@@ -82,7 +84,7 @@ namespace StorgUI
                 listbox.PointerExited += ExpendMenuLeave;
             }
 
-            listbox = this.FindControl<ListBoxItem>("BtContact");
+            listbox = this.FindControl<ListBoxItem>("BtSettings");
             if (listbox != null)
             {
                 listbox.GotFocus += (sender, e) =>
@@ -93,7 +95,7 @@ namespace StorgUI
                 {
                     listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
                 };
-                listbox.Tapped += OnClickContact;
+                listbox.Tapped += OnClickSettings;
                 listbox.PointerEntered += ExpendMenuEnter;
                 listbox.PointerExited += ExpendMenuLeave;
             }
@@ -134,12 +136,6 @@ namespace StorgUI
             if (button != null)
             {
                 button.Click += OnClickReload;
-            }
-
-            button = this.FindControl<Button>("BtSettings");
-            if (button != null)
-            {
-                button.Click += OnClickSettings;
             }
             button = this.FindControl<Button>("BtResearch");
             if (button != null)
@@ -182,11 +178,6 @@ namespace StorgUI
                 parent.Content = new ControlMainPage();
             }
 
-        }
-
-        private void OnClickContact(object? sender, RoutedEventArgs e)
-        {
-            MainContent.Content = new FrmContact();
         }
 
         private void OnClickAide(object? sender, RoutedEventArgs e)

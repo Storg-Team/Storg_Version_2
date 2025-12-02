@@ -2,8 +2,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StorgUI.ControlSettings">
-	<Grid>
-		<TextBlock Text="Paramètres :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black" Margin="25,25,0,0" FontSize="30"/>
+	<Grid Margin="25,25,0,0" >
+            <StackPanel Orientation="Vertical" Spacing="20">
+                <TextBlock Text="Apparence :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black"  FontSize="25"/>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center"> 
+                    <TextBlock Text="Thème : " />
+                    <ToggleSwitch OffContent="Clair" OnContent="Sombre" Classes="ThemeMode"/>
+                </StackPanel>
+        </StackPanel>
 	</Grid>
 </UserControl>
