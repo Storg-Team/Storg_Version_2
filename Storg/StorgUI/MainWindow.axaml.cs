@@ -21,11 +21,13 @@ namespace StorgUI
     public partial class MainWindow : Window
     {
 
+        private LibsGlobal _libsGlobal = new LibsGlobal();
 
         public MainWindow()
         {
             InitializeComponent();
 
+            _libsGlobal.IsBddExisting();
         }
 
 

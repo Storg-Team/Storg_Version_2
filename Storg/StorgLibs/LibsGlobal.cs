@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using StorgCommon;
+using StorgLibs.Libs;
 
 namespace StorgLibs
 {
@@ -9,8 +10,14 @@ namespace StorgLibs
         private SystemHelper _systemhelper = new SystemHelper();
         private BDDHelper _bddhelper = new BDDHelper();
         private GestionFileHelper _gestionfilehelper = new GestionFileHelper();
+        private static APIHelper _apiHelper = new APIHelper();
 
-      
+
+        public void IsBddExisting()
+        {
+            _bddhelper.IsBddExisting();
+        }
+
         public IList<ModelFile> LoadStoredFile()
         {
             return _bddhelper.LoadStoredFile();
@@ -86,5 +93,29 @@ namespace StorgLibs
             return _gestionfilehelper.CheckIfExistInDownloadFolder(fileName, isFile);
         }
 
+        public async Task<bool> StartConnection(string login, string password)
+        {
+            return await _apiHelper.StartConnection(login, password);
+        }
+
+        public bool UpdateSettingsThemeMode(bool lightMode)
+        {
+            return _bddhelper.UpdateSettingsThemeMode(lightMode);
+        }
+
+        public bool UpdateSettingsCanConnect(bool canConnect)
+        {
+            return _bddhelper.UpdateSettingsCanConnect(canConnect);
+        }
+
+        public bool UpdateSettingsCredentials(string login, string password)
+        {
+            return _bddhelper.UpdateSettingsCredentials(login, password);
+        }
+
+        public ModelSettings LoadSettings()
+        {
+            return _bddhelper.LoadSettings();
+        }
     }
 }

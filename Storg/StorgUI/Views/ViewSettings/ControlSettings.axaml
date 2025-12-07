@@ -5,13 +5,30 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StorgUI.ControlSettings">
 	<Grid Margin="25,25,0,0" >
+        <StackPanel Orientation="Vertical" Spacing="40">
             <StackPanel Orientation="Vertical" Spacing="20">
                 <TextBlock Text="Apparence :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black"  FontSize="25"/>
-
+ 
                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center"> 
                     <TextBlock Text="Thème : " />
-                    <ToggleSwitch OffContent="Clair" OnContent="Sombre" Classes="ThemeMode"/>
+                    <ToggleSwitch OffContent="Clair" OnContent="Sombre" Classes="ThemeMode" Margin="0,-5,0,0" Name="switchTheme"/>
                 </StackPanel>
+
+            </StackPanel>
+
+            <StackPanel Spacing="20" HorizontalAlignment="Left">
+                <TextBlock Text="Transfer de fichiers :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black"  FontSize="25"/>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <TextBlock Text="Autoriser la connexion : "/>
+                    <ToggleSwitch OffContent="Désactiver" OnContent="Activer" Margin="0,-5,0,0" Name="switchConnection"/>
+                </StackPanel>
+                <TextBox Text="Email" Width="350" Name="txtboxEmail" IsEnabled="False" Focusable="True"/>
+                <TextBox Text="Mot de passe" Width="350" Name="txtboxPassword" IsEnabled="False" Focusable="True"/>
+                <TextBlock Name="txtConnectionResult" Text="template texte" IsVisible="False"/>
+                <Button Content="Connexion" Name="btnConnection" IsEnabled="False"/>
+            </StackPanel>
+            
         </StackPanel>
 	</Grid>
 </UserControl>
