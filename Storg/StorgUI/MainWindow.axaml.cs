@@ -15,6 +15,7 @@ using Avalonia.Layout;
 using StorgLibs;
 using StorgCommon;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace StorgUI
 {
@@ -25,12 +26,12 @@ namespace StorgUI
 
         public MainWindow()
         {
+            _libsGlobal.IsBddExisting();
+            _libsGlobal.VerifConnection();
+            
             InitializeComponent();
 
-            _libsGlobal.IsBddExisting();
         }
-
-
     }
 }
 

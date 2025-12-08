@@ -65,15 +65,20 @@
 							<Image Grid.Column="0" Grid.Row="0" Margin="0,0,20,0" Source="/Resources/search.png" HorizontalAlignment="Right" Width="25" Height="25"/>
 							</Button>
 						</Grid>
-						<Button Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Name="Reload" Background="#d6bebe" Classes="DefaultBt" Margin="330,-2,0,0" ToolTip.Tip="Actualiser">
-							<Image Width="30" Height="30" Source="/Resources/reload.png"/>
-						</Button>
-						<Button Name="Telecharger" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="390,-2,0,0" ToolTip.Tip="Télécharger">
-							<Image Source="Resources/download.png" Width="25" Height="25" ></Image>
-						</Button>
-						<Button Name="Supprimer" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#d6bebe" Classes="DefaultBt" Margin="450,-2,0,0" ToolTip.Tip="Supprimer">
-							<Image Source="Resources/trash-2.png" Width="25" Height="25"></Image>
-						</Button>
+						<StackPanel Orientation="Horizontal" Margin="330,0,0,0" Spacing="20">
+							<Button Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Center" Name="btnReload" Background="#d6bebe" Classes="DefaultBt"  ToolTip.Tip="Actualiser">
+								<Image Width="30" Height="30" Source="/Resources/reload.png"/>
+							</Button>
+							<Button Name="btnTelecharger" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#d6bebe" Classes="DefaultBt" ToolTip.Tip="Télécharger">
+								<Image Source="Resources/download.png" Width="25" Height="25" ></Image>
+							</Button>
+							<Button Name="btnSupprimer" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#d6bebe" Classes="DefaultBt" ToolTip.Tip="Supprimer">
+								<Image Source="Resources/trash-2.png" Width="25" Height="25"></Image>
+							</Button>
+							<Button Name="btnUpload" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Center" Background="#d6bebe" Classes="DefaultBt" ToolTip.Tip="Transferer" IsVisible="False">
+								<Image  Source="Resources/hard-drive-upload.png" Width="25" Height="25"/>
+							</Button>
+						</StackPanel>
 					</Grid>
 						<DataGrid x:Name="FilesGrid" 
 						          VerticalAlignment="Stretch" 

@@ -11,6 +11,7 @@ namespace StorgLibs
         private BDDHelper _bddhelper = new BDDHelper();
         private GestionFileHelper _gestionfilehelper = new GestionFileHelper();
         private static APIHelper _apiHelper = new APIHelper();
+        private ConnectionHelper _connectionHelper = new ConnectionHelper();
 
 
         public void IsBddExisting()
@@ -108,14 +109,19 @@ namespace StorgLibs
             return _bddhelper.UpdateSettingsCanConnect(canConnect);
         }
 
-        public bool UpdateSettingsCredentials(string login, string password)
+        public bool UpdateSettingsCredentials(string login, string password, bool isConnected = true)
         {
-            return _bddhelper.UpdateSettingsCredentials(login, password);
+            return _bddhelper.UpdateSettingsCredentials(login, password, isConnected);
         }
 
         public ModelSettings LoadSettings()
         {
             return _bddhelper.LoadSettings();
+        }
+
+        public async void VerifConnection()
+        {
+            await _connectionHelper.VerifConnection();
         }
     }
 }

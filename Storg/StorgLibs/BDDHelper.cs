@@ -79,14 +79,22 @@ namespace StorgLibs
                 command.ExecuteNonQuery();
 
                 command = conn.CreateCommand();
-                command.CommandText = "CREATE TABLE IF NOT EXISTS Settings (id INTEGER PRIMARY KEY, lightMode INTEGER NOT NULL, canConnect INTEGER NOT NULL, login TEXT NOT NULL, password TEXT NOT NULL)";
+                command.CommandText = "CREATE TABLE IF NOT EXISTS Settings (id INTEGER PRIMARY KEY, lightMode INTEGER NOT NULL, canConnect INTEGER NOT NULL, login TEXT NOT NULL, password TEXT NOT NULL, isConnected INTEGER NOT NULL)";
+                command.ExecuteNonQuery();
 
-                if (command.ExecuteNonQuery() != 0)
+                command = conn.CreateCommand();
+                command.CommandText = "SELECT * FROM Settings;";
+
+                using (SqliteDataReader reader = command.ExecuteReader())
                 {
-                    command = conn.CreateCommand();
-                    command.CommandText = "INSERT INTO Settings (id, lightMode, canConnect, login, password) VALUES(1, true, false, '', '');";
-                    command.ExecuteNonQuery();
+                    if (!reader.Read())
+                    {
+                        command = conn.CreateCommand();
+                        command.CommandText = "INSERT INTO Settings (id, lightMode, canConnect, login, password, isConnected) VALUES(1, true, false, '', '', false);";
+                        command.ExecuteNonQuery();
+                    }
                 }
+
                 conn.Close();
             }
         }
@@ -260,6 +268,7 @@ namespace StorgLibs
                         settings.canConnect = reader.GetBoolean(2);
                         settings.login = reader.GetString(3);
                         settings.password = reader.GetString(4);
+                        settings.isConnected = reader.GetBoolean(5);
                     }
                 }
                 conn.Close();
@@ -277,7 +286,7 @@ namespace StorgLibs
                 SqliteCommand command = conn.CreateCommand();
                 command.CommandText = "UPDATE Settings SET lightMode = @mode WHERE id = 1;";
                 command.Parameters.AddWithValue("mode", lightMode);
-                
+
                 command.ExecuteNonQuery();
 
                 conn.Close();
@@ -302,16 +311,17 @@ namespace StorgLibs
             return true;
         }
 
-        public bool UpdateSettingsCredentials(string login, string password)
+        public bool UpdateSettingsCredentials(string login, string password, bool isConnected = true)
         {
             using (SqliteConnection conn = new SqliteConnection(_connectionString))
             {
                 conn.Open();
 
                 SqliteCommand command = conn.CreateCommand();
-                command.CommandText = "UPDATE Settings SET login = @login, password = @password WHERE id = 1;";
+                command.CommandText = "UPDATE Settings SET login = @login, password = @password, isConnected = @connected WHERE id = 1;";
                 command.Parameters.AddWithValue("login", login);
                 command.Parameters.AddWithValue("password", password);
+                command.Parameters.AddWithValue("connected", isConnected);
 
                 command.ExecuteNonQuery();
 

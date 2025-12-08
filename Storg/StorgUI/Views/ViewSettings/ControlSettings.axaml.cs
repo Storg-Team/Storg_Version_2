@@ -62,11 +62,19 @@ public partial class ControlSettings : UserControl
 
     }
 
-    private void ToggleConnection(object? sender, RoutedEventArgs e)
+    private async void ToggleConnection(object? sender, RoutedEventArgs e)
     {
         _settings.canConnect = (bool)switchConnection.IsChecked!;
         this.SetVisibility();
-        _libsGlobal.UpdateSettingsCanConnect((bool)switchConnection.IsChecked!);
+        _libsGlobal.UpdateSettingsCanConnect(_settings.canConnect);
+        if (!_settings.canConnect) _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, false);
+        else
+        {
+            if (await _libsGlobal.StartConnection(_settings.login, _settings.password))
+            {
+                _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password);
+            }
+        }
     }
 
     private void GotFocusEmail(object? sender, RoutedEventArgs e)

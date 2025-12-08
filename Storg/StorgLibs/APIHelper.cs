@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
@@ -15,11 +16,7 @@ public class APIHelper
         _httpClient.BaseAddress = new Uri("http://localhost:5067");
     }
 
-    public bool VerifConnection()
-    {
-        return false;
-    }
-
+  
     public async Task<bool> StartConnection(string login, string password)
     {
         bool IsConnected = false;
@@ -36,6 +33,37 @@ public class APIHelper
         {
             return false;
         }
+
+    }
+
+
+    public async Task<bool> UploadFile(string filePath)
+    {
+        try
+        {
+            using MultipartFormDataContent dataContent = new MultipartFormDataContent();
+
+            using FileStream fileStream = File.OpenRead(filePath);
+            StreamContent streamContent = new StreamContent(fileStream);
+            ByteArrayContent fileContent = new ByteArrayContent(streamContent.ReadAsByteArrayAsync().Result);
+            dataContent.Add(fileContent, "file", Path.GetFileName(filePath));
+
+
+            HttpResponseMessage response = await _httpClient.PostAsync($"/upload?apiKey={_apiKey}", dataContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<bool>();
+            }
+
+            return false;
+
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+
 
     }
 

@@ -35,6 +35,7 @@ namespace StorgUI
         #region Variable
         private LibsGlobal _libsglobal = new LibsGlobal();
         private static bool _isPaneOpen = false;
+        private ModelSettings _settings = new ModelSettings();
         private ObservableCollection<ModelDisplayFiles> _dataGridItems = new ObservableCollection<ModelDisplayFiles>();
 
         #endregion Variable
@@ -45,7 +46,7 @@ namespace StorgUI
 
             InitializeComponent();
 
-
+            _settings = _libsglobal.LoadSettings();
 
             LoadingBar.IsVisible = false;
             MainMenu.IsPaneOpen = _isPaneOpen;
@@ -59,101 +60,42 @@ namespace StorgUI
 
             #region btntrigger
 
-            string focus = "#bca7a7";
-            string lostfocus = "#d6bebe";
 
-            ListBoxItem? listbox = this.FindControl<ListBoxItem>("BtAccueil"); // Si un boutton avec en parametre le Nom = BtAcueil, alors ca declanche l'action qui se passe quand on click dessus.
-            if (listbox != null)
-            {
-                this.Loaded += (sender, e) =>
-                {
-                    listbox.Focus();
+            // Set les events des boutons
+            // btnAcceuil
+            BtAccueil.Focus();
+            BtAccueil.GotFocus += SetFocusStyle;
+            BtAccueil.LostFocus += SetFocusStyle;
+            BtAccueil.IsSelected = true;
+            BtAccueil.Tapped += OnClickAccueil;
+            BtAccueil.PointerEntered += ExpendMenuEnter;
+            BtAccueil.PointerExited += ExpendMenuLeave;
 
-                };
-                listbox.GotFocus += (sender, e) =>
-                {
-                    listbox.Background = new SolidColorBrush(Color.Parse(focus));
-                };
-                listbox.LostFocus += (sender, e) =>
-                {
-                    listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
-                };
-                listbox.IsSelected = true;
-                listbox.Tapped += OnClickAccueil;
-                listbox.PointerEntered += ExpendMenuEnter;
-                listbox.PointerExited += ExpendMenuLeave;
-            }
+            //btnSettings
+            BtSettings.GotFocus += SetFocusStyle;
+            BtSettings.LostFocus += SetDefaultStyle;
+            BtSettings.Tapped += OnClickSettings;
+            BtSettings.PointerEntered += ExpendMenuEnter;
+            BtSettings.PointerExited += ExpendMenuLeave;
 
-            listbox = this.FindControl<ListBoxItem>("BtSettings");
-            if (listbox != null)
-            {
-                listbox.GotFocus += (sender, e) =>
-                {
-                    listbox.Background = new SolidColorBrush(Color.Parse(focus));
-                };
-                listbox.LostFocus += (sender, e) =>
-                {
-                    listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
-                };
-                listbox.Tapped += OnClickSettings;
-                listbox.PointerEntered += ExpendMenuEnter;
-                listbox.PointerExited += ExpendMenuLeave;
-            }
+            //btnAide
+            BtAide.GotFocus += SetFocusStyle;
+            BtAide.LostFocus += SetDefaultStyle;
+            BtAide.Tapped += OnClickAide;
+            BtAide.PointerEntered += ExpendMenuEnter;
+            BtAide.PointerExited += ExpendMenuLeave;
 
-            listbox = this.FindControl<ListBoxItem>("BtAide");
-            if (listbox != null)
-            {
-                listbox.GotFocus += (sender, e) =>
-                {
-                    listbox.Background = new SolidColorBrush(Color.Parse(focus));
-                };
-                listbox.LostFocus += (sender, e) =>
-                {
-                    listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
-                };
-                listbox.Tapped += OnClickAide;
-                listbox.PointerEntered += ExpendMenuEnter;
-                listbox.PointerExited += ExpendMenuLeave;
-            }
+            //btnAprops
+            BtAProps.GotFocus += SetFocusStyle;
+            BtAProps.LostFocus += SetDefaultStyle;
+            BtAProps.Tapped += OnClickAProps;
+            BtAProps.PointerEntered += ExpendMenuEnter;
+            BtAProps.PointerExited += ExpendMenuLeave;
 
-            listbox = this.FindControl<ListBoxItem>("BtAProps");
-            if (listbox != null)
-            {
-                listbox.GotFocus += (sender, e) =>
-                {
-                    listbox.Background = new SolidColorBrush(Color.Parse(focus));
-                };
-                listbox.LostFocus += (sender, e) =>
-                {
-                    listbox.Background = new SolidColorBrush(Color.Parse(lostfocus));
-                };
-                listbox.Tapped += OnClickAProps;
-                listbox.PointerEntered += ExpendMenuEnter;
-                listbox.PointerExited += ExpendMenuLeave;
-            }
-
-            Button? button = this.FindControl<Button>("Reload");
-            if (button != null)
-            {
-                button.Click += OnClickReload;
-            }
-            button = this.FindControl<Button>("BtResearch");
-            if (button != null)
-            {
-                button.Click += TriggerClickResearch;
-            }
-
-            button = this.FindControl<Button>("Telecharger");
-            if (button != null)
-            {
-                button.Click += OnclickDl;
-            }
-
-            button = this.FindControl<Button>("Supprimer");
-            if (button != null)
-            {
-                button.Click += OnclickDel;
-            }
+            btnReload.Click += OnClickReload;
+            BtResearch.Click += TriggerClickResearch;
+            btnTelecharger.Click += OnclickDl;
+            btnSupprimer.Click += OnclickDel;
 
         }
 
@@ -199,15 +141,19 @@ namespace StorgUI
         private void OnclickDel(object? sender, RoutedEventArgs e)
         {
             Delete();
-            Telecharger.IsVisible = false;
-            Supprimer.IsVisible = false;
+            btnTelecharger.IsVisible = false;
+            btnSupprimer.IsVisible = false;
+            btnUpload.IsVisible = false;
+
         }
 
         private void OnclickDl(object? sender, RoutedEventArgs e)
         {
             Download();
-            Telecharger.IsVisible = false;
-            Supprimer.IsVisible = false;
+            btnTelecharger.IsVisible = false;
+            btnSupprimer.IsVisible = false;
+            btnUpload.IsVisible = false;
+
         }
 
         private async Task OnDrop(object? sender, DragEventArgs e) // Fonction de Drag and Drop
@@ -224,8 +170,9 @@ namespace StorgUI
         {
             if (FilesGrid.SelectedItems.Count != 0)
             {
-                Telecharger.IsVisible = true;
-                Supprimer.IsVisible = true;
+                btnTelecharger.IsVisible = true;
+                btnSupprimer.IsVisible = true;
+                btnUpload.IsVisible = _settings.isConnected;
             }
         }
 
@@ -260,7 +207,7 @@ namespace StorgUI
             }
         }
 
-        private void Dynamic_Change_Size(object? sender, SizeChangedEventArgs e)  // Permet de changer dynamiquement la taille de la section de scoll en fonction de la taille de l'�cran.
+        private void Dynamic_Change_Size(object? sender, SizeChangedEventArgs e)  // Permet de changer dynamiquement la taille de la section de scoll en fonction de la taille de l'ecran.
         {
             if (this.Parent as ContentControl != null && this.Parent.Parent as ContentControl != null)
             {
@@ -273,7 +220,7 @@ namespace StorgUI
         {
             if (parent!.Height > 283)
             {
-                FilesGrid.Height = parent.Height - 275;
+                FilesGrid.Height = parent.Height - 277;
             }
         }
 
@@ -283,6 +230,19 @@ namespace StorgUI
 
 
         #region Methode
+
+        private void SetFocusStyle(object? sender, RoutedEventArgs e)
+        {
+            // string focus = "#bca7a7";
+            // this.Background = new SolidColorBrush(Color.Parse(focus));
+        }
+
+        private void SetDefaultStyle(object? sender, RoutedEventArgs e)
+        {
+            // string lostfocus = "#d6bebe";
+            // this.Background = new SolidColorBrush(Color.Parse(lostfocus));
+        }
+
 
         private void InitDataGridFiles()
         {
@@ -331,8 +291,9 @@ namespace StorgUI
             _dataGridItems = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsglobal.LoadStoredFile()));
             FilesGrid.ItemsSource = _dataGridItems;
 
-            Telecharger.IsVisible = false;
-            Supprimer.IsVisible = false;
+            btnTelecharger.IsVisible = false;
+            btnSupprimer.IsVisible = false;
+            btnUpload.IsVisible = false;
         }
 
         private async void Add_File(IStorageFile file, float gap) // Permet de cree et d'ajouter un fichier a la BDD
@@ -452,8 +413,9 @@ namespace StorgUI
             if (!FilesGrid.IsKeyboardFocusWithin)
             {
                 FilesGrid.SelectedItems.Clear();
-                Telecharger.IsVisible = false;
-                Supprimer.IsVisible = false;
+                btnTelecharger.IsVisible = false;
+                btnSupprimer.IsVisible = false;
+                btnUpload.IsVisible = false;
             }
         }
 

@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using StorgCommon;
 using StorgLibs;
+using StorgLibs.Libs;
 
 namespace StorgTestUnitaire
 {
@@ -15,6 +16,7 @@ namespace StorgTestUnitaire
         private GestionFileHelper _gestionfilehelper = new GestionFileHelper();
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private SystemHelper _systemhelper = new SystemHelper();
+        private APIHelper _apiHelper = new APIHelper();
 
         [TestMethod]
         public void TestBDDFileExist()
@@ -128,7 +130,7 @@ namespace StorgTestUnitaire
         }
 
         [TestMethod]
-        public void TestCreationFile()
+        public async Task TestCreationFile()
         {
             // byte[] result = File.ReadAllBytes("/home/lucas/Bureau/testdoc.odt");
             // string encoded = "";
@@ -151,7 +153,7 @@ namespace StorgTestUnitaire
             //     test.Add(new KeyValuePair<int, string>(i, $"{i}"));
             // }
             // IList<KeyValuePair<int, string>> test = new List<KeyValuePair<int, string>>();
-            
+
             // string[] Filelist = Directory.GetFiles(_bddhelper.GetStoredPath("fichier_client_big.csv"));
             // Regex regex = new Regex(@"/img(\d{0,}).webp");
 
@@ -161,7 +163,7 @@ namespace StorgTestUnitaire
             //     int test2 = Int16.Parse(result.Groups[1].Value);
             //     test.Add(new KeyValuePair<int, string>(test2, $"{FileName}"));
             // }
-            
+
             // string[] test3 = test.OrderBy(f => f.Key).Select(f => f.Value).ToArray();
 
             // foreach (KeyValuePair<int, string> item in test.OrderBy(f => f.Key))
@@ -174,6 +176,12 @@ namespace StorgTestUnitaire
             //     Console.WriteLine(item);
             // }
             // Console.WriteLine(test3.Length);
+
+
+            Assert.IsTrue(await _apiHelper.UploadFile("/home/lucas/Bureau/test.txt"));
+
+
+
         }
 
     }
