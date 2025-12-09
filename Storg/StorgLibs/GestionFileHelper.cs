@@ -17,22 +17,24 @@ namespace StorgLibs
 {
     public class GestionFileHelper
     {
+        private IntPtr _libHandle;
 
-        #region DLL import
-        private const string _libsName = "Libs/libs_filecompression.so";
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)] //function comes from C/C++ code, not C#
+        private delegate bool CompressFileDelegate(string filepath, string savefilepath, string data);
 
-        [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool CompressFile(string filepath, string savefilepath, string data);
-
-        [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int DecompressFile(
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate int DecompressFileDelegate(
             [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)]
             string[] filelist, int size, string dlpath);
 
-        [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void GetFileData(byte[] buffer, int bufferSize);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void GetFileDataDelegate(byte[] buffer, int bufferSize);
 
-        #endregion DLL import
+        private CompressFileDelegate _compressFile;
+        private DecompressFileDelegate _decompressFile;
+        private GetFileDataDelegate _getFileData;
+        private bool _disposed = false;
+
 
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private static string _savedFolder = ConfigurationManager.AppSettings.Get("SavedFolder")!;
@@ -43,75 +45,147 @@ namespace StorgLibs
 
 
         #region Methode
-        public async Task<bool> StoreFile(string FileName, string FilePath, string FileSize)
+        public string GetLibPath()
         {
-            string Destination_Folder = "";
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
-            if (_systemhelper.GetCurrentOS() == _currentOs.Windows) // Cree les chemin pour enregistrer les fichiers
+            string libPath = "";
+
+            if (_systemhelper.GetCurrentOS() == _currentOs.Windows)
             {
-                Destination_Folder = Path.Combine(_currentExecDirectory, _savedFolder);
+                libPath = Path.Combine(baseDir, "Libs", "libs_filecompression.dll");
             }
             else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
             {
-                Destination_Folder = Path.Combine(Path.Combine(home, "storg"), ".data/SavedFolder");
+                libPath = Path.Combine(baseDir, "Libs", "libs_filecompression.so");
+            }
+            else if (_systemhelper.GetCurrentOS() == _currentOs.OSX)
+            {
+                libPath = Path.Combine(baseDir,"Libs", "libs_filecompression.dylib");
+            }
+            else
+            {
+                throw new PlatformNotSupportedException($"Platform '{RuntimeInformation.OSDescription}' is not supported.");
             }
 
-            string Destination_Path = Path.Combine(Destination_Folder, FileName);
+            // Verify file exists
+            if (!File.Exists(libPath))
+            {
+                throw new FileNotFoundException($"Native library not found at: {libPath}");
+            }
+
+            return libPath;
+        }
+        public GestionFileHelper()
+        {
+            try
+            {
+                string libPath = GetLibPath();
+
+                _libHandle = NativeLibrary.Load(libPath);
+
+                IntPtr compressFuncPointer = NativeLibrary.GetExport(_libHandle, "CompressFile");
+                _compressFile = Marshal.GetDelegateForFunctionPointer<CompressFileDelegate>(compressFuncPointer);
+
+                IntPtr decompressFuncPointer = NativeLibrary.GetExport(_libHandle, "DecompressFile");
+                _decompressFile = Marshal.GetDelegateForFunctionPointer<DecompressFileDelegate>(decompressFuncPointer);
+
+                IntPtr getFileDataFuncPointer = NativeLibrary.GetExport(_libHandle, "GetFileData");
+                _getFileData = Marshal.GetDelegateForFunctionPointer<GetFileDataDelegate>(getFileDataFuncPointer);
+            }
+
+            catch (DllNotFoundException ex)
+            {
+                throw new Exception(
+                    $"Failed to load native library. " +
+                    $"Current architecture: {RuntimeInformation.ProcessArchitecture}. " +
+                    $"Make sure the library is compiled for the correct architecture. " +
+                    $"Original error: {ex.Message}", ex);
+            }
+        }
+        public async Task<bool> StoreFile(string fileName, string filePath, string fileSize)
+        {
+            string destinationFolder = "";
+
+            if (_systemhelper.GetCurrentOS() == _currentOs.Windows) // Cree les chemin pour enregistrer les fichiers
+            {
+                destinationFolder = Path.Combine(_currentExecDirectory, _savedFolder);
+            }
+            else if (_systemhelper.GetCurrentOS() == _currentOs.Linux || _systemhelper.GetCurrentOS() == _currentOs.OSX)
+            {
+                destinationFolder = Path.Combine(Path.Combine(home, "storg"), ".data/SavedFolder");
+            }
+
+            string Destination_Path = Path.Combine(destinationFolder, fileName);
 
             Directory.CreateDirectory(Destination_Path);
 
-            byte[] filedata = File.ReadAllBytes(FilePath);
+            byte[] filedata = File.ReadAllBytes(filePath);
             string encodedBase64 = Convert.ToBase64String(filedata);
 
-            if (CompressFile(FilePath, Destination_Path, encodedBase64))
+            try
             {
-
-                if (_bddhelper.StoreFileToBDD(new ModelFile
+                if (_compressFile(filePath, Destination_Path, encodedBase64))
                 {
-                    Name = FileName,
-                    Date = _systemhelper.GetDateTime().Date!,
-                    Time = _systemhelper.GetDateTime().Time!,
-                    Weight = FileSize,
-                    StoredFolder = Destination_Path,
-                })) return true;
+
+                    if (_bddhelper.StoreFileToBDD(new ModelFile
+                    {
+                        Name = fileName,
+                        Date = _systemhelper.GetDateTime().Date!,
+                        Time = _systemhelper.GetDateTime().Time!,
+                        Weight = fileSize,
+                        StoredFolder = Destination_Path,
+                    })) return true;
+                    return false;
+                }
+            }
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e);
                 return false;
             }
             return false;
         }
 
-        public async Task<bool> DownloadFile(string FileName)
+        public async Task<bool> DownloadFile(string fileName)
         {
             string DownloadFolder = _systemhelper.GetDownloadFolder();
 
-            if (!File.Exists(Path.Combine(DownloadFolder, FileName)))
+            if (!File.Exists(Path.Combine(DownloadFolder, fileName)))
             {
-                string[] Filelist = GetFileImageListe(FileName);
 
-                int size = DecompressFile(Filelist, Filelist.Length, Path.Combine(DownloadFolder, FileName));
+                File.WriteAllBytes(Path.Combine(DownloadFolder, fileName), this.FileToDecompress(fileName));
 
-                byte[] result = new byte[size];
-                GetFileData(result, size);
-                string encodedBase64 = Encoding.UTF8.GetString(result, 0, size);
-                byte[] decodedBase64 = Convert.FromBase64String(encodedBase64);
-                File.WriteAllBytes(Path.Combine(DownloadFolder, FileName), decodedBase64);
-
-                DeleteFile(FileName);
-                _bddhelper.DeleteFileInBDD(FileName);
+                DeleteFile(fileName);
+                _bddhelper.DeleteFileInBDD(fileName);
 
                 return true;
             }
             return false;
         }
 
-        public bool DeleteFile(string FileName)
+        private byte[] FileToDecompress(string fileName)
         {
-            string StoredFilePath = _bddhelper.GetStoredPath(FileName);
+            string[] filelist = GetFileImageListe(fileName);
 
-            if (Directory.Exists(StoredFilePath))
+            int size = _decompressFile(filelist, filelist.Length, "");
+
+            byte[] result = new byte[size];
+            _getFileData(result, size);
+            string encodedBase64 = Encoding.UTF8.GetString(result, 0, size);
+            byte[] decodedBase64 = Convert.FromBase64String(encodedBase64);
+            return decodedBase64;
+        }
+
+        public bool DeleteFile(string fileName)
+        {
+            string storedFilePath = _bddhelper.GetStoredPath(fileName);
+
+            if (Directory.Exists(storedFilePath))
             {
-                Directory.Delete(StoredFilePath, recursive: true);
-                _bddhelper.DeleteFileInBDD(FileName);
-                if (Directory.Exists(StoredFilePath))
+                Directory.Delete(storedFilePath, recursive: true);
+                _bddhelper.DeleteFileInBDD(fileName);
+                if (Directory.Exists(storedFilePath))
                 {
                     return false;
                 }
@@ -119,22 +193,22 @@ namespace StorgLibs
             return true;
         }
 
-        public string GetParentPath(string StoredFilePath, string FileName)
+        public string GetParentPath(string storedFilePath, string fileName)
         {
-            Regex regex = new Regex(@$"(.*?)(?={Regex.Escape($"{FileName}")}$)");
-            return regex.Match(StoredFilePath).Groups[1].Value;
+            Regex regex = new Regex(@$"(.*?)(?={Regex.Escape($"{fileName}")}$)");
+            return regex.Match(storedFilePath).Groups[1].Value;
         }
 
-        public async Task<bool> ExportFile(string FileName)
+        public async Task<bool> ExportFile(string fileName)
         {
             string DownloadFolder = _systemhelper.GetDownloadFolder();
-            string DownloadFileFolder = Path.Combine(DownloadFolder, "Dir_" + FileName);
+            string DownloadFileFolder = Path.Combine(DownloadFolder, "Dir_" + fileName);
 
             Directory.CreateDirectory(DownloadFileFolder);
 
-            if (Directory.Exists(_bddhelper.GetStoredPath(FileName)))
+            if (Directory.Exists(_bddhelper.GetStoredPath(fileName)))
             {
-                string[] FilePathList = GetFileImageListe(FileName);
+                string[] FilePathList = GetFileImageListe(fileName);
 
                 for (int i = 0; i < FilePathList.Length; i++)
                 {
@@ -157,8 +231,8 @@ namespace StorgLibs
             else
             {
                 string DownloadFolderPath = Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_" + fileName);
-                Directory.Delete(DownloadFolderPath, recursive:true);
-                await ExportFile(fileName);                
+                Directory.Delete(DownloadFolderPath, recursive: true);
+                await ExportFile(fileName);
             }
         }
 

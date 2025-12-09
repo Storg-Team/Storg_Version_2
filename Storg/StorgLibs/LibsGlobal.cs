@@ -94,7 +94,7 @@ namespace StorgLibs
             return _gestionfilehelper.CheckIfExistInDownloadFolder(fileName, isFile);
         }
 
-        public async Task<bool> StartConnection(string login, string password)
+        public async Task<Dictionary<int, bool>> StartConnection(string login, string password)
         {
             return await _apiHelper.StartConnection(login, password);
         }
@@ -109,9 +109,9 @@ namespace StorgLibs
             return _bddhelper.UpdateSettingsCanConnect(canConnect);
         }
 
-        public bool UpdateSettingsCredentials(string login, string password, bool isConnected = true)
+        public bool UpdateSettingsCredentials(string login, string password, int userId, bool isConnected = true)
         {
-            return _bddhelper.UpdateSettingsCredentials(login, password, isConnected);
+            return _bddhelper.UpdateSettingsCredentials(login, password, userId, isConnected);
         }
 
         public ModelSettings LoadSettings()
@@ -122,6 +122,11 @@ namespace StorgLibs
         public async void VerifConnection()
         {
             await _connectionHelper.VerifConnection();
+        }
+
+        public async Task<IList<string>> GetFilesUploaded(int userId)
+        {
+            return await _apiHelper.GetFilesUploaded(userId);
         }
     }
 }
