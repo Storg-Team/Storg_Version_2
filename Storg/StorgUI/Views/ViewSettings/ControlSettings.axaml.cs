@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -48,10 +50,11 @@ public partial class ControlSettings : UserControl
         string email = txtboxEmail.Text ?? "";
         string password = txtboxPassword.Text != null && txtboxPassword.Text != hidePassword ? txtboxPassword.Text : _settings.password;
 
-        if (await _libsGlobal.StartConnection(email, password))
+        Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(email, password);
+        if (userInformation.First().Value)
         {
             txtConnectionResult.Text = "Connexion réussi";
-            _libsGlobal.UpdateSettingsCredentials(email, password);
+            _libsGlobal.UpdateSettingsCredentials(email, password, userInformation.First().Key);
             txtboxPassword.Text = hidePassword;
         }
         else
@@ -67,12 +70,14 @@ public partial class ControlSettings : UserControl
         _settings.canConnect = (bool)switchConnection.IsChecked!;
         this.SetVisibility();
         _libsGlobal.UpdateSettingsCanConnect(_settings.canConnect);
-        if (!_settings.canConnect) _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, false);
+        if (!_settings.canConnect) _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId, false);
         else
         {
-            if (await _libsGlobal.StartConnection(_settings.login, _settings.password))
+            Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(_settings.login, _settings.password);
+
+            if (userInformation.First().Value)
             {
-                _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password);
+                _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId);
             }
         }
     }

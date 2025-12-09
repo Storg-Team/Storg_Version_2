@@ -9,35 +9,34 @@ public class APIHelper
 {
 
     private static string _apiKey = "392023af96b3cf7b70720d0992fd3ec6749f4cb1ba5c2625a06fbc5e3d40b793";
-    private static HttpClient _httpClient = new HttpClient();
+    private HttpClient _httpClient = new HttpClient();
 
     public APIHelper()
     {
         _httpClient.BaseAddress = new Uri("http://localhost:5067");
     }
 
-  
-    public async Task<bool> StartConnection(string login, string password)
+
+    public async Task<Dictionary<int, bool>> StartConnection(string login, string password)
     {
-        bool IsConnected = false;
         try
         {
             HttpResponseMessage response = await _httpClient.GetAsync($"/connection?login={login}&mdp={password}&apiKey={_apiKey}");
             if (response.IsSuccessStatusCode)
             {
-                IsConnected = await response.Content.ReadFromJsonAsync<bool>();
+                return await response.Content.ReadFromJsonAsync<Dictionary<int, bool>>() ?? new Dictionary<int, bool> { { -1, false } };
             }
-            return IsConnected;
+            return new Dictionary<int, bool> { { -1, false } };
         }
         catch (Exception)
         {
-            return false;
+            return new Dictionary<int, bool> { { -1, false } };
         }
 
     }
 
 
-    public async Task<bool> UploadFile(string filePath)
+    public async Task<bool> UploadFile(string filePath, int userId)
     {
         try
         {
@@ -49,7 +48,7 @@ public class APIHelper
             dataContent.Add(fileContent, "file", Path.GetFileName(filePath));
 
 
-            HttpResponseMessage response = await _httpClient.PostAsync($"/upload?apiKey={_apiKey}", dataContent);
+            HttpResponseMessage response = await _httpClient.PostAsync($"/upload?userId={userId}&apiKey={_apiKey}", dataContent);
 
             if (response.IsSuccessStatusCode)
             {
@@ -65,6 +64,27 @@ public class APIHelper
         }
 
 
+    }
+
+
+    public async Task<IList<string>> GetFilesUploaded(int userId)
+    {
+
+        try
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(@$"/listuserfiles?userId={userId}&apiKey={_apiKey}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IList<string>>() ?? [];
+            }
+
+            return [];
+        }
+        catch (Exception)
+        {
+            return [];
+        }
     }
 
 }

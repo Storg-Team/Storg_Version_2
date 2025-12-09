@@ -21,10 +21,12 @@ public class ConnectionHelper
         {
             try
             {
-                if (!await _apiHelper.StartConnection(_settings.login, _settings.password))
+
+                Dictionary<int, bool> userInformation = await _apiHelper.StartConnection(_settings.login, _settings.password);
+                if (!userInformation.First().Value)
                 {
-                    _bddHelper.UpdateSettingsCredentials("", "", false);
-                    _settings.isConnected = false;                    
+                    _bddHelper.UpdateSettingsCredentials("", "", _settings.userId, false);
+                    _settings.isConnected = false;
                 }
             }
             catch (Exception e)

@@ -4,6 +4,7 @@ namespace StorgCommon;
 
 public class ModelSettings
 {
+    public int userId {get; set;} = 0;
     public bool lightMode {get; set;} = true;
     public bool canConnect {get; set;} = false;
     public string login {get; set;} = "";

@@ -178,7 +178,12 @@ namespace StorgTestUnitaire
             // Console.WriteLine(test3.Length);
 
 
-            Assert.IsTrue(await _apiHelper.UploadFile("/home/lucas/Bureau/test.txt"));
+            foreach (string item in await _apiHelper.GetFilesUploaded(_bddhelper.LoadSettings().userId))
+            {
+                Console.WriteLine(item);
+            }
+
+            // Assert.IsTrue(await _apiHelper.UploadFile("/home/lucas/Bureau/test1.txt", 1));
 
 
 

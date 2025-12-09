@@ -16,6 +16,7 @@ using StorgLibs;
 using StorgCommon;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace StorgUI
 {
@@ -28,7 +29,7 @@ namespace StorgUI
         {
             _libsGlobal.IsBddExisting();
             _libsGlobal.VerifConnection();
-            
+
             InitializeComponent();
 
         }
