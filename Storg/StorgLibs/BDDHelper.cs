@@ -8,21 +8,19 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.Data.Sqlite;
 using StorgCommon;
 using System.Runtime.CompilerServices;
-using System.Configuration;
 
 namespace StorgLibs
 {
     public class BDDHelper
     {
-        private static string _BDDFilePath = "";
-        private static string _connectionString = "";
+        private string _BDDFilePath = "";
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private SystemHelper _systemhelper = new SystemHelper();
         private string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
 
 
-        public BDDHelper()
+        private string SetConnectionString()
         {
             if (_systemhelper.GetCurrentOS() == _currentOs.Windows)
             {
@@ -34,7 +32,12 @@ namespace StorgLibs
                 string CurrentDirectory = Path.Combine(home, "storg");
                 _BDDFilePath = Path.Combine(Path.Combine(CurrentDirectory, ".data"), "BDD_Files_Info.db");
             }
-            _connectionString = @$"Data Source={_BDDFilePath};";
+            else if (_systemhelper.GetCurrentOS() == _currentOs.OSX)
+            {
+                string CurrentDirectory = Path.Combine(home, "storg");
+                _BDDFilePath = Path.Combine(Path.Combine(CurrentDirectory, ".data"), "BDD_Files_Info.db");
+            }
+            return @$"Data Source={_BDDFilePath};";
         }
 
         public void IsBddExisting()
@@ -52,13 +55,18 @@ namespace StorgLibs
                 DirPath = Path.Combine(CurrentDirectory, ".data");
                 _BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
             }
+            else if (_systemhelper.GetCurrentOS() == _currentOs.OSX)
+            {
+                string CurrentDirectory = Path.Combine(home, "storg");
+                DirPath = Path.Combine(CurrentDirectory, ".data");
+                _BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
+            }
 
             if (Directory.Exists(DirPath))
             {
                 if (!File.Exists(_BDDFilePath))
                 {
                     using (File.Create(_BDDFilePath)) { }
-                    ;
                 }
             }
             else
@@ -66,47 +74,29 @@ namespace StorgLibs
                 Directory.CreateDirectory(DirPath);
                 File.SetAttributes(DirPath, FileAttributes.Hidden);
                 using (File.Create(_BDDFilePath)) { }
-                ;
             }
 
 
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            string sqlcreatetable = @"CREATE TABLE IF NOT EXISTS Files (Name TEXT NOT NULL, Date TEXT NOT NULL, Time TEXT NOT NULL, Weight TEXT NOT NULL, StoredFolder TEXT NOT NULL)";
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
-
-                SqliteCommand command = conn.CreateCommand();
-                command.CommandText = @"CREATE TABLE IF NOT EXISTS Files (Name TEXT NOT NULL, Date TEXT NOT NULL, Time TEXT NOT NULL, Weight TEXT NOT NULL, StoredFolder TEXT NOT NULL)";
-                command.ExecuteNonQuery();
-
-                command = conn.CreateCommand();
-                command.CommandText = "CREATE TABLE IF NOT EXISTS Settings (id INTEGER PRIMARY KEY, lightMode INTEGER NOT NULL, canConnect INTEGER NOT NULL, login TEXT NOT NULL, password TEXT NOT NULL, isConnected INTEGER NOT NULL)";
-                command.ExecuteNonQuery();
-
-                command = conn.CreateCommand();
-                command.CommandText = "SELECT * FROM Settings;";
-
-                using (SqliteDataReader reader = command.ExecuteReader())
+                using (SqliteCommand cmd = new SqliteCommand(sqlcreatetable, conn))
                 {
-                    if (!reader.Read())
-                    {
-                        command = conn.CreateCommand();
-                        command.CommandText = "INSERT INTO Settings (id, lightMode, canConnect, login, password, isConnected) VALUES(1, true, false, '', '', false);";
-                        command.ExecuteNonQuery();
-                    }
+                    cmd.ExecuteNonQuery();
                 }
-
-                conn.Close();
             }
         }
 
-        #region BDD Files
+
 
         public IList<ModelFile> LoadStoredFile()
         {
+            this.IsBddExisting();
             IList<ModelFile> listFile = new List<ModelFile>();
 
             string sqlrequest = @$"SELECT * FROM Files";
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
                 using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
@@ -134,10 +124,10 @@ namespace StorgLibs
         }
 
 
-        public bool CheckIfFileExistInBDD(string NameFIle)
+        public bool CheckIfFileExist(string NameFIle)
         {
             string sqlrequest = @$"SELECT * FROM Files WHERE Name = @NameFile";
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
                 using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
@@ -153,11 +143,10 @@ namespace StorgLibs
         }
 
 
-        public bool StoreFileToBDD(ModelFile file)
+        public void StoreFileToBDD(ModelFile file)
         {
             string sqlrequest = @$"INSERT INTO Files (Name, Date, Time, Weight, StoredFolder) VALUES(@name, @date, @time, @weight, @storedfolder)";
-
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
                 using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
@@ -167,14 +156,9 @@ namespace StorgLibs
                     command.Parameters.AddWithValue("@time", file.Time);
                     command.Parameters.AddWithValue("@weight", file.Weight);
                     command.Parameters.AddWithValue("@storedfolder", file.StoredFolder);
-
-                    if (command.ExecuteNonQuery() == 1)
-                    {
-                        return true;
-                    }
+                    command.ExecuteNonQuery();
                 }
             }
-            return false;
         }
 
 
@@ -183,7 +167,7 @@ namespace StorgLibs
         {
             string StoredFolder = "";
             string sqlrequest = @$"SELECT StoredFolder FROM Files WHERE Name = @NameFile";
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
                 using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
@@ -204,7 +188,7 @@ namespace StorgLibs
         public void DeleteFileInBDD(string FileName)
         {
             string sqlrequest = @$"DELETE FROM Files WHERE Name = @NameFile";
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
                 using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
@@ -219,7 +203,7 @@ namespace StorgLibs
         {
             IList<ModelFile> FileList = new List<ModelFile>();
             string sqlrequest = "SELECT * FROM Files WHERE Name LIKE @search";
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
+            using (SqliteConnection conn = new SqliteConnection(this.SetConnectionString()))
             {
                 conn.Open();
                 using (SqliteCommand command = new SqliteCommand(sqlrequest, conn))
@@ -244,93 +228,8 @@ namespace StorgLibs
             return FileList;
         }
 
-        #endregion BDD Files
 
-
-
-        #region BDD Settings
-
-        public ModelSettings LoadSettings()
-        {
-            ModelSettings settings = new ModelSettings();
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
-            {
-                conn.Open();
-
-                SqliteCommand command = conn.CreateCommand();
-                command.CommandText = "SELECT * FROM Settings;";
-
-                using (SqliteDataReader reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        settings.lightMode = reader.GetBoolean(1);
-                        settings.canConnect = reader.GetBoolean(2);
-                        settings.login = reader.GetString(3);
-                        settings.password = reader.GetString(4);
-                        settings.isConnected = reader.GetBoolean(5);
-                    }
-                }
-                conn.Close();
-            }
-
-            return settings;
-        }
-
-        public bool UpdateSettingsThemeMode(bool lightMode)
-        {
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
-            {
-                conn.Open();
-
-                SqliteCommand command = conn.CreateCommand();
-                command.CommandText = "UPDATE Settings SET lightMode = @mode WHERE id = 1;";
-                command.Parameters.AddWithValue("mode", lightMode);
-
-                command.ExecuteNonQuery();
-
-                conn.Close();
-            }
-            return true;
-        }
-
-        public bool UpdateSettingsCanConnect(bool canConnect)
-        {
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
-            {
-                conn.Open();
-
-                SqliteCommand command = conn.CreateCommand();
-                command.CommandText = "UPDATE Settings SET canConnect = @connect WHERE id = 1;";
-                command.Parameters.AddWithValue("connect", canConnect);
-
-                command.ExecuteNonQuery();
-
-                conn.Close();
-            }
-            return true;
-        }
-
-        public bool UpdateSettingsCredentials(string login, string password, bool isConnected = true)
-        {
-            using (SqliteConnection conn = new SqliteConnection(_connectionString))
-            {
-                conn.Open();
-
-                SqliteCommand command = conn.CreateCommand();
-                command.CommandText = "UPDATE Settings SET login = @login, password = @password, isConnected = @connected WHERE id = 1;";
-                command.Parameters.AddWithValue("login", login);
-                command.Parameters.AddWithValue("password", password);
-                command.Parameters.AddWithValue("connected", isConnected);
-
-                command.ExecuteNonQuery();
-
-                conn.Close();
-            }
-            return true;
-        }
-
-        #endregion BDD Settings
     }
 }
+
 
