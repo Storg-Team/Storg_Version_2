@@ -79,6 +79,9 @@
 								<Image  Source="Resources/hard-drive-upload.png" Width="25" Height="25"/>
 							</Button>
 						</StackPanel>
+						<Button Name="btnFetch" HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="30" Width="40" Height="40" Background="#d6bebe" Classes="DefaultBt" Margin="0,0,10,0" ToolTip.Tip="Récupérer fichiers transférer" IsVisible="False"> 
+							<Image Source="Resources/cloud-backup.png" Width="25" Height="25"/>
+						</Button>
 					</Grid>
 						<DataGrid x:Name="FilesGrid" 
 						          VerticalAlignment="Stretch" 

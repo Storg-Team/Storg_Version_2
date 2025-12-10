@@ -43,35 +43,35 @@ namespace StorgLibs
 
 
         #region Methode
-        public async Task<bool> StoreFile(string FileName, string FilePath, string FileSize)
+        public async Task<bool> StoreFile(string fileName, string filePath, string fileSize)
         {
-            string Destination_Folder = "";
+            string destinationFolder = "";
 
             if (_systemhelper.GetCurrentOS() == _currentOs.Windows) // Cree les chemin pour enregistrer les fichiers
             {
-                Destination_Folder = Path.Combine(_currentExecDirectory, _savedFolder);
+                destinationFolder = Path.Combine(_currentExecDirectory, _savedFolder);
             }
             else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
             {
-                Destination_Folder = Path.Combine(Path.Combine(home, "storg"), ".data/SavedFolder");
+                destinationFolder = Path.Combine(Path.Combine(home, "storg"), ".data/SavedFolder");
             }
 
-            string Destination_Path = Path.Combine(Destination_Folder, FileName);
+            string Destination_Path = Path.Combine(destinationFolder, fileName);
 
             Directory.CreateDirectory(Destination_Path);
 
-            byte[] filedata = File.ReadAllBytes(FilePath);
+            byte[] filedata = File.ReadAllBytes(filePath);
             string encodedBase64 = Convert.ToBase64String(filedata);
 
-            if (CompressFile(FilePath, Destination_Path, encodedBase64))
+            if (CompressFile(filePath, Destination_Path, encodedBase64))
             {
 
                 if (_bddhelper.StoreFileToBDD(new ModelFile
                 {
-                    Name = FileName,
+                    Name = fileName,
                     Date = _systemhelper.GetDateTime().Date!,
                     Time = _systemhelper.GetDateTime().Time!,
-                    Weight = FileSize,
+                    Weight = fileSize,
                     StoredFolder = Destination_Path,
                 })) return true;
                 return false;
@@ -79,39 +79,45 @@ namespace StorgLibs
             return false;
         }
 
-        public async Task<bool> DownloadFile(string FileName)
+        public async Task<bool> DownloadFile(string fileName)
         {
             string DownloadFolder = _systemhelper.GetDownloadFolder();
 
-            if (!File.Exists(Path.Combine(DownloadFolder, FileName)))
+            if (!File.Exists(Path.Combine(DownloadFolder, fileName)))
             {
-                string[] Filelist = GetFileImageListe(FileName);
+                
+                File.WriteAllBytes(Path.Combine(DownloadFolder, fileName), this.FileToDecompress(fileName));
 
-                int size = DecompressFile(Filelist, Filelist.Length, Path.Combine(DownloadFolder, FileName));
-
-                byte[] result = new byte[size];
-                GetFileData(result, size);
-                string encodedBase64 = Encoding.UTF8.GetString(result, 0, size);
-                byte[] decodedBase64 = Convert.FromBase64String(encodedBase64);
-                File.WriteAllBytes(Path.Combine(DownloadFolder, FileName), decodedBase64);
-
-                DeleteFile(FileName);
-                _bddhelper.DeleteFileInBDD(FileName);
+                DeleteFile(fileName);
+                _bddhelper.DeleteFileInBDD(fileName);
 
                 return true;
             }
             return false;
         }
 
-        public bool DeleteFile(string FileName)
+        private byte[] FileToDecompress(string fileName)
         {
-            string StoredFilePath = _bddhelper.GetStoredPath(FileName);
+            string[] filelist = GetFileImageListe(fileName);
 
-            if (Directory.Exists(StoredFilePath))
+            int size = DecompressFile(filelist, filelist.Length, "");
+
+            byte[] result = new byte[size];
+            GetFileData(result, size);
+            string encodedBase64 = Encoding.UTF8.GetString(result, 0, size);
+            byte[] decodedBase64 = Convert.FromBase64String(encodedBase64);
+            return decodedBase64;
+        }
+
+        public bool DeleteFile(string fileName)
+        {
+            string storedFilePath = _bddhelper.GetStoredPath(fileName);
+
+            if (Directory.Exists(storedFilePath))
             {
-                Directory.Delete(StoredFilePath, recursive: true);
-                _bddhelper.DeleteFileInBDD(FileName);
-                if (Directory.Exists(StoredFilePath))
+                Directory.Delete(storedFilePath, recursive: true);
+                _bddhelper.DeleteFileInBDD(fileName);
+                if (Directory.Exists(storedFilePath))
                 {
                     return false;
                 }
@@ -119,22 +125,22 @@ namespace StorgLibs
             return true;
         }
 
-        public string GetParentPath(string StoredFilePath, string FileName)
+        public string GetParentPath(string storedFilePath, string fileName)
         {
-            Regex regex = new Regex(@$"(.*?)(?={Regex.Escape($"{FileName}")}$)");
-            return regex.Match(StoredFilePath).Groups[1].Value;
+            Regex regex = new Regex(@$"(.*?)(?={Regex.Escape($"{fileName}")}$)");
+            return regex.Match(storedFilePath).Groups[1].Value;
         }
 
-        public async Task<bool> ExportFile(string FileName)
+        public async Task<bool> ExportFile(string fileName)
         {
             string DownloadFolder = _systemhelper.GetDownloadFolder();
-            string DownloadFileFolder = Path.Combine(DownloadFolder, "Dir_" + FileName);
+            string DownloadFileFolder = Path.Combine(DownloadFolder, "Dir_" + fileName);
 
             Directory.CreateDirectory(DownloadFileFolder);
 
-            if (Directory.Exists(_bddhelper.GetStoredPath(FileName)))
+            if (Directory.Exists(_bddhelper.GetStoredPath(fileName)))
             {
-                string[] FilePathList = GetFileImageListe(FileName);
+                string[] FilePathList = GetFileImageListe(fileName);
 
                 for (int i = 0; i < FilePathList.Length; i++)
                 {
@@ -157,8 +163,8 @@ namespace StorgLibs
             else
             {
                 string DownloadFolderPath = Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_" + fileName);
-                Directory.Delete(DownloadFolderPath, recursive:true);
-                await ExportFile(fileName);                
+                Directory.Delete(DownloadFolderPath, recursive: true);
+                await ExportFile(fileName);
             }
         }
 

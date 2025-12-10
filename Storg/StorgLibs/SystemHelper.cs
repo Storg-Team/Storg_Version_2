@@ -49,5 +49,12 @@ namespace StorgLibs
             }
             throw new PlatformNotSupportedException("OS non supporté !");
         }
+
+        public string GetWorkSpace()
+        {
+            if (this.GetCurrentOS() == _currentOS.Windows) return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".data");
+            else if (this.GetCurrentOS() == _currentOS.Linux) return Path.Combine(Environment.GetEnvironmentVariable("HOME")!, "storg");
+            throw new PlatformNotSupportedException("OS non supporté !");
+        }
     }
 }

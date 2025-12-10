@@ -24,6 +24,7 @@ using StorgUI.Views.ViewDownloadPopUp;
 using HarfBuzzSharp;
 using System.Threading.Tasks;
 using Avalonia.Themes.Fluent;
+using StorgUI.Views.ViewFetchFiles;
 
 
 namespace StorgUI
@@ -48,6 +49,7 @@ namespace StorgUI
 
             _settings = _libsglobal.LoadSettings();
 
+            btnFetch.IsVisible = _settings.isConnected;
             LoadingBar.IsVisible = false;
             MainMenu.IsPaneOpen = _isPaneOpen;
             refresh(); // Permet d'afficher tout les fichiers deja present dans la BDD
@@ -96,6 +98,8 @@ namespace StorgUI
             BtResearch.Click += TriggerClickResearch;
             btnTelecharger.Click += OnclickDl;
             btnSupprimer.Click += OnclickDel;
+            btnFetch.Click += OnClickFetchFiles;
+            btnUpload.Click += OnClickUpload;
 
         }
 
@@ -191,6 +195,16 @@ namespace StorgUI
         {
             MainMenu.IsPaneOpen = false;
             _isPaneOpen = MainMenu.IsPaneOpen;
+        }
+
+        private void OnClickFetchFiles(object? sender, RoutedEventArgs e)
+        {
+            this.FetchFiles();
+        }
+
+        private void OnClickUpload(object? sender, RoutedEventArgs e)
+        {
+            this.Upload();
         }
 
         #endregion trigger
@@ -379,6 +393,23 @@ namespace StorgUI
             this.refresh();
 
         }
+
+        private async void Upload()
+        {
+            IList<ModelDisplayFiles> listFile = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
+
+            await _libsglobal.UploadFile(listFile);
+        }
+
+        private void FetchFiles()
+        {
+            FrmFetchFiles fetchFiles = new FrmFetchFiles();
+            fetchFiles.Show((Window)this.VisualRoot!);
+            this.refresh();
+        }
+
+
+
 
         #endregion Methode
 

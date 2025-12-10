@@ -36,7 +36,7 @@ public class APIHelper
     }
 
 
-    public async Task<bool> UploadFile(string filePath, int userId)
+    public async Task<bool> UploadFileApi(string filePath, int userId)
     {
         try
         {
