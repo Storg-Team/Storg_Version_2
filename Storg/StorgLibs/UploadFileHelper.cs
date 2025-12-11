@@ -12,7 +12,7 @@ public class UploadFileHelper
     private SystemHelper _systemHelper = new SystemHelper();
     private APIHelper _apiHelper = new APIHelper();
 
-    public async Task<bool> UploadFile(IList<ModelDisplayFiles> listFile)
+    public async Task<bool> UploadFileFromApi(IList<ModelDisplayFiles> listFile)
     {
         foreach (ModelDisplayFiles file in listFile)
         {
@@ -21,7 +21,14 @@ public class UploadFileHelper
 
             ZipFile.CreateFromDirectory(storedFilePath, outputPath);
 
-            await _apiHelper.UploadFileApi(outputPath, _bddHelper.LoadSettings().userId);
+            MultipartFormDataContent dataContent = new MultipartFormDataContent();
+
+            FileStream fileStream = File.OpenRead(outputPath);
+            StreamContent streamContent = new StreamContent(fileStream);
+            ByteArrayContent fileContent = new ByteArrayContent(streamContent.ReadAsByteArrayAsync().Result);
+            dataContent.Add(fileContent, "file", Path.GetFileName(outputPath));
+
+            await _apiHelper.UploadFileApi(dataContent);
 
             File.Delete(outputPath);
         }

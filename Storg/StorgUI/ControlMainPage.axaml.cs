@@ -207,6 +207,11 @@ namespace StorgUI
             this.Upload();
         }
 
+        private void OnClosed(object? sender, EventArgs e)
+        {
+            this.refresh();
+        }
+
         #endregion trigger
 
         #region WindowsDynamicSize
@@ -331,13 +336,16 @@ namespace StorgUI
                         FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Import du fichier impossible");
                         await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
                     }
+                    else
+                    {
+                        _dataGridItems.Add(new ModelDisplayFiles() { Name = file.Name, Date = _libsglobal.GetDateTime().Date + " " + _libsglobal.GetDateTime().Time, Weight = FileWeight });
+                    }
                 }
                 else
                 {
                     FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Import du fichier impossible");
                     await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
                 }
-                _dataGridItems.Add(new ModelDisplayFiles() { Name = file.Name, Date = _libsglobal.GetDateTime().Date + " " + _libsglobal.GetDateTime().Time, Weight = FileWeight });
                 LoadingBar.Value += gap;
             }
         }
@@ -398,14 +406,14 @@ namespace StorgUI
         {
             IList<ModelDisplayFiles> listFile = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
 
-            await _libsglobal.UploadFile(listFile);
+            await _libsglobal.UploadFileFromApi(listFile);
         }
 
         private void FetchFiles()
         {
             FrmFetchFiles fetchFiles = new FrmFetchFiles();
             fetchFiles.Show((Window)this.VisualRoot!);
-            this.refresh();
+            fetchFiles.Closed += OnClosed;
         }
 
 

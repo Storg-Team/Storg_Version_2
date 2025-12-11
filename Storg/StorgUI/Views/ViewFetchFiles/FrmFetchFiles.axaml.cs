@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -32,7 +34,7 @@ public partial class FrmFetchFiles : Window
 
     private async void LoadFiles(object? sender, RoutedEventArgs e)
     {
-        IList<string> filesList = await _libsGlobal.GetFilesUploaded(_libsGlobal.LoadSettings().userId); 
+        IList<string> filesList = await _libsGlobal.GetFilesUploaded(); 
         dataGrid.Columns.Clear();
         this.SetDataGridColumn();
         dataGrid.ItemsSource = new ObservableCollection<ModelDisplayFetchFile>(this.CastDisplayFile(filesList));
@@ -56,11 +58,12 @@ public partial class FrmFetchFiles : Window
         dataGrid.Columns.Add(column);
     }
 
-    private void Importer(object? sender, RoutedEventArgs e)
+    private async void Importer(object? sender, RoutedEventArgs e)
     {
 
-        
+        IList<ModelDisplayFetchFile> fileNameList = dataGrid.SelectedItems.Cast<ModelDisplayFetchFile>().ToList();
 
+        await _libsGlobal.ImportFileFromApi(fileNameList);
 
         this.Close();
     }

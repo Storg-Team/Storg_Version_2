@@ -17,6 +17,7 @@ namespace StorgTestUnitaire
         private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private SystemHelper _systemhelper = new SystemHelper();
         private APIHelper _apiHelper = new APIHelper();
+        private ImportFileHelper _import = new ImportFileHelper();
 
         [TestMethod]
         public void TestBDDFileExist()
@@ -129,6 +130,7 @@ namespace StorgTestUnitaire
             File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "testdelete.pdf"));
         }
 
+
         [TestMethod]
         public async Task TestCreationFile()
         {
@@ -178,15 +180,15 @@ namespace StorgTestUnitaire
             // Console.WriteLine(test3.Length);
 
 
-            foreach (string item in await _apiHelper.GetFilesUploaded(_bddhelper.LoadSettings().userId))
-            {
-                Console.WriteLine(item);
-            }
+            // foreach (string item in await _apiHelper.GetFilesUploaded(_bddhelper.LoadSettings().userId))
+            // {
+            //     Console.WriteLine(item);
+            // }
 
             // Assert.IsTrue(await _apiHelper.UploadFile("/home/lucas/Bureau/test1.txt", 1));
 
-
-
+            // Assert.IsTrue(await _import.ImportFileFromApi(["test.txt.zip"]));
+           
         }
 
     }

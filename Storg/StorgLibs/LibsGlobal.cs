@@ -13,6 +13,7 @@ namespace StorgLibs
         private static APIHelper _apiHelper = new APIHelper();
         private ConnectionHelper _connectionHelper = new ConnectionHelper();
         private UploadFileHelper _uploadFileHelper = new UploadFileHelper();
+        private ImportFileHelper _importFileHelper = new ImportFileHelper();
 
 
         public void IsBddExisting()
@@ -125,14 +126,19 @@ namespace StorgLibs
             await _connectionHelper.VerifConnection();
         }
 
-        public async Task<IList<string>> GetFilesUploaded(int userId)
+        public async Task<IList<string>> GetFilesUploaded()
         {
-            return await _apiHelper.GetFilesUploaded(userId);
+            return await _apiHelper.GetFilesUploaded();
         }
 
-        public async Task<bool> UploadFile(IList<ModelDisplayFiles> listFile)
+        public async Task<bool> UploadFileFromApi(IList<ModelDisplayFiles> listFile)
         {
-            return await _uploadFileHelper.UploadFile(listFile);
+            return await _uploadFileHelper.UploadFileFromApi(listFile);
+        }
+
+        public async Task<bool> ImportFileFromApi(IList<ModelDisplayFetchFile> fileNameList)
+        {
+            return await _importFileHelper.ImportFileFromApi(fileNameList);
         }
     }
 }
