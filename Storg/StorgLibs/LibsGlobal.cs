@@ -131,14 +131,14 @@ namespace StorgLibs
             return await _apiHelper.GetFilesUploaded();
         }
 
-        public async Task<bool> UploadFileFromApi(IList<ModelDisplayFiles> listFile)
+        public async Task<bool> UploadFileFromApi(ModelDisplayFiles file)
         {
-            return await _uploadFileHelper.UploadFileFromApi(listFile);
+            return await _uploadFileHelper.UploadFileFromApi(file);
         }
 
-        public async Task<bool> ImportFileFromApi(IList<ModelDisplayFetchFile> fileNameList)
+        public async Task<bool> ImportFileFromApi(ModelDisplayFetchFile fileName)
         {
-            return await _importFileHelper.ImportFileFromApi(fileNameList);
+            return await _importFileHelper.ImportFileFromApi(fileName);
         }
     }
 }

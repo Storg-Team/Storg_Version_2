@@ -31,51 +31,48 @@ public class ImportFileHelper
         }
     }
 
-    public async Task<bool> ImportFileFromApi(IList<ModelDisplayFetchFile> fileNameList)
+    public async Task<bool> ImportFileFromApi(ModelDisplayFetchFile fileName)
     {
         Regex regex = new Regex(@"(.{0,}).zip");
 
-        foreach (ModelDisplayFetchFile fileName in fileNameList)
+        string fileNameWithNoExtention = regex.Match(fileName.fileName).Groups[1].Value;
+        fileNameWithNoExtention = fileNameWithNoExtention == "" ? fileName.fileName : fileNameWithNoExtention;
+
+        if (!_bddHelper.CheckIfFileExistInBDD(fileNameWithNoExtention))
         {
-            string fileNameWithNoExtention = regex.Match(fileName.fileName).Groups[1].Value;
-            fileNameWithNoExtention = fileNameWithNoExtention == "" ? fileName.fileName : fileNameWithNoExtention;
+            byte[] dataFile = await _apiHelper.ImportFileApi(fileName.fileName);
+            string outputPath = Path.Combine(_systemHelper.GetWorkSpace(), fileName.fileName);
+            string outputFolder = Path.Combine(_storedFilePath, fileNameWithNoExtention);
 
-            if (!_bddHelper.CheckIfFileExistInBDD(fileNameWithNoExtention))
+            File.WriteAllBytes(outputPath, dataFile);
+
+            Directory.CreateDirectory(outputFolder);
+            try
             {
-                byte[] dataFile = await _apiHelper.ImportFileApi(fileName.fileName);
-                string outputPath = Path.Combine(_systemHelper.GetWorkSpace(), fileName.fileName);
-                string outputFolder = Path.Combine(_storedFilePath, fileNameWithNoExtention);
+                ZipFile.ExtractToDirectory(outputPath, outputFolder);
 
-                File.WriteAllBytes(outputPath, dataFile);
-
-                Directory.CreateDirectory(outputFolder);
-                try
+                ModelFile file = new ModelFile()
                 {
-                    ZipFile.ExtractToDirectory(outputPath, outputFolder);
+                    Name = fileNameWithNoExtention,
+                    Date = _systemHelper.GetDateTime().Date!,
+                    Time = _systemHelper.GetDateTime().Time!,
+                    StoredFolder = outputFolder,
+                    Weight = this.GetFileWeight(outputPath),
+                };
 
-                    ModelFile file = new ModelFile()
-                    {
-                        Name = fileNameWithNoExtention,
-                        Date = _systemHelper.GetDateTime().Date!,
-                        Time = _systemHelper.GetDateTime().Time!,
-                        StoredFolder = outputFolder,
-                        Weight = this.GetFileWeight(outputPath),
-                    };
-
-                    _bddHelper.StoreFileToBDD(file);
-                    File.Delete(outputPath);
-                }
-                catch (Exception)
-                {
-                    Directory.Delete(outputFolder);
-                    File.Delete(outputPath);
-                    return false;
-                }
+                _bddHelper.StoreFileToBDD(file);
+                File.Delete(outputPath);
             }
-            else
+            catch (Exception)
             {
+                Directory.Delete(outputFolder);
+                File.Delete(outputPath);
                 return false;
             }
+        }
+        else
+        {
+            return false;
         }
         return true;
     }

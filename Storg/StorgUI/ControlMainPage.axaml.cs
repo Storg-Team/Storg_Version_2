@@ -145,18 +145,13 @@ namespace StorgUI
         private void OnclickDel(object? sender, RoutedEventArgs e)
         {
             Delete();
-            btnTelecharger.IsVisible = false;
-            btnSupprimer.IsVisible = false;
-            btnUpload.IsVisible = false;
-
+            this.SetVisibility();
         }
 
         private void OnclickDl(object? sender, RoutedEventArgs e)
         {
             Download();
-            btnTelecharger.IsVisible = false;
-            btnSupprimer.IsVisible = false;
-            btnUpload.IsVisible = false;
+            this.SetVisibility();
 
         }
 
@@ -202,9 +197,19 @@ namespace StorgUI
             this.FetchFiles();
         }
 
-        private void OnClickUpload(object? sender, RoutedEventArgs e)
+        private async void OnClickUpload(object? sender, RoutedEventArgs e)
         {
-            this.Upload();
+            LoadingBar.ProgressTextFormat = "Transfet en cours...";
+            LoadingBar.Value = 0;
+            LoadingBar.IsVisible = true;
+            await Task.Delay(10);
+            await this.Upload();
+            LoadingBar.ProgressTextFormat = "Transfet terminé";
+            await Task.Delay(500);
+            LoadingBar.IsVisible = false;
+            LoadingBar.Value = 0;
+
+            this.SetVisibility();
         }
 
         private void OnClosed(object? sender, EventArgs e)
@@ -249,6 +254,13 @@ namespace StorgUI
 
 
         #region Methode
+
+        private void SetVisibility()
+        {
+            btnTelecharger.IsVisible = false;
+            btnSupprimer.IsVisible = false;
+            btnUpload.IsVisible = false;
+        }
 
         private void SetFocusStyle(object? sender, RoutedEventArgs e)
         {
@@ -389,8 +401,8 @@ namespace StorgUI
 
         private async void Delete() // Permet de supprimer un fichier
         {
-            IList<ModelDisplayFiles> FilesList = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
-            foreach (ModelDisplayFiles file in FilesList)
+            IList<ModelDisplayFiles> files = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
+            foreach (ModelDisplayFiles file in files)
             {
                 if (!_libsglobal.DeleteFile(file.Name))
                 {
@@ -402,11 +414,17 @@ namespace StorgUI
 
         }
 
-        private async void Upload()
+        private async Task Upload()
         {
-            IList<ModelDisplayFiles> listFile = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
+            IList<ModelDisplayFiles> files = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
+            float gap = 100.0f / files.Count;
+            foreach (ModelDisplayFiles file in files)
+            {
+                await _libsglobal.UploadFileFromApi(file);
 
-            await _libsglobal.UploadFileFromApi(listFile);
+                LoadingBar.Value += gap;
+                await Task.Delay(1);
+            }
         }
 
         private void FetchFiles()

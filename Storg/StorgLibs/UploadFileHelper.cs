@@ -12,26 +12,23 @@ public class UploadFileHelper
     private SystemHelper _systemHelper = new SystemHelper();
     private APIHelper _apiHelper = new APIHelper();
 
-    public async Task<bool> UploadFileFromApi(IList<ModelDisplayFiles> listFile)
+    public async Task<bool> UploadFileFromApi(ModelDisplayFiles file)
     {
-        foreach (ModelDisplayFiles file in listFile)
-        {
-            string storedFilePath = _bddHelper.GetStoredPath(file.Name);
-            string outputPath = Path.Combine(_systemHelper.GetWorkSpace(), file.Name + ".zip");
+        string storedFilePath = _bddHelper.GetStoredPath(file.Name);
+        string outputPath = Path.Combine(_systemHelper.GetWorkSpace(), file.Name + ".zip");
 
-            ZipFile.CreateFromDirectory(storedFilePath, outputPath);
+        ZipFile.CreateFromDirectory(storedFilePath, outputPath);
 
-            MultipartFormDataContent dataContent = new MultipartFormDataContent();
+        MultipartFormDataContent dataContent = new MultipartFormDataContent();
 
-            FileStream fileStream = File.OpenRead(outputPath);
-            StreamContent streamContent = new StreamContent(fileStream);
-            ByteArrayContent fileContent = new ByteArrayContent(streamContent.ReadAsByteArrayAsync().Result);
-            dataContent.Add(fileContent, "file", Path.GetFileName(outputPath));
+        FileStream fileStream = File.OpenRead(outputPath);
+        StreamContent streamContent = new StreamContent(fileStream);
+        ByteArrayContent fileContent = new ByteArrayContent(streamContent.ReadAsByteArrayAsync().Result);
+        dataContent.Add(fileContent, "file", Path.GetFileName(outputPath));
 
-            await _apiHelper.UploadFileApi(dataContent);
+        await _apiHelper.UploadFileApi(dataContent);
 
-            File.Delete(outputPath);
-        }
+        File.Delete(outputPath);
         return true;
 
     }

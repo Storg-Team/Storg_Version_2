@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Interactivity;
@@ -22,8 +23,29 @@ public partial class FrmFetchFiles : Window
         InitializeComponent();
 
         this.Loaded += LoadFiles;
-        btnImporter.Click += Importer;
+        btnImporter.Click += OnClickImport;
     }
+
+    #region Trigger
+
+    private async void OnClickImport(object? sender, RoutedEventArgs e)
+    {
+        loadingBar.Value = 0;
+        loadingBar.ProgressTextFormat = "Import en cours...";
+        loadingBar.IsVisible = true;
+        await Task.Delay(10);
+        await this.Importer();
+    
+        loadingBar.ProgressTextFormat = "Import terminé";
+        await Task.Delay(500);
+        loadingBar.IsVisible = false;
+        loadingBar.Value = 0;
+        this.Close();
+    }
+
+    #endregion Trigger
+
+
 
     #region Methode
 
@@ -34,7 +56,7 @@ public partial class FrmFetchFiles : Window
 
     private async void LoadFiles(object? sender, RoutedEventArgs e)
     {
-        IList<string> filesList = await _libsGlobal.GetFilesUploaded(); 
+        IList<string> filesList = await _libsGlobal.GetFilesUploaded();
         dataGrid.Columns.Clear();
         this.SetDataGridColumn();
         dataGrid.ItemsSource = new ObservableCollection<ModelDisplayFetchFile>(this.CastDisplayFile(filesList));
@@ -42,30 +64,34 @@ public partial class FrmFetchFiles : Window
 
     private IEnumerable<ModelDisplayFetchFile> CastDisplayFile(IList<string> filesList)
     {
-        return from file in filesList select new ModelDisplayFetchFile(){fileName = file};
+        return from file in filesList select new ModelDisplayFetchFile() { fileName = file };
     }
 
     private void SetDataGridColumn()
     {
         DataGridTextColumn column = new DataGridTextColumn()
         {
-          Header = "Nom du fichier",
-          Width = new DataGridLength(1, DataGridLengthUnitType.Star),
-          Binding = new Binding("fileName"),
-          Foreground = Brushes.Black,
+            Header = "Nom du fichier",
+            Width = new DataGridLength(1, DataGridLengthUnitType.Star),
+            Binding = new Binding("fileName"),
+            Foreground = Brushes.Black,
         };
 
         dataGrid.Columns.Add(column);
     }
 
-    private async void Importer(object? sender, RoutedEventArgs e)
+    private async Task Importer()
     {
 
         IList<ModelDisplayFetchFile> fileNameList = dataGrid.SelectedItems.Cast<ModelDisplayFetchFile>().ToList();
 
-        await _libsGlobal.ImportFileFromApi(fileNameList);
-
-        this.Close();
+        float gap = 100.0f / fileNameList.Count;
+        foreach (ModelDisplayFetchFile fileName in fileNameList)
+        {
+            await _libsGlobal.ImportFileFromApi(fileName);
+            loadingBar.Value += gap;
+            await Task.Delay(1);
+        }
     }
 
 
