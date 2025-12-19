@@ -20,6 +20,7 @@
       
   </StackPanel>
   <ProgressBar Name="loadingBar" IsVisible="False" VerticalAlignment="Bottom" Margin="15,0,15,90" ProgressTextFormat="Import en cours..." Height="20" ShowProgressText="True" Foreground="#0eba2f"/>
+  <Button Name="btnSupprimer" Content="Supprimer" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,130,30" Classes="ErrorBtn" BorderBrush="Black" IsVisible="False"/>
   <Button Name="btnImporter" Content="Importer" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,30" Classes="ErrorBtn" BorderBrush="Black"/>
 </Grid>
 </Window>

@@ -26,10 +26,10 @@ public class UploadFileHelper
         ByteArrayContent fileContent = new ByteArrayContent(streamContent.ReadAsByteArrayAsync().Result);
         dataContent.Add(fileContent, "file", Path.GetFileName(outputPath));
 
-        await _apiHelper.UploadFileApi(dataContent);
+        bool uploadStatus = await _apiHelper.UploadFileApi(dataContent);
 
         File.Delete(outputPath);
-        return true;
+        return uploadStatus;
 
     }
 }

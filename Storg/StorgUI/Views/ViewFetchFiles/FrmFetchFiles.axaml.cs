@@ -24,6 +24,8 @@ public partial class FrmFetchFiles : Window
 
         this.Loaded += LoadFiles;
         btnImporter.Click += OnClickImport;
+        btnSupprimer.Click += OnClickDelete;
+        dataGrid.SelectionChanged += DisplayDelete;
     }
 
     #region Trigger
@@ -35,8 +37,28 @@ public partial class FrmFetchFiles : Window
         loadingBar.IsVisible = true;
         await Task.Delay(10);
         await this.Importer();
-    
+
         loadingBar.ProgressTextFormat = "Import terminé";
+        await Task.Delay(500);
+        loadingBar.IsVisible = false;
+        loadingBar.Value = 0;
+        this.Close();
+    }
+
+    private void DisplayDelete(object? sender, RoutedEventArgs e)
+    {
+        btnSupprimer.IsVisible = true;
+    }
+
+    private async void OnClickDelete(object? sender, RoutedEventArgs e)
+    {
+        loadingBar.Value = 0;
+        loadingBar.ProgressTextFormat = "Suppression en cours...";
+        loadingBar.IsVisible = true;
+        await Task.Delay(10);
+        await this.Delete();
+
+        loadingBar.ProgressTextFormat = "Suppression terminé";
         await Task.Delay(500);
         loadingBar.IsVisible = false;
         loadingBar.Value = 0;
@@ -51,7 +73,11 @@ public partial class FrmFetchFiles : Window
 
     private void UnSelectDataGrid(object? sender, RoutedEventArgs e)
     {
-        if (!dataGrid.IsKeyboardFocusWithin) dataGrid.SelectedItems.Clear();
+        if (!dataGrid.IsKeyboardFocusWithin)
+        {
+            dataGrid.SelectedItems.Clear();
+            btnSupprimer.IsVisible = false;
+        }
     }
 
     private async void LoadFiles(object? sender, RoutedEventArgs e)
@@ -82,13 +108,33 @@ public partial class FrmFetchFiles : Window
 
     private async Task Importer()
     {
-
         IList<ModelDisplayFetchFile> fileNameList = dataGrid.SelectedItems.Cast<ModelDisplayFetchFile>().ToList();
 
         float gap = 100.0f / fileNameList.Count;
         foreach (ModelDisplayFetchFile fileName in fileNameList)
         {
-            await _libsGlobal.ImportFileFromApi(fileName);
+            if (!await _libsGlobal.ImportFileFromApi(fileName))
+            {
+                FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp($"Impossible d'importer le fichier : {fileName.fileName}", fileName.fileName, true);
+                await frmErrorPopUp.ShowDialog((Window)this.VisualRoot!);
+            }
+            loadingBar.Value += gap;
+            await Task.Delay(1);
+        }
+    }
+
+    private async Task Delete()
+    {
+        IList<ModelDisplayFetchFile> fileNameList = dataGrid.SelectedItems.Cast<ModelDisplayFetchFile>().ToList();
+
+        float gap = 100.0f / fileNameList.Count;
+        foreach (ModelDisplayFetchFile fileName in fileNameList)
+        {
+            if (!await _libsGlobal.DeleteFileApi(fileName.fileName))
+            {
+                FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp($"Impossible de supprimer le fichier : {fileName.fileName}");
+                await frmErrorPopUp.ShowDialog((Window)this.VisualRoot!);
+            }
             loadingBar.Value += gap;
             await Task.Delay(1);
         }

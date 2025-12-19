@@ -5,6 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using StorgCommon;
 using StorgLibs;
 
 namespace StorgUI;
@@ -33,17 +34,19 @@ public partial class FrmErrorPopUp : Window
 
         this.Loaded += LoadBtnDyn;
 
-        Button? btn = this.FindControl<Button>("choiceDyn");
-        if (btn != null)
-        {
-            btn.Click += CloseErrorOrReplace;
-        }
+        choiceDyn.Click += CloseErrorOrReplaceOnExportOrDownload;
+        cancel.Click += Leave;
+    }
 
-        btn = this.FindControl<Button>("cancel");
-        if (btn != null)
-        {
-            btn.Click += Leave;
-        }
+    public FrmErrorPopUp(string message, string fileName, bool import) : this()
+    {
+        MessageErreur.Text = message;
+        _fileName = fileName;
+        _replaceMode = import;
+
+        this.Loaded += LoadBtnDyn;
+        choiceDyn.Click += CloseErrorOrReplaceOnImport;
+        cancel.Click += Leave;
     }
 
     private void LoadBtnDyn(object? sender, RoutedEventArgs e)
@@ -68,14 +71,23 @@ public partial class FrmErrorPopUp : Window
         }
     }
 
-    private void CloseErrorOrReplace(object? sender, RoutedEventArgs e)
+    private void CloseErrorOrReplaceOnExportOrDownload(object? sender, RoutedEventArgs e)
     {
         if (!_replaceMode)
             this.Close();
         else if (_replaceMode)
             _ = _libsglobal.ReplaceOnExportOrDownload(_fileName, !_export);
         this.Close();
+    }
 
+    private void CloseErrorOrReplaceOnImport(object? sender, RoutedEventArgs e)
+    {
+        if (_replaceMode)
+        {
+            _libsglobal.DeleteFile(_libsglobal.GetFileNameWithNoExtention(_fileName));
+            _ = _libsglobal.ImportFileFromApi(new ModelDisplayFetchFile() { fileName = _fileName });
+        }
+        this.Close();
     }
 
     private void Leave(object? sender, RoutedEventArgs e)

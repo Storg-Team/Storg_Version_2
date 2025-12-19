@@ -105,6 +105,25 @@ public class APIHelper
         }
     }
 
+    public async Task<bool> DeleteFileApi(string fileName)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(@$"/delete?fileName={fileName}&userId={_settings.userId}&apiKey={_apiKey}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<bool>();
+            }
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+        return false;
+    }
+
+
     private void UpdateSettings()
     {
         _settings = _bddHelper.LoadSettings();

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StorgUI.ControlSettings">
-	<Grid Margin="25,25,0,0" >
+	<Grid Margin="25,25,0,0">
         <StackPanel Orientation="Vertical" Spacing="40">
             <StackPanel Orientation="Vertical" Spacing="20">
                 <TextBlock Text="Apparence :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black"  FontSize="25"/>
@@ -21,7 +21,9 @@
 
                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                     <TextBlock Text="Autoriser la connexion : "/>
-                    <ToggleSwitch OffContent="Désactiver" OnContent="Activer" Margin="0,-5,0,0" Name="switchConnection"/>
+                    <ToggleSwitch OffContent="Désactiver" OnContent="Activer" Margin="0,-8,0,0" Name="switchConnection"/>
+                    <Image Source="avares://StorgUI/Resources/check_green.png" Name="check" Width="25" Height="25" Margin="0,-8,0,0" IsVisible="False" ToolTip.Tip="Vous êtes connecté"/> 
+                    <Image Source="avares://StorgUI/Resources/cross_red.png" Name="cross" Width="25" Height="25" Margin="0,-8,0,0" IsVisible="True" ToolTip.Tip="Vous n'êtes pas connecté"/> 
                 </StackPanel>
                 <TextBox Text="Email" Width="350" Name="txtboxEmail" IsEnabled="False" Focusable="True"/>
                 <TextBox Text="Mot de passe" Width="350" Name="txtboxPassword" IsEnabled="False" Focusable="True"/>

@@ -33,9 +33,8 @@ public class ImportFileHelper
 
     public async Task<bool> ImportFileFromApi(ModelDisplayFetchFile fileName)
     {
-        Regex regex = new Regex(@"(.{0,}).zip");
-
-        string fileNameWithNoExtention = regex.Match(fileName.fileName).Groups[1].Value;
+        
+        string fileNameWithNoExtention = this.GetFileNameWithNoExtention(fileName.fileName);
         fileNameWithNoExtention = fileNameWithNoExtention == "" ? fileName.fileName : fileNameWithNoExtention;
 
         if (!_bddHelper.CheckIfFileExistInBDD(fileNameWithNoExtention))
@@ -81,6 +80,13 @@ public class ImportFileHelper
     {
         using FileStream fs = File.OpenRead(filePath);
         return $"{fs.Length / 1024} Ko";
+    }
+
+    public string GetFileNameWithNoExtention(string fileName)
+    {
+        Regex regex = new Regex(@"(.{0,}).zip");
+
+        return regex.Match(fileName).Groups[1].Value;
     }
 
 }

@@ -127,6 +127,7 @@ namespace StorgLibs
                             listFile.Add(file);
                         }
                     }
+                    conn.Close();
                 }
             }
             return listFile;
@@ -173,6 +174,7 @@ namespace StorgLibs
                         return true;
                     }
                 }
+                conn.Close();
             }
             return false;
         }
@@ -197,6 +199,7 @@ namespace StorgLibs
                         }
                     }
                 }
+                conn.Close();
             }
             return StoredFolder;
         }
@@ -240,6 +243,7 @@ namespace StorgLibs
                         }
                     }
                 }
+                conn.Close();
             }
             return FileList;
         }
@@ -274,7 +278,6 @@ namespace StorgLibs
                 }
                 conn.Close();
             }
-
             return settings;
         }
 

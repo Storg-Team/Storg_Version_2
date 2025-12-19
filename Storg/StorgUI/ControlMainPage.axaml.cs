@@ -1,29 +1,16 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using System;
-using System.Configuration;
-using System.IO;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Avalonia.Layout;
 using StorgLibs;
 using StorgCommon;
 using System.Linq;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.ComponentModel.DataAnnotations;
 using Avalonia.Data;
-using System.Security.Cryptography.X509Certificates;
 using StorgUI.Views.ViewDownloadPopUp;
-using HarfBuzzSharp;
 using System.Threading.Tasks;
-using Avalonia.Themes.Fluent;
 using StorgUI.Views.ViewFetchFiles;
 
 
@@ -34,7 +21,7 @@ namespace StorgUI
     {
 
         #region Variable
-        private LibsGlobal _libsglobal = new LibsGlobal();
+        private LibsGlobal _libsGlobal = new LibsGlobal();
         private static bool _isPaneOpen = false;
         private ModelSettings _settings = new ModelSettings();
         private ObservableCollection<ModelDisplayFiles> _dataGridItems = new ObservableCollection<ModelDisplayFiles>();
@@ -45,19 +32,19 @@ namespace StorgUI
         public ControlMainPage()
         {
 
+
             InitializeComponent();
 
-            _settings = _libsglobal.LoadSettings();
+            this.Loaded += OnLoadSettings;
+            this.Loaded += SetDynSize;
 
-            btnFetch.IsVisible = _settings.isConnected;
             LoadingBar.IsVisible = false;
             MainMenu.IsPaneOpen = _isPaneOpen;
-            refresh(); // Permet d'afficher tout les fichiers deja present dans la BDD
+            this.refresh();
 
             FilesGrid.Tapped += DisplayBtnOptionFile;
             AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop
 
-            this.Loaded += SetDynSize;
 
 
             #region btntrigger
@@ -101,16 +88,22 @@ namespace StorgUI
             btnFetch.Click += OnClickFetchFiles;
             btnUpload.Click += OnClickUpload;
 
+            #endregion btntrigger
         }
 
-
-        #endregion btntrigger
 
 
 
 
 
         #region trigger
+
+        private void OnLoadSettings(object? sender, RoutedEventArgs e)
+        {
+            _settings = _libsGlobal.LoadSettings();
+            btnFetch.IsVisible = _settings.isConnected;
+        }
+
         private void OnClickSettings(object? sender, RoutedEventArgs e)
         {
             MainContent.Content = new ControlSettings();
@@ -319,7 +312,7 @@ namespace StorgUI
 
             this.InitDataGridFiles();
 
-            _dataGridItems = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsglobal.LoadStoredFile()));
+            _dataGridItems = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsGlobal.LoadStoredFile()));
             FilesGrid.ItemsSource = _dataGridItems;
 
             btnTelecharger.IsVisible = false;
@@ -332,7 +325,7 @@ namespace StorgUI
 
             string FileWeight = "";
 
-            if (_libsglobal.CheckIfFileExistInBDD(file.Name))
+            if (_libsGlobal.CheckIfFileExistInBDD(file.Name))
             {
                 FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Fichier déja existant");
                 await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
@@ -343,14 +336,14 @@ namespace StorgUI
                     FileWeight = Convert.ToString($"{stream.Length / 1024} Ko");
                 if (file.TryGetLocalPath() != null)
                 {
-                    if (!await _libsglobal.StoreFile(file.Name, file.TryGetLocalPath()!, FileWeight))
+                    if (!await _libsGlobal.StoreFile(file.Name, file.TryGetLocalPath()!, FileWeight))
                     {
                         FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Import du fichier impossible");
                         await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
                     }
                     else
                     {
-                        _dataGridItems.Add(new ModelDisplayFiles() { Name = file.Name, Date = _libsglobal.GetDateTime().Date + " " + _libsglobal.GetDateTime().Time, Weight = FileWeight });
+                        _dataGridItems.Add(new ModelDisplayFiles() { Name = file.Name, Date = _libsGlobal.GetDateTime().Date + " " + _libsGlobal.GetDateTime().Time, Weight = FileWeight });
                     }
                 }
                 else
@@ -383,7 +376,7 @@ namespace StorgUI
             }
             string research_file_text = Search.Text;
 
-            FilesGrid.ItemsSource = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsglobal.ResearchFileByName(research_file_text)).Reverse());
+            FilesGrid.ItemsSource = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsGlobal.ResearchFileByName(research_file_text)).Reverse());
 
             Focus();
         }
@@ -404,7 +397,7 @@ namespace StorgUI
             IList<ModelDisplayFiles> files = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
             foreach (ModelDisplayFiles file in files)
             {
-                if (!_libsglobal.DeleteFile(file.Name))
+                if (!_libsGlobal.DeleteFile(file.Name))
                 {
                     FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec de le suppression du ficher :" + file.Name);
                     await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
@@ -420,8 +413,11 @@ namespace StorgUI
             float gap = 100.0f / files.Count;
             foreach (ModelDisplayFiles file in files)
             {
-                await _libsglobal.UploadFileFromApi(file);
-
+                if (!await _libsGlobal.UploadFileFromApi(file))
+                {
+                 FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp($"Impossible d'uploader le fichier : {file.Name}\nIl est possible que le fichier existe déjà ou que le serveur rencontre un problème.");
+                 await frmErrorPopUp.ShowDialog((Window)this.VisualRoot!);   
+                }
                 LoadingBar.Value += gap;
                 await Task.Delay(1);
             }

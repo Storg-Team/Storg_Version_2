@@ -22,9 +22,9 @@ public partial class ControlSettings : UserControl
     {
         InitializeComponent();
 
-        _settings = _libsGlobal.LoadSettings();
-        this.SetLoadSettings();
-        this.SetVisibility();
+        this.Loaded += OnLoadSettings;
+        this.Loaded += OnLoadSetConnectionIcons;
+        
 
         #region Event
 
@@ -62,7 +62,8 @@ public partial class ControlSettings : UserControl
             txtConnectionResult.Text = "login ou mot de passe incorrect";
         }
         txtConnectionResult.IsVisible = true;
-
+        check.IsVisible = true;
+        cross.IsVisible = false;
     }
 
     private async void ToggleConnection(object? sender, RoutedEventArgs e)
@@ -80,6 +81,8 @@ public partial class ControlSettings : UserControl
                 _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId);
             }
         }
+        check.IsVisible = check.IsVisible ? false : true;
+        cross.IsVisible = cross.IsVisible ? false : true;
     }
 
     private void GotFocusEmail(object? sender, RoutedEventArgs e)
@@ -107,6 +110,27 @@ public partial class ControlSettings : UserControl
     private void UpdateSettingsTheme(object? sender, RoutedEventArgs e)
     {
         _libsGlobal.UpdateSettingsThemeMode(!(bool)switchTheme.IsChecked!);
+    }
+
+    private void OnLoadSettings(object? sender, RoutedEventArgs e)
+    {
+        _settings = _libsGlobal.LoadSettings();
+        this.SetLoadSettings();
+        this.SetVisibility();
+    }
+
+    private void OnLoadSetConnectionIcons(object? sender, RoutedEventArgs e)
+    {
+        if (_settings.isConnected)
+        {
+            check.IsVisible = true;
+            cross.IsVisible = false;
+        }
+        else
+        {
+            check.IsVisible = false;
+            cross.IsVisible = true;
+        }
     }
 
 
