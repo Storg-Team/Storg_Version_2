@@ -56,14 +56,14 @@ namespace StorgLibs
                 destinationFolder = Path.Combine(Path.Combine(home, "storg"), ".data/SavedFolder");
             }
 
-            string Destination_Path = Path.Combine(destinationFolder, fileName);
+            string destinationPath = Path.Combine(destinationFolder, fileName);
 
-            Directory.CreateDirectory(Destination_Path);
+            Directory.CreateDirectory(destinationPath);
 
             byte[] filedata = File.ReadAllBytes(filePath);
             string encodedBase64 = Convert.ToBase64String(filedata);
 
-            if (CompressFile(filePath, Destination_Path, encodedBase64))
+            if (CompressFile(filePath, destinationPath, encodedBase64))
             {
 
                 if (_bddhelper.StoreFileToBDD(new ModelFile
@@ -72,7 +72,7 @@ namespace StorgLibs
                     Date = _systemhelper.GetDateTime().Date!,
                     Time = _systemhelper.GetDateTime().Time!,
                     Weight = fileSize,
-                    StoredFolder = Destination_Path,
+                    StoredFolder = destinationPath,
                 })) return true;
                 return false;
             }
