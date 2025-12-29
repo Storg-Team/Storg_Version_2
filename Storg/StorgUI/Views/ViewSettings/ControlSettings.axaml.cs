@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -15,6 +16,7 @@ public partial class ControlSettings : UserControl
 {
 
     private LibsGlobal _libsGlobal = new LibsGlobal();
+    private ModelCurrentOS _currentOS = new ModelCurrentOS();
     private static ModelSettings _settings = new ModelSettings();
     private string hidePassword = "***********************";
 
@@ -24,7 +26,7 @@ public partial class ControlSettings : UserControl
 
         this.Loaded += OnLoadSettings;
         this.Loaded += OnLoadSetConnectionIcons;
-        
+
 
         #region Event
 
@@ -35,6 +37,7 @@ public partial class ControlSettings : UserControl
         txtboxPassword.GotFocus += GotFocusPassword;
         txtboxPassword.LostFocus += LostFocusPassword;
         switchTheme.IsCheckedChanged += UpdateSettingsTheme;
+        hyperLinkUser.Click += OnClickWebSiteRedirect;
 
 
 
@@ -56,14 +59,14 @@ public partial class ControlSettings : UserControl
             txtConnectionResult.Text = "Connexion réussi";
             _libsGlobal.UpdateSettingsCredentials(email, password, userInformation.First().Key);
             txtboxPassword.Text = hidePassword;
+            check.IsVisible = true;
+            cross.IsVisible = false;
         }
         else
         {
             txtConnectionResult.Text = "login ou mot de passe incorrect";
         }
         txtConnectionResult.IsVisible = true;
-        check.IsVisible = true;
-        cross.IsVisible = false;
     }
 
     private async void ToggleConnection(object? sender, RoutedEventArgs e)
@@ -133,6 +136,11 @@ public partial class ControlSettings : UserControl
         }
     }
 
+    private void OnClickWebSiteRedirect(object? sender, RoutedEventArgs e)
+    {
+        this.Redirect();
+    }
+
 
     #endregion Trigger
 
@@ -154,6 +162,34 @@ public partial class ControlSettings : UserControl
         txtboxPassword.Text = _settings.password != "" ? hidePassword : "Mot de passe";
     }
 
+    private void Redirect()
+    {
+        string url = "https://storg.serveousercontent.com/";
+        try
+        {
+            if (_libsGlobal.GetCurrentOS() == _currentOS.Windows)
+            {
+                Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
+            }
+            else if (_libsGlobal.GetCurrentOS() == _currentOS.Linux)
+            {
+                Process.Start("xdg-open", url);
+            }
+            else if (_libsGlobal.GetCurrentOS() == _currentOS.OSX)
+            {
+                Process.Start("open", url);
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+        catch (System.Exception)
+        {
+            FrmErrorPopUp errorPopUp = new FrmErrorPopUp("Navigateur introuvable.\nVeuillez vous rendre sur : https://storg.serveousercontent.com/");
+            errorPopUp.ShowDialog((Window)VisualRoot!);
+        }
+    }
 
     #endregion Methode
 

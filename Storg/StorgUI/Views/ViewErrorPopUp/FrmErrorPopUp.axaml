@@ -9,7 +9,7 @@
 	<Grid>
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Spacing="20" Margin="10,20,0,0">
 			<Image Source="/Resources/erreur.png" Width="30" Height="30" Margin="0,0,0,0"/>
-			<TextBlock Name="MessageErreur" Text="Texte dynamique" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="0,0,10,0" TextWrapping="Wrap" Width="280"/>
+			<SelectableTextBlock Name="MessageErreur" Text="Texte dynamique" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="0,0,10,0" TextWrapping="Wrap" Width="280"/>
 		</StackPanel>
 		<StackPanel Margin="0,15,20,20" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="15"> 
 		<Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="70" Height="30" Name="cancel" Content="Annuler" Classes="ErrorBtn" BorderBrush="Black" Background="#f1efee" Foreground="Black"  />

@@ -25,10 +25,14 @@
                     <Image Source="avares://StorgUI/Resources/check_green.png" Name="check" Width="25" Height="25" Margin="0,-8,0,0" IsVisible="False" ToolTip.Tip="Vous êtes connecté"/> 
                     <Image Source="avares://StorgUI/Resources/cross_red.png" Name="cross" Width="25" Height="25" Margin="0,-8,0,0" IsVisible="True" ToolTip.Tip="Vous n'êtes pas connecté"/> 
                 </StackPanel>
-                <TextBox Text="Email" Width="350" Name="txtboxEmail" IsEnabled="False" Focusable="True"/>
-                <TextBox Text="Mot de passe" Width="350" Name="txtboxPassword" IsEnabled="False" Focusable="True"/>
+                <TextBox Text="Email" Width="350" Name="txtboxEmail" IsEnabled="False" Focusable="True" HorizontalAlignment="Left"/>
+                <TextBox Text="Mot de passe" Width="350" Name="txtboxPassword" IsEnabled="False" Focusable="True" HorizontalAlignment="Left"/>
                 <TextBlock Name="txtConnectionResult" Text="template texte" IsVisible="False"/>
                 <Button Content="Connexion" Name="btnConnection" IsEnabled="False"/>
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
+                    <TextBlock Text="Si vous n'avez pas encore de compte créé en un " Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                    <HyperlinkButton Name="hyperLinkUser" Content="ici" Grid.Row="0" Grid.Column="1" FontSize="16" Background="Transparent" Classes="DefaultBt" Foreground="BlueViolet"/>
+                </Grid>
             </StackPanel>
             
         </StackPanel>

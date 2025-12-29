@@ -17,7 +17,7 @@ public class APIHelper
 
     public APIHelper()
     {
-        _httpClient.BaseAddress = new Uri("http://localhost:5067");
+        _httpClient.BaseAddress = new Uri("https://storgapi.serveousercontent.com");
         this.UpdateSettings();
     }
 
