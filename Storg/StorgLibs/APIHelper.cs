@@ -18,7 +18,6 @@ public class APIHelper
     public APIHelper()
     {
         _httpClient.BaseAddress = new Uri("https://storgapi.serveousercontent.com");
-        this.UpdateSettings();
     }
 
 
@@ -107,6 +106,7 @@ public class APIHelper
 
     public async Task<bool> DeleteFileApi(string fileName)
     {
+        this.UpdateSettings();
         try
         {
             HttpResponseMessage response = await _httpClient.GetAsync(@$"/delete?fileName={fileName}&userId={_settings.userId}&apiKey={_apiKey}");

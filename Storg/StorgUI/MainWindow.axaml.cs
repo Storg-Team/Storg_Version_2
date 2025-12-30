@@ -32,7 +32,6 @@ namespace StorgUI
             _libsGlobal.VerifConnection();
 
             InitializeComponent();
-
         }
     }
 }

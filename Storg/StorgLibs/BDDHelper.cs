@@ -57,16 +57,14 @@ namespace StorgLibs
             {
                 if (!File.Exists(_BDDFilePath))
                 {
-                    using (File.Create(_BDDFilePath)) { }
-                    ;
+                    using (File.Create(_BDDFilePath)) { };
                 }
             }
             else
             {
                 Directory.CreateDirectory(DirPath);
                 File.SetAttributes(DirPath, FileAttributes.Hidden);
-                using (File.Create(_BDDFilePath)) { }
-                ;
+                using (File.Create(_BDDFilePath)) { };
             }
 
 
