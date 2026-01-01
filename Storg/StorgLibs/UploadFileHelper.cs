@@ -17,18 +17,21 @@ public class UploadFileHelper
         string storedFilePath = _bddHelper.GetStoredPath(file.Name);
         string outputPath = Path.Combine(_systemHelper.GetWorkSpace(), file.Name + ".zip");
 
-        ZipFile.CreateFromDirectory(storedFilePath, outputPath);
+        if (!File.Exists(outputPath)) ZipFile.CreateFromDirectory(storedFilePath, outputPath);
 
         MultipartFormDataContent dataContent = new MultipartFormDataContent();
 
-        FileStream fileStream = File.OpenRead(outputPath);
-        StreamContent streamContent = new StreamContent(fileStream);
-        ByteArrayContent fileContent = new ByteArrayContent(streamContent.ReadAsByteArrayAsync().Result);
-        dataContent.Add(fileContent, "file", Path.GetFileName(outputPath));
+        using (FileStream fileStream = File.OpenRead(outputPath))
+        {
+            StreamContent streamContent = new StreamContent(fileStream);
+            ByteArrayContent fileContent = new ByteArrayContent(streamContent.ReadAsByteArrayAsync().Result);
+            dataContent.Add(fileContent, "file", Path.GetFileName(outputPath));
+        }
 
         bool uploadStatus = await _apiHelper.UploadFileApi(dataContent);
 
-        File.Delete(outputPath);
+        if (File.Exists(outputPath)) File.Delete(outputPath);
+
         return uploadStatus;
 
     }
