@@ -12,6 +12,7 @@ using Avalonia.Data;
 using StorgUI.Views.ViewDownloadPopUp;
 using System.Threading.Tasks;
 using StorgUI.Views.ViewFetchFiles;
+using Avalonia.Media;
 
 
 namespace StorgUI
@@ -43,8 +44,8 @@ namespace StorgUI
             this.refresh();
 
             FilesGrid.Tapped += DisplayBtnOptionFile;
-            AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop
-
+            dragDrop.AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop
+            
 
 
             #region btntrigger
@@ -150,11 +151,14 @@ namespace StorgUI
 
         private async Task OnDrop(object? sender, DragEventArgs e) // Fonction de Drag and Drop
         {
-
-            IReadOnlyList<IStorageFile>? items = (IReadOnlyList<IStorageFile>?)e.Data.GetFiles(); // Recupere le ou les objects deposer
-            if (items != null)
+            if (e.Data.Contains("text/uri-list")) dragDrop.Background = Brushes.Red;
+            if (e.Data.Contains(DataFormats.Files))
             {
-                await LoopOnFileToAdd(items);
+                IReadOnlyList<IStorageFile>? items = (IReadOnlyList<IStorageFile>?)e.Data.GetFiles(); // Recupere le ou les objects deposer
+                if (items != null)
+                {
+                    await LoopOnFileToAdd(items);
+                }
             }
         }
 
@@ -415,8 +419,8 @@ namespace StorgUI
             {
                 if (!await _libsGlobal.UploadFileFromApi(file))
                 {
-                 FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp($"Impossible d'uploader le fichier : {file.Name}\nIl est possible que le fichier existe déjà ou que le serveur rencontre un problème.");
-                 await frmErrorPopUp.ShowDialog((Window)this.VisualRoot!);   
+                    FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp($"Impossible d'uploader le fichier : {file.Name}\nIl est possible que le fichier existe déjà ou que le serveur rencontre un problème.");
+                    await frmErrorPopUp.ShowDialog((Window)this.VisualRoot!);
                 }
                 LoadingBar.Value += gap;
                 await Task.Delay(1);

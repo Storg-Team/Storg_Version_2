@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Numerics;
 using System.Text.Unicode;
 using System.Buffers.Text;
+using System.Security.Cryptography;
 
 
 namespace StorgLibs
@@ -25,9 +26,9 @@ namespace StorgLibs
         private static extern bool CompressFile(string filepath, string savefilepath, string data);
 
         [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int DecompressFile(
+        private static extern bool DecompressFile(
             [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)]
-            string[] filelist, int size, string dlpath);
+            string[] filelist, int size, string filePath);
 
         [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
         private static extern void GetFileData(byte[] buffer, int bufferSize);
@@ -59,55 +60,97 @@ namespace StorgLibs
             string destinationPath = Path.Combine(destinationFolder, fileName);
 
             Directory.CreateDirectory(destinationPath);
+            string tmpFilePath = Path.Combine(_systemhelper.GetWorkSpace(), fileName + ".txt");
 
-            byte[] filedata = File.ReadAllBytes(filePath);
-            string encodedBase64 = Convert.ToBase64String(filedata);
-
-            if (CompressFile(filePath, destinationPath, encodedBase64))
+            try
             {
+                using FileStream fs = File.OpenRead(filePath);
+                using FileStream output = new FileStream(tmpFilePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 61440 * 1024);
 
-                if (_bddhelper.StoreFileToBDD(new ModelFile
+                using ToBase64Transform transform = new ToBase64Transform();
+                using CryptoStream crypto = new CryptoStream(output, transform, CryptoStreamMode.Write);
+
+                fs.CopyTo(crypto);
+                crypto.FlushFinalBlock();
+
+
+                if (CompressFile(tmpFilePath, destinationPath, ""))
                 {
-                    Name = fileName,
-                    Date = _systemhelper.GetDateTime().Date!,
-                    Time = _systemhelper.GetDateTime().Time!,
-                    Weight = fileSize,
-                    StoredFolder = destinationPath,
-                })) return true;
-                return false;
+
+                    if (_bddhelper.StoreFileToBDD(new ModelFile
+                    {
+                        Name = fileName,
+                        Date = _systemhelper.GetDateTime().Date!,
+                        Time = _systemhelper.GetDateTime().Time!,
+                        Weight = fileSize,
+                        StoredFolder = destinationPath,
+                    })) return true;
+                    return false;
+                }
+
+            }
+            catch (Exception)
+            {
+                if (Directory.Exists(destinationPath)) Directory.Delete(destinationPath, recursive: true);
+            }
+            finally
+            {
+                if (File.Exists(tmpFilePath)) File.Delete(tmpFilePath);
             }
             return false;
+
         }
 
         public async Task<bool> DownloadFile(string fileName)
         {
-            string DownloadFolder = _systemhelper.GetDownloadFolder();
+            string downloadFolder = _systemhelper.GetDownloadFolder();
+            string tmpFilePath = Path.Combine(_systemhelper.GetWorkSpace(), fileName + ".txt");
 
-            if (!File.Exists(Path.Combine(DownloadFolder, fileName)))
+            try
             {
-                
-                File.WriteAllBytes(Path.Combine(DownloadFolder, fileName), this.FileToDecompress(fileName));
+                if (!File.Exists(Path.Combine(downloadFolder, fileName)))
+                {
 
-                DeleteFile(fileName);
-                _bddhelper.DeleteFileInBDD(fileName);
+                    string[] filelist = GetFileImageListe(fileName);
 
-                return true;
+                    if (DecompressFile(filelist, filelist.Length, tmpFilePath))
+                    {
+                        using FileStream fs = new FileStream(tmpFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 61440 * 1024);
+                        using FileStream output = new FileStream(Path.Combine(downloadFolder, fileName), FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 61440 * 1024);
+
+                        using FromBase64Transform transform = new FromBase64Transform();
+                        using CryptoStream crypto = new CryptoStream(fs, transform, CryptoStreamMode.Read);
+
+                        crypto.CopyTo(output);
+
+
+                        DeleteFile(fileName);
+                        _bddhelper.DeleteFileInBDD(fileName);
+                    }
+
+
+                    return true;
+                }
+            }
+            finally
+            {
+                if (File.Exists(tmpFilePath)) File.Delete(tmpFilePath);
             }
             return false;
         }
 
-        private byte[] FileToDecompress(string fileName)
-        {
-            string[] filelist = GetFileImageListe(fileName);
+        // private byte[] FileToDecompress(string fileName)
+        // {
+        //     string[] filelist = GetFileImageListe(fileName);
 
-            int size = DecompressFile(filelist, filelist.Length, "");
+        //     int size = DecompressFile(filelist, filelist.Length, "");
 
-            byte[] result = new byte[size];
-            GetFileData(result, size);
-            string encodedBase64 = Encoding.UTF8.GetString(result, 0, size);
-            byte[] decodedBase64 = Convert.FromBase64String(encodedBase64);
-            return decodedBase64;
-        }
+        //     byte[] result = new byte[size];
+        //     GetFileData(result, size);
+        //     string encodedBase64 = Encoding.UTF8.GetString(result, 0, size);
+        //     byte[] decodedBase64 = Convert.FromBase64String(encodedBase64);
+        //     return decodedBase64;
+        // }
 
         public bool DeleteFile(string fileName)
         {
@@ -116,12 +159,12 @@ namespace StorgLibs
             if (Directory.Exists(storedFilePath))
             {
                 Directory.Delete(storedFilePath, recursive: true);
-                _bddhelper.DeleteFileInBDD(fileName);
                 if (Directory.Exists(storedFilePath))
                 {
                     return false;
                 }
             }
+            _bddhelper.DeleteFileInBDD(fileName);
             return true;
         }
 
