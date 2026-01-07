@@ -45,7 +45,7 @@ namespace StorgUI
 
             FilesGrid.Tapped += DisplayBtnOptionFile;
             dragDrop.AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop
-            
+
 
 
             #region btntrigger
@@ -88,6 +88,7 @@ namespace StorgUI
             btnSupprimer.Click += OnclickDel;
             btnFetch.Click += OnClickFetchFiles;
             btnUpload.Click += OnClickUpload;
+            folderImport.PointerPressed += OpenFolderBorwser;
 
             #endregion btntrigger
         }
@@ -213,6 +214,7 @@ namespace StorgUI
         {
             this.refresh();
         }
+
 
         #endregion trigger
 
@@ -501,18 +503,51 @@ namespace StorgUI
 
             if (items.Count > 0)
             {
-                LoadingBar.ProgressTextFormat = "Import en cours...";
-                LoadingBar.Value = 0;
-                LoadingBar.IsVisible = true;
-                await Task.Delay(10);
-                await LoopOnFileToAdd(items);
+                AddWithProgressBar(items);
+            }
+        }
 
-                LoadingBar.ProgressTextFormat = "Terminé";
-                await Task.Delay(500);
-                LoadingBar.IsVisible = false;
-
+        private async void OpenFolderBorwser(object? sender, PointerPressedEventArgs e) // Permet d'ouvrir l'explorateur de fichier
+        {
+            TopLevel topLevel = TopLevel.GetTopLevel(this)!;
+            if (topLevel.StorageProvider == null)
+            {
+                return;
             }
 
+            IReadOnlyList<IStorageFolder> folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions // Recupere le ou les fichiers selectionner
+            {
+                Title = "Sélection votre fichier", // Titre de la fenetre
+                AllowMultiple = true,  // Permet de selectionner plusieur fichier
+            });
+
+            if (folders.Count > 0)
+            {
+                foreach (IStorageFolder folder in folders)
+                {
+                    List<IStorageFile> files = new List<IStorageFile>();
+                    await foreach (IStorageItem item in folder.GetItemsAsync())
+                    {
+                        if (item is IStorageFile) files.Add((IStorageFile)item);
+                    }
+
+                    AddWithProgressBar(files);
+                }
+            }
+        }
+
+        private async void AddWithProgressBar(IReadOnlyList<IStorageFile> files)
+        {
+            LoadingBar.ProgressTextFormat = "Import en cours...";
+            LoadingBar.Value = 0;
+            LoadingBar.IsVisible = true;
+            await Task.Delay(10);
+
+            await LoopOnFileToAdd(files);
+
+            LoadingBar.ProgressTextFormat = "Terminé";
+            await Task.Delay(500);
+            LoadingBar.IsVisible = false;
         }
 
         private async Task LoopOnFileToAdd(IReadOnlyList<IStorageFile> items)
