@@ -24,11 +24,6 @@ namespace StorgLibs
             return _bddhelper.LoadStoredFile();
         }
 
-        public string GetCurrentOS()
-        {
-            return _systemhelper.GetCurrentOS();
-        }
-
         public bool CheckIfFileExistInBDD(string NameFIle)
         {
             return _bddhelper.CheckIfFileExistInBDD(NameFIle);

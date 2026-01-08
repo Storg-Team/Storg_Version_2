@@ -36,32 +36,28 @@ namespace StorgLibs
         private bool _disposed = false;
 
 
-        private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private static string _savedFolder = ConfigurationManager.AppSettings.Get("SavedFolder")!;
         private static string _currentExecDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private SystemHelper _systemhelper = new SystemHelper();
         private BDDHelper _bddhelper = new BDDHelper();
-        private string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
 
         #region Methode
         public string GetLibPath()
         {
-            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-
             string libPath = "";
 
-            if (_systemhelper.GetCurrentOS() == _currentOs.Windows)
+            if (_systemhelper.IsWindows())
             {
-                libPath = Path.Combine(baseDir, "Libs", "libs_filecompression.dll");
+                libPath = Path.Combine(_currentExecDirectory, "Libs", "libs_filecompression.dll");
             }
-            else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
+            else if (_systemhelper.IsLinux())
             {
-                libPath = Path.Combine(baseDir, "Libs", "libs_filecompression.so");
+                libPath = Path.Combine(_currentExecDirectory, "Libs", "libs_filecompression.so");
             }
-            else if (_systemhelper.GetCurrentOS() == _currentOs.OSX)
+            else if (_systemhelper.IsOSX())
             {
-                libPath = Path.Combine(baseDir,"Libs", "libs_filecompression.dylib");
+                libPath = Path.Combine(_currentExecDirectory,"Libs", "libs_filecompression.dylib");
             }
             else
             {
@@ -105,18 +101,7 @@ namespace StorgLibs
         }
         public async Task<bool> StoreFile(string fileName, string filePath, string fileSize)
         {
-            string destinationFolder = "";
-
-            if (_systemhelper.GetCurrentOS() == _currentOs.Windows) // Cree les chemin pour enregistrer les fichiers
-            {
-                destinationFolder = Path.Combine(_currentExecDirectory, _savedFolder);
-            }
-            else if (_systemhelper.GetCurrentOS() == _currentOs.Linux || _systemhelper.GetCurrentOS() == _currentOs.OSX)
-            {
-                destinationFolder = Path.Combine(Path.Combine(home, "storg"), ".data/SavedFolder");
-            }
-
-            string Destination_Path = Path.Combine(destinationFolder, fileName);
+            string Destination_Path = Path.Combine(_systemhelper.GetDestinationFolder(), fileName);
 
             Directory.CreateDirectory(Destination_Path);
 

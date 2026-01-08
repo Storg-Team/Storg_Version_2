@@ -16,7 +16,6 @@ namespace StorgLibs
     {
         private static string _BDDFilePath = "";
         private static string _connectionString = "";
-        private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private SystemHelper _systemhelper = new SystemHelper();
         private string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
@@ -24,12 +23,12 @@ namespace StorgLibs
 
         public BDDHelper()
         {
-            if (_systemhelper.GetCurrentOS() == _currentOs.Windows)
+            if (_systemhelper.IsWindows())
             {
                 string CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 _BDDFilePath = Path.Combine(Path.Combine(CurrentDirectory, ".data"), "BDD_Files_Info.db");
             }
-            else if (_systemhelper.GetCurrentOS() == _currentOs.Linux || _systemhelper.GetCurrentOS() == _currentOs.OSX)
+            else if (_systemhelper.IsLinux() || _systemhelper.IsOSX())
             {
                 string CurrentDirectory = Path.Combine(home, "storg");
                 _BDDFilePath = Path.Combine(Path.Combine(CurrentDirectory, ".data"), "BDD_Files_Info.db");
@@ -40,13 +39,13 @@ namespace StorgLibs
         public void IsBddExisting()
         {
             string DirPath = "";
-            if (_systemhelper.GetCurrentOS() == _currentOs.Windows)
+            if (_systemhelper.IsWindows())
             {
                 string CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 DirPath = Path.Combine(CurrentDirectory, ".data");
                 _BDDFilePath = Path.Combine(DirPath, "BDD_Files_Info.db");
             }
-            else if (_systemhelper.GetCurrentOS() == _currentOs.Linux || _systemhelper.GetCurrentOS() == _currentOs.OSX)
+            else if (_systemhelper.IsLinux() || _systemhelper.IsOSX())
             {
                 string CurrentDirectory = Path.Combine(home, "storg");
                 DirPath = Path.Combine(CurrentDirectory, ".data");
