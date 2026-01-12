@@ -13,6 +13,8 @@ using StorgUI.Views.ViewDownloadPopUp;
 using System.Threading.Tasks;
 using StorgUI.Views.ViewFetchFiles;
 using Avalonia.Media;
+using System.Runtime.CompilerServices;
+using System.IO;
 
 
 namespace StorgUI
@@ -85,6 +87,7 @@ namespace StorgUI
             //btnLiveDecomp
             BtLiveDecomp.PointerEntered += ExpendMenuEnter;
             BtLiveDecomp.PointerExited += ExpendMenuLeave;
+            BtLiveDecomp.Tapped += OnClickLiveDecompression;
 
             btnReload.Click += OnClickReload;
             BtResearch.Click += TriggerClickResearch;
@@ -219,7 +222,7 @@ namespace StorgUI
             this.refresh();
         }
 
-        private async void OnClickLiveDecompression(object? sender, RoutedEventArgs e)
+        private async void OnClickLiveDecompression(object? sender, TappedEventArgs e)
         {
             IReadOnlyList<IStorageFile> items = await OpenFileBorwser();
 
@@ -571,36 +574,6 @@ namespace StorgUI
             LoadingBar.IsVisible = false;
         }
 
-        private async void LiveDecompressionWithProgressBar(IReadOnlyList<IStorageFile> files)
-        {
-            LoadingBar.ProgressTextFormat = "Decompression en cours...";
-            LoadingBar.Value = 0;
-            LoadingBar.IsVisible = true;
-            await Task.Delay(10);
-
-            await LoopOnLiveDecompression(files);
-
-            LoadingBar.ProgressTextFormat = "Terminé";
-            await Task.Delay(500);
-            LoadingBar.IsVisible = false;
-        }
-
-        private async Task LoopOnLiveDecompression(IReadOnlyList<IStorageFile> items)
-        {
-            float gap = 100.0f / items.Count;
-            foreach (var files in items) 
-            {
-
-                var file = files as IStorageFile;
-                if (file != null)
-                {
-                    _libsGlobal.LiveDecompression(file.TryGetLocalPath()!); 
-                    LoadingBar.Value += gap;
-                    await Task.Delay(1);
-                }
-            }
-        }
-
         private async Task LoopOnFileToAdd(IReadOnlyList<IStorageFile> items)
         {
             float gap = 100.0f / items.Count;
@@ -619,6 +592,49 @@ namespace StorgUI
             // LoadingBar.IsVisible = false;
             refresh(); // Refresh pour que le nouveau fichier soit en haut
         }
+
+        private async void LiveDecompressionWithProgressBar(IReadOnlyList<IStorageFile> files)
+        {
+            LoadingBar.ProgressTextFormat = "Decompression en cours...";
+            LoadingBar.Value = 0;
+            LoadingBar.IsVisible = true;
+            await Task.Delay(10);
+
+            await LoopOnLiveDecompression(files);
+
+            LoadingBar.ProgressTextFormat = "Terminé";
+            await Task.Delay(500);
+            LoadingBar.IsVisible = false;
+        }
+
+        private async Task LoopOnLiveDecompression(IReadOnlyList<IStorageFile> items)
+        {
+            float gap = 100.0f / items.Count;
+            foreach (var files in items)
+            {
+
+                var file = files as IStorageFile;
+                if (file != null)
+                {
+                    string filePath = file.TryGetLocalPath()!;
+                    FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp($"Le fichier {Path.GetFileName(filePath)} ne peut pas être décompresser");
+                    if (Path.GetExtension(filePath) == ".zip")
+                    {
+                        if (!await _libsGlobal.LiveDecompression(filePath))
+                        {
+                            await frmErrorPopUp.ShowDialog((Window)this.VisualRoot!);
+                        }
+                    }
+                    else
+                    {
+                        await frmErrorPopUp.ShowDialog((Window)this.VisualRoot!);
+                    }
+                    LoadingBar.Value += gap;
+                    await Task.Delay(1);
+                }
+            }
+        }
+
 
         #endregion FileBrowser
 

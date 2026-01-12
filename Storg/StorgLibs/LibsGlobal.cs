@@ -146,9 +146,9 @@ namespace StorgLibs
             return _importFileHelper.GetFileNameWithNoExtention(fileName);
         }
 
-        public async void LiveDecompression(string filePath)
+        public async Task<bool> LiveDecompression(string filePath)
         {
-            await _gestionfilehelper.LiveDecompression(filePath);
+            return await _gestionfilehelper.LiveDecompression(filePath);
         }
     }
 }

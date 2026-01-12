@@ -114,7 +114,7 @@ namespace StorgTestUnitaire
 
             Assert.IsTrue(await _gestionfilehelper.ExportFile(testfile.Name));
 
-            Assert.IsTrue(Directory.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_" + testfile.Name)));
+            Assert.IsTrue(File.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), testfile.Name+".zip")));
 
             Assert.IsTrue(await _gestionfilehelper.DownloadFile(testfile.Name));
 

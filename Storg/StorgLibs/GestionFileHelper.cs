@@ -12,6 +12,7 @@ using System.Numerics;
 using System.Text.Unicode;
 using System.Buffers.Text;
 using System.Security.Cryptography;
+using System.IO.Compression;
 
 
 namespace StorgLibs
@@ -111,7 +112,7 @@ namespace StorgLibs
                 if (!File.Exists(Path.Combine(downloadFolder, fileName)))
                 {
 
-                    string[] filelist = GetFileImageListe(fileName);
+                    string[] filelist = GetFileImageListe(_bddhelper.GetStoredPath(fileName));
 
                     if (DecompressFile(filelist, filelist.Length, tmpFilePath))
                     {
@@ -139,19 +140,6 @@ namespace StorgLibs
             return false;
         }
 
-        // private byte[] FileToDecompress(string fileName)
-        // {
-        //     string[] filelist = GetFileImageListe(fileName);
-
-        //     int size = DecompressFile(filelist, filelist.Length, "");
-
-        //     byte[] result = new byte[size];
-        //     GetFileData(result, size);
-        //     string encodedBase64 = Encoding.UTF8.GetString(result, 0, size);
-        //     byte[] decodedBase64 = Convert.FromBase64String(encodedBase64);
-        //     return decodedBase64;
-        // }
-
         public bool DeleteFile(string fileName)
         {
             string storedFilePath = _bddhelper.GetStoredPath(fileName);
@@ -176,18 +164,19 @@ namespace StorgLibs
 
         public async Task<bool> ExportFile(string fileName)
         {
-            string DownloadFolder = _systemhelper.GetDownloadFolder();
-            string DownloadFileFolder = Path.Combine(DownloadFolder, "Dir_" + fileName);
+            string downloadFolder = _systemhelper.GetDownloadFolder();
+            string downloadFile = Path.Combine(downloadFolder, fileName + ".zip");
+            string savedFile = _bddhelper.GetStoredPath(fileName);
 
-            Directory.CreateDirectory(DownloadFileFolder);
-
-            if (Directory.Exists(_bddhelper.GetStoredPath(fileName)))
+            if (Directory.Exists(savedFile))
             {
-                string[] FilePathList = GetFileImageListe(fileName);
-
-                for (int i = 0; i < FilePathList.Length; i++)
+                try
                 {
-                    File.Copy(FilePathList[i], Path.Combine(DownloadFileFolder, "img" + i + ".webp"));
+                    ZipFile.CreateFromDirectory(savedFile, downloadFile);
+                }
+                catch (System.Exception)
+                {
+                    return false;
                 }
                 return true;
             }
@@ -199,14 +188,14 @@ namespace StorgLibs
         {
             if (isFile)
             {
-                string DownloadFilePath = Path.Combine(_systemhelper.GetDownloadFolder(), fileName);
-                File.Delete(DownloadFilePath);
+                string downloadFilePath = Path.Combine(_systemhelper.GetDownloadFolder(), fileName);
+                File.Delete(downloadFilePath);
                 await DownloadFile(fileName);
             }
             else
             {
-                string DownloadFolderPath = Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_" + fileName);
-                Directory.Delete(DownloadFolderPath, recursive: true);
+                string downloadFolderPath = Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_" + fileName);
+                Directory.Delete(downloadFolderPath, recursive: true);
                 await ExportFile(fileName);
             }
         }
@@ -227,13 +216,13 @@ namespace StorgLibs
             return false;
         }
 
-        private string[] GetFileImageListe(string FileName)
+        private string[] GetFileImageListe(string filePath)
         {
             IList<KeyValuePair<int, string>> ImageListeKeyValue = new List<KeyValuePair<int, string>>();
 
             Regex regex = new Regex(@"/img(\d{0,}).webp");
 
-            foreach (string imageName in Directory.GetFiles(_bddhelper.GetStoredPath(FileName)))
+            foreach (string imageName in Directory.GetFiles(filePath))
             {
                 int imageNumber = Int16.Parse(regex.Match(imageName).Groups[1].Value);
                 ImageListeKeyValue.Add(new KeyValuePair<int, string>(imageNumber, $"{imageName}"));
@@ -241,9 +230,43 @@ namespace StorgLibs
             return ImageListeKeyValue.OrderBy(f => f.Key).Select(f => f.Value).ToArray();
         }
 
-        public async Task LiveDecompression(string filePath)
+        public async Task<bool> LiveDecompression(string filePath)
         {
-            
+            string workSpace = _systemhelper.GetWorkSpace();
+            string filePathUnZip = Path.Combine(workSpace, Path.GetFileNameWithoutExtension(filePath));
+            string fileName = Path.GetFileName(filePathUnZip);
+            string tmpFilePath = Path.Combine(_systemhelper.GetWorkSpace(), fileName + ".txt");
+
+            try
+            {
+                if (File.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), fileName))) return false;
+
+                ZipFile.ExtractToDirectory(filePath, filePathUnZip);
+
+                string[] imageList = this.GetFileImageListe(filePathUnZip);
+
+                if (DecompressFile(imageList, imageList.Length, tmpFilePath))
+                {
+                    using FileStream fs = new FileStream(tmpFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 61440 * 1024);
+                    using FileStream output = new FileStream(Path.Combine(_systemhelper.GetDownloadFolder(), fileName), FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 61440 * 1024);
+
+                    using FromBase64Transform transform = new FromBase64Transform();
+                    using CryptoStream crypto = new CryptoStream(fs, transform, CryptoStreamMode.Read);
+
+                    crypto.CopyTo(output);
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                if (File.Exists(tmpFilePath)) File.Delete(tmpFilePath);
+                if (Directory.Exists(filePathUnZip)) Directory.Delete(filePathUnZip, recursive: true);
+            }
         }
 
 
