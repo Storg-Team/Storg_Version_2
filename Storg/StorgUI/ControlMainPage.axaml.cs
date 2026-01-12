@@ -82,6 +82,10 @@ namespace StorgUI
             BtAProps.PointerEntered += ExpendMenuEnter;
             BtAProps.PointerExited += ExpendMenuLeave;
 
+            //btnLiveDecomp
+            BtLiveDecomp.PointerEntered += ExpendMenuEnter;
+            BtLiveDecomp.PointerExited += ExpendMenuLeave;
+
             btnReload.Click += OnClickReload;
             BtResearch.Click += TriggerClickResearch;
             btnTelecharger.Click += OnclickDl;
@@ -213,6 +217,16 @@ namespace StorgUI
         private void OnClosed(object? sender, EventArgs e)
         {
             this.refresh();
+        }
+
+        private async void OnClickLiveDecompression(object? sender, RoutedEventArgs e)
+        {
+            IReadOnlyList<IStorageFile> items = await OpenFileBorwser();
+
+            if (items.Count > 0)
+            {
+                LiveDecompressionWithProgressBar(items);
+            }
         }
 
 
@@ -483,12 +497,22 @@ namespace StorgUI
 
         #region FileBrowser
 
-        private async void OpenFileBorwser(object? sender, PointerPressedEventArgs e) // Permet d'ouvrir l'explorateur de fichier
+        private async void FileBrowser(object? sender, PointerPressedEventArgs e)
+        {
+            IReadOnlyList<IStorageFile> items = await OpenFileBorwser();
+
+            if (items.Count > 0)
+            {
+                AddWithProgressBar(items);
+            }
+        }
+
+        private async Task<IReadOnlyList<IStorageFile>> OpenFileBorwser() // Permet d'ouvrir l'explorateur de fichier
         {
             TopLevel topLevel = TopLevel.GetTopLevel(this)!;
             if (topLevel.StorageProvider == null)
             {
-                return;
+                return [];
             }
 
             IReadOnlyList<IStorageFile> items = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions // Recupere le ou les fichiers selectionner
@@ -501,10 +525,7 @@ namespace StorgUI
                 }
             });
 
-            if (items.Count > 0)
-            {
-                AddWithProgressBar(items);
-            }
+            return items;
         }
 
         private async void OpenFolderBorwser(object? sender, PointerPressedEventArgs e) // Permet d'ouvrir l'explorateur de fichier
@@ -548,6 +569,36 @@ namespace StorgUI
             LoadingBar.ProgressTextFormat = "Terminé";
             await Task.Delay(500);
             LoadingBar.IsVisible = false;
+        }
+
+        private async void LiveDecompressionWithProgressBar(IReadOnlyList<IStorageFile> files)
+        {
+            LoadingBar.ProgressTextFormat = "Decompression en cours...";
+            LoadingBar.Value = 0;
+            LoadingBar.IsVisible = true;
+            await Task.Delay(10);
+
+            await LoopOnLiveDecompression(files);
+
+            LoadingBar.ProgressTextFormat = "Terminé";
+            await Task.Delay(500);
+            LoadingBar.IsVisible = false;
+        }
+
+        private async Task LoopOnLiveDecompression(IReadOnlyList<IStorageFile> items)
+        {
+            float gap = 100.0f / items.Count;
+            foreach (var files in items) 
+            {
+
+                var file = files as IStorageFile;
+                if (file != null)
+                {
+                    _libsGlobal.LiveDecompression(file.TryGetLocalPath()!); 
+                    LoadingBar.Value += gap;
+                    await Task.Delay(1);
+                }
+            }
         }
 
         private async Task LoopOnFileToAdd(IReadOnlyList<IStorageFile> items)

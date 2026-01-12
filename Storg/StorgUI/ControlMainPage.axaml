@@ -42,6 +42,12 @@
 										<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">A propos</TextBlock>
 									</StackPanel>
 								</ListBoxItem>
+								<ListBoxItem Name="BtLiveDecomp" Background="#d6bebe"  Classes="DefaultBt" Focusable="True">
+									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+										<Image Source="avares://StorgUI/Resources/folder-input.png " HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
+										<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Live décompression</TextBlock>
+									</StackPanel>
+								</ListBoxItem>
 							</ListBox>
 				</StackPanel>
 					</SplitView.Pane>
@@ -97,7 +103,7 @@
 						<ProgressBar Name="LoadingBar" Minimum="0" Maximum="100" Margin="10, -100 , 10, 10" ShowProgressText="True" Height="20" Value="0" Foreground="#0eba2f" IsVisible="True"/>
 
 					<Grid>
-					<Grid Name="dragDrop" Background="#d6bebe" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch" Height="190" Margin="0,-40,0,0" PointerPressed="OpenFileBorwser">
+					<Grid Name="dragDrop" Background="#d6bebe" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch" Height="190" Margin="0,-40,0,0" PointerPressed="FileBrowser">
 						<Rectangle StrokeDashArray="5, 3" Stroke="Black" StrokeThickness="3"></Rectangle>
 						<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Déposez ici / Cliquez pour parcourir</TextBlock>
 					</Grid>

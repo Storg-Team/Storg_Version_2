@@ -241,6 +241,11 @@ namespace StorgLibs
             return ImageListeKeyValue.OrderBy(f => f.Key).Select(f => f.Value).ToArray();
         }
 
+        public async Task LiveDecompression(string filePath)
+        {
+            
+        }
+
 
         #endregion Methode
     }
