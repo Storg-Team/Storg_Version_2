@@ -71,11 +71,13 @@ public partial class FrmErrorPopUp : Window
         }
     }
 
-    private void CloseErrorOrReplaceOnExportOrDownload(object? sender, RoutedEventArgs e)
+    private async void CloseErrorOrReplaceOnExportOrDownload(object? sender, RoutedEventArgs e)
     {
         if (!_replaceMode)
             this.Close();
         else if (_replaceMode)
+            this.Hide();
+            await Task.Delay(1);
             _ = _libsglobal.ReplaceOnExportOrDownload(_fileName, !_export);
         this.Close();
     }
