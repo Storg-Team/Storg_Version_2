@@ -62,6 +62,7 @@ namespace StorgUI
             BtAccueil.Tapped += OnClickAccueil;
             BtAccueil.PointerEntered += ExpendMenuEnter;
             BtAccueil.PointerExited += ExpendMenuLeave;
+            BtAccueil.KeyDown += OnKeyDownAcceuil;
 
             //btnSettings
             BtSettings.GotFocus += SetFocusStyle;
@@ -69,6 +70,7 @@ namespace StorgUI
             BtSettings.Tapped += OnClickSettings;
             BtSettings.PointerEntered += ExpendMenuEnter;
             BtSettings.PointerExited += ExpendMenuLeave;
+            BtSettings.KeyDown += OnKeyDownSettings;
 
             //btnAide
             BtAide.GotFocus += SetFocusStyle;
@@ -76,6 +78,7 @@ namespace StorgUI
             BtAide.Tapped += OnClickAide;
             BtAide.PointerEntered += ExpendMenuEnter;
             BtAide.PointerExited += ExpendMenuLeave;
+            BtAide.KeyDown += OnKeyDownAide;
 
             //btnAprops
             BtAProps.GotFocus += SetFocusStyle;
@@ -83,11 +86,13 @@ namespace StorgUI
             BtAProps.Tapped += OnClickAProps;
             BtAProps.PointerEntered += ExpendMenuEnter;
             BtAProps.PointerExited += ExpendMenuLeave;
+            BtAProps.KeyDown += OnKeyDownAProps;
 
             //btnLiveDecomp
             BtLiveDecomp.PointerEntered += ExpendMenuEnter;
             BtLiveDecomp.PointerExited += ExpendMenuLeave;
             BtLiveDecomp.Tapped += OnClickLiveDecompression;
+            BtLiveDecomp.KeyDown += OnKeyDownLiveDecompression;
 
             btnReload.Click += OnClickReload;
             BtResearch.Click += TriggerClickResearch;
@@ -95,7 +100,7 @@ namespace StorgUI
             btnSupprimer.Click += OnclickDel;
             btnFetch.Click += OnClickFetchFiles;
             btnUpload.Click += OnClickUpload;
-            folderImport.PointerPressed += OpenFolderBorwser;
+            folderImport.PointerPressed += OnClickOpenFolderBrowser;
 
             #endregion btntrigger
         }
@@ -115,27 +120,80 @@ namespace StorgUI
 
         private void OnClickSettings(object? sender, RoutedEventArgs e)
         {
-            MainContent.Content = new ControlSettings();
+            this.LoadFrmSettings();
+        }
+
+        private void OnKeyDownSettings(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.LoadFrmSettings();
+            }
         }
 
         private void OnClickAccueil(object? sender, RoutedEventArgs e) // Une fois le boutton clicker ca declanche les fonctions associer a chaque boutton pour effectuer ce qu'il faut.
         {
-            ContentControl? parent = this.Parent as ContentControl;
-            if (parent != null)
-            {
-                parent.Content = new ControlMainPage();
-            }
+            this.LoadFrmAcceuil();
+        }
 
+        private void OnKeyDownAcceuil(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.LoadFrmAcceuil();
+            }
         }
 
         private void OnClickAide(object? sender, RoutedEventArgs e)
         {
-            MainContent.Content = new ControlNavigationHelper();
+            this.LoadFrmAide();
+        }
+
+        private void OnKeyDownAide(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.LoadFrmAide();
+            }
         }
 
         private void OnClickAProps(object? sender, RoutedEventArgs e)
         {
-            MainContent.Content = new FrmAPropos();
+            this.LoadFrmAProps();
+        }
+
+        private void OnKeyDownAProps(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.LoadFrmAProps();
+            }
+        }
+
+        private void OnClickOpenFolderBrowser(object? sender, PointerPressedEventArgs e)
+        {
+            this.OpenFolderBrowser();
+        }
+
+        private void OnKeyDownOpenFolderBrowser(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.OpenFolderBrowser();
+            }
+        }
+
+        private async void OnClickLiveDecompression(object? sender, TappedEventArgs e)
+        {
+            this.LiveDecompression();
+        }
+
+        private async void OnKeyDownLiveDecompression(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.LiveDecompression();
+            }
         }
 
         private void OnClickReload(object? sender, RoutedEventArgs e) // Appel la fonction refresh.
@@ -222,13 +280,16 @@ namespace StorgUI
             this.refresh();
         }
 
-        private async void OnClickLiveDecompression(object? sender, TappedEventArgs e)
+        public void TriggerKeyResearch(object? sender, KeyEventArgs e) // Faire une recherche de fichier
         {
-            IReadOnlyList<IStorageFile> items = await OpenFileBorwser();
-
-            if (items.Count > 0)
+            if (e.Key == Key.Enter) // Verifi si la touche entrer est presser
             {
-                LiveDecompressionWithProgressBar(items);
+                Research();
+            }
+            if (e.Key == Key.Escape) // si escape est presser alors on quitte la zone de recherche
+            {
+                Focus();
+                refresh();
             }
         }
 
@@ -270,6 +331,40 @@ namespace StorgUI
 
 
         #region Methode
+
+        private void LoadFrmAcceuil()
+        {
+            ContentControl? parent = this.Parent as ContentControl;
+            if (parent != null)
+            {
+                parent.Content = new ControlMainPage();
+            }
+        }
+
+        private void LoadFrmSettings()
+        {
+            MainContent.Content = new ControlSettings();
+        }
+
+        private void LoadFrmAide()
+        {
+            MainContent.Content = new ControlNavigationHelper();
+        }
+
+        private void LoadFrmAProps()
+        {
+            MainContent.Content = new FrmAPropos();
+        }
+
+        private async void LiveDecompression()
+        {
+            IReadOnlyList<IStorageFile> items = await OpenFileBorwser();
+
+            if (items.Count > 0)
+            {
+                LiveDecompressionWithProgressBar(items);
+            }
+        }
 
         private void SetVisibility()
         {
@@ -375,19 +470,6 @@ namespace StorgUI
                     await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
                 }
                 LoadingBar.Value += gap;
-            }
-        }
-
-        public void TriggerKeyResearch(object? sender, KeyEventArgs e) // Faire une recherche de fichier
-        {
-            if (e.Key == Key.Enter) // Verifi si la touche entrer est presser
-            {
-                Research();
-            }
-            if (e.Key == Key.Escape) // si escape est presser alors on quitte la zone de recherche
-            {
-                Focus();
-                refresh();
             }
         }
 
@@ -531,7 +613,7 @@ namespace StorgUI
             return items;
         }
 
-        private async void OpenFolderBorwser(object? sender, PointerPressedEventArgs e) // Permet d'ouvrir l'explorateur de fichier
+        private async void OpenFolderBrowser() // Permet d'ouvrir l'explorateur de fichier
         {
             TopLevel topLevel = TopLevel.GetTopLevel(this)!;
             if (topLevel.StorageProvider == null)
