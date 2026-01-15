@@ -19,46 +19,91 @@ namespace StorgLibs
 {
     public class GestionFileHelper
     {
+        private IntPtr _libHandle;
 
-        #region DLL import
-        private const string _libsName = "Libs/libs_filecompression.so";
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)] //function comes from C/C++ code, not C#
+        private delegate bool CompressFileDelegate(string filepath, string savefilepath, string data);
 
-        [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool CompressFile(string filepath, string savefilepath, string data);
-
-        [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool DecompressFile(
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate int DecompressFileDelegate(
             [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)]
             string[] filelist, int size, string filePath);
 
-        [DllImport(_libsName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void GetFileData(byte[] buffer, int bufferSize);
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void GetFileDataDelegate(byte[] buffer, int bufferSize);
 
-        #endregion DLL import
+        private CompressFileDelegate _compressFile;
+        private DecompressFileDelegate _decompressFile;
+        private GetFileDataDelegate _getFileData;
+        private bool _disposed = false;
 
-        private ModelCurrentOS _currentOs = new ModelCurrentOS();
+
         private static string _savedFolder = ConfigurationManager.AppSettings.Get("SavedFolder")!;
         private static string _currentExecDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private SystemHelper _systemhelper = new SystemHelper();
         private BDDHelper _bddhelper = new BDDHelper();
-        private string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
 
         #region Methode
+        public string GetLibPath()
+        {
+            string libPath = "";
+
+            if (_systemhelper.IsWindows())
+            {
+                libPath = Path.Combine(_currentExecDirectory, "Libs", "libs_filecompression.dll");
+            }
+            else if (_systemhelper.IsLinux())
+            {
+                libPath = Path.Combine(_currentExecDirectory, "Libs", "libs_filecompression.so");
+            }
+            else if (_systemhelper.IsOSX())
+            {
+                libPath = Path.Combine(_currentExecDirectory,"Libs", "libs_filecompression.dylib");
+            }
+            else
+            {
+                throw new PlatformNotSupportedException($"Platform '{RuntimeInformation.OSDescription}' is not supported.");
+            }
+
+            // Verify file exists
+            if (!File.Exists(libPath))
+            {
+                throw new FileNotFoundException($"Native library not found at: {libPath}");
+            }
+
+            return libPath;
+        }
+        public GestionFileHelper()
+        {
+            try
+            {
+                string libPath = GetLibPath();
+
+                _libHandle = NativeLibrary.Load(libPath);
+
+                IntPtr compressFuncPointer = NativeLibrary.GetExport(_libHandle, "CompressFile");
+                _compressFile = Marshal.GetDelegateForFunctionPointer<CompressFileDelegate>(compressFuncPointer);
+
+                IntPtr decompressFuncPointer = NativeLibrary.GetExport(_libHandle, "DecompressFile");
+                _decompressFile = Marshal.GetDelegateForFunctionPointer<DecompressFileDelegate>(decompressFuncPointer);
+
+                IntPtr getFileDataFuncPointer = NativeLibrary.GetExport(_libHandle, "GetFileData");
+                _getFileData = Marshal.GetDelegateForFunctionPointer<GetFileDataDelegate>(getFileDataFuncPointer);
+            }
+
+            catch (DllNotFoundException ex)
+            {
+                throw new Exception(
+                    $"Failed to load native library. " +
+                    $"Current architecture: {RuntimeInformation.ProcessArchitecture}. " +
+                    $"Make sure the library is compiled for the correct architecture. " +
+                    $"Original error: {ex.Message}", ex);
+            }
+        }
         public async Task<bool> StoreFile(string fileName, string filePath, string fileSize)
         {
-            string destinationFolder = "";
-
-            if (_systemhelper.GetCurrentOS() == _currentOs.Windows) // Cree les chemin pour enregistrer les fichiers
-            {
-                destinationFolder = Path.Combine(_currentExecDirectory, _savedFolder);
-            }
-            else if (_systemhelper.GetCurrentOS() == _currentOs.Linux)
-            {
-                destinationFolder = Path.Combine(Path.Combine(home, "storg"), ".data/SavedFolder");
-            }
-
-            string destinationPath = Path.Combine(destinationFolder, fileName);
+            string Destination_Path = Path.Combine(_systemhelper.GetDestinationFolder(), fileName);
 
             Directory.CreateDirectory(destinationPath);
             string tmpFilePath = Path.Combine(_systemhelper.GetWorkSpace(), fileName + ".txt");
@@ -75,7 +120,7 @@ namespace StorgLibs
                 crypto.FlushFinalBlock();
 
 
-                if (CompressFile(tmpFilePath, destinationPath, ""))
+                if (_compressFile(tmpFilePath, destinationPath, ""))
                 {
 
                     if (_bddhelper.StoreFileToBDD(new ModelFile

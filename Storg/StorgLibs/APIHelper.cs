@@ -129,4 +129,25 @@ public class APIHelper
         _settings = _bddHelper.LoadSettings();
     }
 
+
+    public async Task<IList<string>> GetFilesUploaded(int userId)
+    {
+
+        try
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(@$"/listuserfiles?userId={userId}&apiKey={_apiKey}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IList<string>>() ?? [];
+            }
+
+            return [];
+        }
+        catch (Exception)
+        {
+            return [];
+        }
+    }
+
 }

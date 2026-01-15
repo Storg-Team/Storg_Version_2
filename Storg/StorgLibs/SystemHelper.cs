@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 using System.Runtime.InteropServices;
 using StorgCommon;
 
@@ -10,15 +11,34 @@ namespace StorgLibs
 {
     public class SystemHelper
     {
-
-        private ModelCurrentOS _currentOS = new ModelCurrentOS();
-
-        public string GetCurrentOS()
+        public bool IsWindows()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return _currentOS.Windows;
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return _currentOS.Linux;
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) return _currentOS.OSX;
-            throw new PlatformNotSupportedException("OS non supporté !");
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+        }
+
+        public bool IsLinux()
+        {
+            return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+        }
+
+        public bool IsOSX()
+        {
+            return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+        }
+
+        public string GetDestinationFolder()
+        {
+            string destinationFolder = "";
+
+            if (IsWindows()) // Cree les chemin pour enregistrer les fichiers
+            {
+                destinationFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigurationManager.AppSettings.Get("SavedFolder")!);
+            }
+            else if (IsLinux() || IsOSX())
+            {
+                destinationFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "storg"), ".data/SavedFolder");
+            }
+            return destinationFolder;
         }
 
         public ModelTime GetDateTime()
