@@ -42,6 +42,12 @@
 										<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">A propos</TextBlock>
 									</StackPanel>
 								</ListBoxItem>
+								<ListBoxItem Name="BtLiveDecomp" Background="#d6bebe"  Classes="DefaultBt" Focusable="True">
+									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+										<Image Source="avares://StorgUI/Resources/folder-input.png " HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
+										<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Live décompression</TextBlock>
+									</StackPanel>
+								</ListBoxItem>
 							</ListBox>
 				</StackPanel>
 					</SplitView.Pane>
@@ -79,6 +85,9 @@
 								<Image  Source="Resources/hard-drive-upload.png" Width="25" Height="25"/>
 							</Button>
 						</StackPanel>
+						<Button Name="btnFetch" HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="30" Width="40" Height="40" Background="#d6bebe" Classes="DefaultBt" Margin="0,0,10,0" ToolTip.Tip="Récupérer fichiers transférer" IsVisible="False"> 
+							<Image Source="Resources/cloud-backup.png" Width="25" Height="25"/>
+						</Button>
 					</Grid>
 						<DataGrid x:Name="FilesGrid" 
 						          VerticalAlignment="Stretch" 
@@ -93,9 +102,15 @@
 
 						<ProgressBar Name="LoadingBar" Minimum="0" Maximum="100" Margin="10, -100 , 10, 10" ShowProgressText="True" Height="20" Value="0" Foreground="#0eba2f" IsVisible="True"/>
 
-					<Grid Background="#d6bebe" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch" Height="190" Margin="0,-40,0,0" PointerPressed="OpenFileBorwser">
+					<Grid>
+					<Grid Name="dragDrop" Background="#d6bebe" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch" Height="190" Margin="0,-40,0,0" PointerPressed="FileBrowser">
 						<Rectangle StrokeDashArray="5, 3" Stroke="Black" StrokeThickness="3"></Rectangle>
 						<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Déposez ici / Cliquez pour parcourir</TextBlock>
+					</Grid>
+						<Grid Name="folderImport" VerticalAlignment="Bottom" HorizontalAlignment="Center" Background="#c0a7a7">
+							<Rectangle StrokeDashArray="5, 3" Stroke="Black" StrokeThickness="3" Width="300" Height="40"></Rectangle>
+							<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Importer le contenu d'un dossier</TextBlock>
+						</Grid>
 					</Grid>
 				</StackPanel>
 							

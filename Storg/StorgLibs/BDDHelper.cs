@@ -56,16 +56,14 @@ namespace StorgLibs
             {
                 if (!File.Exists(_BDDFilePath))
                 {
-                    using (File.Create(_BDDFilePath)) { }
-                    ;
+                    using (File.Create(_BDDFilePath)) { };
                 }
             }
             else
             {
                 Directory.CreateDirectory(DirPath);
                 File.SetAttributes(DirPath, FileAttributes.Hidden);
-                using (File.Create(_BDDFilePath)) { }
-                ;
+                using (File.Create(_BDDFilePath)) { };
             }
 
 
@@ -126,6 +124,7 @@ namespace StorgLibs
                             listFile.Add(file);
                         }
                     }
+                    conn.Close();
                 }
             }
             return listFile;
@@ -172,6 +171,7 @@ namespace StorgLibs
                         return true;
                     }
                 }
+                conn.Close();
             }
             return false;
         }
@@ -196,6 +196,7 @@ namespace StorgLibs
                         }
                     }
                 }
+                conn.Close();
             }
             return StoredFolder;
         }
@@ -239,6 +240,7 @@ namespace StorgLibs
                         }
                     }
                 }
+                conn.Close();
             }
             return FileList;
         }
@@ -273,7 +275,6 @@ namespace StorgLibs
                 }
                 conn.Close();
             }
-
             return settings;
         }
 

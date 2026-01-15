@@ -12,6 +12,8 @@ namespace StorgLibs
         private GestionFileHelper _gestionfilehelper = new GestionFileHelper();
         private static APIHelper _apiHelper = new APIHelper();
         private ConnectionHelper _connectionHelper = new ConnectionHelper();
+        private UploadFileHelper _uploadFileHelper = new UploadFileHelper();
+        private ImportFileHelper _importFileHelper = new ImportFileHelper();
 
 
         public void IsBddExisting()
@@ -49,34 +51,29 @@ namespace StorgLibs
             return _systemhelper.GetDownloadFolder();
         }
 
-        public async Task<bool> DownloadFile(string FileName)
+        public async Task<bool> DownloadFile(string fileName)
         {
-            return await _gestionfilehelper.DownloadFile(FileName);
+            return await _gestionfilehelper.DownloadFile(fileName);
         }
 
-        public string GetStoredPath(string FileName)
+        public string GetStoredPath(string fileName)
         {
-            return _bddhelper.GetStoredPath(FileName);
+            return _bddhelper.GetStoredPath(fileName);
         }
 
-        public void DeleteFileInBDD(string FileName)
+        public bool DeleteFile(string fileName)
         {
-            _bddhelper.DeleteFileInBDD(FileName);
+            return _gestionfilehelper.DeleteFile(fileName);
         }
 
-        public bool DeleteFile(string StoredFilePath)
+        public async Task<bool> ExportFile(string fileName)
         {
-            return _gestionfilehelper.DeleteFile(StoredFilePath);
+            return await _gestionfilehelper.ExportFile(fileName);
         }
 
-        public async Task<bool> ExportFile(string FileName)
+        public IList<ModelFile> ResearchFileByName(string researchText)
         {
-            return await _gestionfilehelper.ExportFile(FileName);
-        }
-
-        public IList<ModelFile> ResearchFileByName(string ResearchText)
-        {
-            return _bddhelper.ResearchFileByName(ResearchText);
+            return _bddhelper.ResearchFileByName(researchText);
         }
 
         public async Task ReplaceOnExportOrDownload(string fileName, bool isFile = true)
@@ -119,9 +116,34 @@ namespace StorgLibs
             await _connectionHelper.VerifConnection();
         }
 
-        public async Task<IList<string>> GetFilesUploaded(int userId)
+        public async Task<IList<string>> GetFilesUploaded()
         {
-            return await _apiHelper.GetFilesUploaded(userId);
+            return await _apiHelper.GetFilesUploaded();
+        }
+
+        public async Task<bool> UploadFileFromApi(ModelDisplayFiles file)
+        {
+            return await _uploadFileHelper.UploadFileFromApi(file);
+        }
+
+        public async Task<bool> ImportFileFromApi(ModelDisplayFetchFile fileName)
+        {
+            return await _importFileHelper.ImportFileFromApi(fileName);
+        }
+
+        public async Task<bool> DeleteFileApi(string fileName)
+        {
+            return await _apiHelper.DeleteFileApi(fileName);
+        }
+
+        public string GetFileNameWithNoExtention(string fileName)
+        {
+            return _importFileHelper.GetFileNameWithNoExtention(fileName);
+        }
+
+        public async Task<bool> LiveDecompression(string filePath)
+        {
+            return await _gestionfilehelper.LiveDecompression(filePath);
         }
     }
 }

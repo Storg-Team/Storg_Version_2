@@ -17,25 +17,33 @@ public class ConnectionHelper
     {
         _settings = _bddHelper.LoadSettings();
 
-        if (_settings.isConnected && _settings.canConnect)
+        if (_settings.canConnect)
         {
             try
             {
 
                 Dictionary<int, bool> userInformation = await _apiHelper.StartConnection(_settings.login, _settings.password);
-                if (!userInformation.First().Value)
+                if (userInformation.First().Value)
                 {
-                    _bddHelper.UpdateSettingsCredentials("", "", _settings.userId, false);
-                    _settings.isConnected = false;
+                    _bddHelper.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId, true);
+                    _settings.isConnected = true;
+                }
+                else
+                {
+                    this.DisconnectUser();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e);
+                this.DisconnectUser();
             }
         }
+    }
 
-
+    private void DisconnectUser()
+    {
+        _bddHelper.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId, false);
+        _settings.isConnected = false;
     }
 
 }

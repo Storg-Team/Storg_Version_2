@@ -17,6 +17,7 @@ using StorgCommon;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Data.Sqlite;
 
 namespace StorgUI
 {
@@ -31,7 +32,6 @@ namespace StorgUI
             _libsGlobal.VerifConnection();
 
             InitializeComponent();
-
         }
     }
 }

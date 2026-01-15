@@ -1,29 +1,20 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using System;
-using System.Configuration;
-using System.IO;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Avalonia.Layout;
 using StorgLibs;
 using StorgCommon;
 using System.Linq;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.ComponentModel.DataAnnotations;
 using Avalonia.Data;
-using System.Security.Cryptography.X509Certificates;
 using StorgUI.Views.ViewDownloadPopUp;
-using HarfBuzzSharp;
 using System.Threading.Tasks;
-using Avalonia.Themes.Fluent;
+using StorgUI.Views.ViewFetchFiles;
+using Avalonia.Media;
+using System.Runtime.CompilerServices;
+using System.IO;
 
 
 namespace StorgUI
@@ -33,7 +24,7 @@ namespace StorgUI
     {
 
         #region Variable
-        private LibsGlobal _libsglobal = new LibsGlobal();
+        private LibsGlobal _libsGlobal = new LibsGlobal();
         private static bool _isPaneOpen = false;
         private ModelSettings _settings = new ModelSettings();
         private ObservableCollection<ModelDisplayFiles> _dataGridItems = new ObservableCollection<ModelDisplayFiles>();
@@ -44,18 +35,19 @@ namespace StorgUI
         public ControlMainPage()
         {
 
+
             InitializeComponent();
 
-            _settings = _libsglobal.LoadSettings();
+            this.Loaded += OnLoadSettings;
+            this.Loaded += SetDynSize;
 
             LoadingBar.IsVisible = false;
             MainMenu.IsPaneOpen = _isPaneOpen;
-            refresh(); // Permet d'afficher tout les fichiers deja present dans la BDD
+            this.refresh();
 
             FilesGrid.Tapped += DisplayBtnOptionFile;
-            AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop
+            dragDrop.AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop
 
-            this.Loaded += SetDynSize;
 
 
             #region btntrigger
@@ -70,6 +62,7 @@ namespace StorgUI
             BtAccueil.Tapped += OnClickAccueil;
             BtAccueil.PointerEntered += ExpendMenuEnter;
             BtAccueil.PointerExited += ExpendMenuLeave;
+            BtAccueil.KeyDown += OnKeyDownAcceuil;
 
             //btnSettings
             BtSettings.GotFocus += SetFocusStyle;
@@ -77,6 +70,7 @@ namespace StorgUI
             BtSettings.Tapped += OnClickSettings;
             BtSettings.PointerEntered += ExpendMenuEnter;
             BtSettings.PointerExited += ExpendMenuLeave;
+            BtSettings.KeyDown += OnKeyDownSettings;
 
             //btnAide
             BtAide.GotFocus += SetFocusStyle;
@@ -84,6 +78,7 @@ namespace StorgUI
             BtAide.Tapped += OnClickAide;
             BtAide.PointerEntered += ExpendMenuEnter;
             BtAide.PointerExited += ExpendMenuLeave;
+            BtAide.KeyDown += OnKeyDownAide;
 
             //btnAprops
             BtAProps.GotFocus += SetFocusStyle;
@@ -91,45 +86,114 @@ namespace StorgUI
             BtAProps.Tapped += OnClickAProps;
             BtAProps.PointerEntered += ExpendMenuEnter;
             BtAProps.PointerExited += ExpendMenuLeave;
+            BtAProps.KeyDown += OnKeyDownAProps;
+
+            //btnLiveDecomp
+            BtLiveDecomp.PointerEntered += ExpendMenuEnter;
+            BtLiveDecomp.PointerExited += ExpendMenuLeave;
+            BtLiveDecomp.Tapped += OnClickLiveDecompression;
+            BtLiveDecomp.KeyDown += OnKeyDownLiveDecompression;
 
             btnReload.Click += OnClickReload;
             BtResearch.Click += TriggerClickResearch;
             btnTelecharger.Click += OnclickDl;
             btnSupprimer.Click += OnclickDel;
+            btnFetch.Click += OnClickFetchFiles;
+            btnUpload.Click += OnClickUpload;
+            folderImport.PointerPressed += OnClickOpenFolderBrowser;
 
+            #endregion btntrigger
         }
 
-
-        #endregion btntrigger
 
 
 
 
 
         #region trigger
+
+        private void OnLoadSettings(object? sender, RoutedEventArgs e)
+        {
+            _settings = _libsGlobal.LoadSettings();
+            btnFetch.IsVisible = _settings.isConnected;
+        }
+
         private void OnClickSettings(object? sender, RoutedEventArgs e)
         {
-            MainContent.Content = new ControlSettings();
+            this.LoadFrmSettings();
+        }
+
+        private void OnKeyDownSettings(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.LoadFrmSettings();
+            }
         }
 
         private void OnClickAccueil(object? sender, RoutedEventArgs e) // Une fois le boutton clicker ca declanche les fonctions associer a chaque boutton pour effectuer ce qu'il faut.
         {
-            ContentControl? parent = this.Parent as ContentControl;
-            if (parent != null)
-            {
-                parent.Content = new ControlMainPage();
-            }
+            this.LoadFrmAcceuil();
+        }
 
+        private void OnKeyDownAcceuil(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.LoadFrmAcceuil();
+            }
         }
 
         private void OnClickAide(object? sender, RoutedEventArgs e)
         {
-            MainContent.Content = new ControlNavigationHelper();
+            this.LoadFrmAide();
+        }
+
+        private void OnKeyDownAide(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.LoadFrmAide();
+            }
         }
 
         private void OnClickAProps(object? sender, RoutedEventArgs e)
         {
-            MainContent.Content = new FrmAPropos();
+            this.LoadFrmAProps();
+        }
+
+        private void OnKeyDownAProps(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.LoadFrmAProps();
+            }
+        }
+
+        private void OnClickOpenFolderBrowser(object? sender, PointerPressedEventArgs e)
+        {
+            this.OpenFolderBrowser();
+        }
+
+        private void OnKeyDownOpenFolderBrowser(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.OpenFolderBrowser();
+            }
+        }
+
+        private async void OnClickLiveDecompression(object? sender, TappedEventArgs e)
+        {
+            this.LiveDecompression();
+        }
+
+        private async void OnKeyDownLiveDecompression(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                this.LiveDecompression();
+            }
         }
 
         private void OnClickReload(object? sender, RoutedEventArgs e) // Appel la fonction refresh.
@@ -141,28 +205,26 @@ namespace StorgUI
         private void OnclickDel(object? sender, RoutedEventArgs e)
         {
             Delete();
-            btnTelecharger.IsVisible = false;
-            btnSupprimer.IsVisible = false;
-            btnUpload.IsVisible = false;
-
+            this.SetVisibility();
         }
 
         private void OnclickDl(object? sender, RoutedEventArgs e)
         {
             Download();
-            btnTelecharger.IsVisible = false;
-            btnSupprimer.IsVisible = false;
-            btnUpload.IsVisible = false;
+            this.SetVisibility();
 
         }
 
         private async Task OnDrop(object? sender, DragEventArgs e) // Fonction de Drag and Drop
         {
-
-            IReadOnlyList<IStorageFile>? items = (IReadOnlyList<IStorageFile>?)e.Data.GetFiles(); // Recupere le ou les objects deposer
-            if (items != null)
+            if (e.Data.Contains("text/uri-list")) dragDrop.Background = Brushes.Red;
+            if (e.Data.Contains(DataFormats.Files))
             {
-                await LoopOnFileToAdd(items);
+                IReadOnlyList<IStorageFile>? items = (IReadOnlyList<IStorageFile>?)e.Data.GetFiles(); // Recupere le ou les objects deposer
+                if (items != null)
+                {
+                    await LoopOnFileToAdd(items);
+                }
             }
         }
 
@@ -192,6 +254,45 @@ namespace StorgUI
             MainMenu.IsPaneOpen = false;
             _isPaneOpen = MainMenu.IsPaneOpen;
         }
+
+        private void OnClickFetchFiles(object? sender, RoutedEventArgs e)
+        {
+            this.FetchFiles();
+        }
+
+        private async void OnClickUpload(object? sender, RoutedEventArgs e)
+        {
+            LoadingBar.ProgressTextFormat = "Transfet en cours...";
+            LoadingBar.Value = 0;
+            LoadingBar.IsVisible = true;
+            await Task.Delay(10);
+            await this.Upload();
+            LoadingBar.ProgressTextFormat = "Transfet terminé";
+            await Task.Delay(500);
+            LoadingBar.IsVisible = false;
+            LoadingBar.Value = 0;
+
+            this.SetVisibility();
+        }
+
+        private void OnClosed(object? sender, EventArgs e)
+        {
+            this.refresh();
+        }
+
+        public void TriggerKeyResearch(object? sender, KeyEventArgs e) // Faire une recherche de fichier
+        {
+            if (e.Key == Key.Enter) // Verifi si la touche entrer est presser
+            {
+                Research();
+            }
+            if (e.Key == Key.Escape) // si escape est presser alors on quitte la zone de recherche
+            {
+                Focus();
+                refresh();
+            }
+        }
+
 
         #endregion trigger
 
@@ -230,6 +331,47 @@ namespace StorgUI
 
 
         #region Methode
+
+        private void LoadFrmAcceuil()
+        {
+            ContentControl? parent = this.Parent as ContentControl;
+            if (parent != null)
+            {
+                parent.Content = new ControlMainPage();
+            }
+        }
+
+        private void LoadFrmSettings()
+        {
+            MainContent.Content = new ControlSettings();
+        }
+
+        private void LoadFrmAide()
+        {
+            MainContent.Content = new ControlNavigationHelper();
+        }
+
+        private void LoadFrmAProps()
+        {
+            MainContent.Content = new FrmAPropos();
+        }
+
+        private async void LiveDecompression()
+        {
+            IReadOnlyList<IStorageFile> items = await OpenFileBorwser();
+
+            if (items.Count > 0)
+            {
+                LiveDecompressionWithProgressBar(items);
+            }
+        }
+
+        private void SetVisibility()
+        {
+            btnTelecharger.IsVisible = false;
+            btnSupprimer.IsVisible = false;
+            btnUpload.IsVisible = false;
+        }
 
         private void SetFocusStyle(object? sender, RoutedEventArgs e)
         {
@@ -288,7 +430,7 @@ namespace StorgUI
 
             this.InitDataGridFiles();
 
-            _dataGridItems = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsglobal.LoadStoredFile()));
+            _dataGridItems = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsGlobal.LoadStoredFile()));
             FilesGrid.ItemsSource = _dataGridItems;
 
             btnTelecharger.IsVisible = false;
@@ -301,7 +443,7 @@ namespace StorgUI
 
             string FileWeight = "";
 
-            if (_libsglobal.CheckIfFileExistInBDD(file.Name))
+            if (_libsGlobal.CheckIfFileExistInBDD(file.Name))
             {
                 FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Fichier déja existant");
                 await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
@@ -312,10 +454,14 @@ namespace StorgUI
                     FileWeight = Convert.ToString($"{stream.Length / 1024} Ko");
                 if (file.TryGetLocalPath() != null)
                 {
-                    if (!await _libsglobal.StoreFile(file.Name, file.TryGetLocalPath()!, FileWeight))
+                    if (!await _libsGlobal.StoreFile(file.Name, file.TryGetLocalPath()!, FileWeight))
                     {
                         FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Import du fichier impossible");
                         await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
+                    }
+                    else
+                    {
+                        _dataGridItems.Add(new ModelDisplayFiles() { Name = file.Name, Date = _libsGlobal.GetDateTime().Date + " " + _libsGlobal.GetDateTime().Time, Weight = FileWeight });
                     }
                 }
                 else
@@ -323,21 +469,7 @@ namespace StorgUI
                     FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Import du fichier impossible");
                     await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
                 }
-                _dataGridItems.Add(new ModelDisplayFiles() { Name = file.Name, Date = _libsglobal.GetDateTime().Date + " " + _libsglobal.GetDateTime().Time, Weight = FileWeight });
                 LoadingBar.Value += gap;
-            }
-        }
-
-        public void TriggerKeyResearch(object? sender, KeyEventArgs e) // Faire une recherche de fichier
-        {
-            if (e.Key == Key.Enter) // Verifi si la touche entrer est presser
-            {
-                Research();
-            }
-            if (e.Key == Key.Escape) // si escape est presser alors on quitte la zone de recherche
-            {
-                Focus();
-                refresh();
             }
         }
 
@@ -349,7 +481,7 @@ namespace StorgUI
             }
             string research_file_text = Search.Text;
 
-            FilesGrid.ItemsSource = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsglobal.ResearchFileByName(research_file_text)).Reverse());
+            FilesGrid.ItemsSource = new ObservableCollection<ModelDisplayFiles>(this.CastModelFile(_libsGlobal.ResearchFileByName(research_file_text)).Reverse());
 
             Focus();
         }
@@ -367,10 +499,10 @@ namespace StorgUI
 
         private async void Delete() // Permet de supprimer un fichier
         {
-            IList<ModelDisplayFiles> FilesList = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
-            foreach (ModelDisplayFiles file in FilesList)
+            IList<ModelDisplayFiles> files = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
+            foreach (ModelDisplayFiles file in files)
             {
-                if (!_libsglobal.DeleteFile(file.Name))
+                if (!_libsGlobal.DeleteFile(file.Name))
                 {
                     FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec de le suppression du ficher :" + file.Name);
                     await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
@@ -379,6 +511,32 @@ namespace StorgUI
             this.refresh();
 
         }
+
+        private async Task Upload()
+        {
+            IList<ModelDisplayFiles> files = FilesGrid.SelectedItems.Cast<ModelDisplayFiles>().ToList();
+            float gap = 100.0f / files.Count;
+            foreach (ModelDisplayFiles file in files)
+            {
+                if (!await _libsGlobal.UploadFileFromApi(file))
+                {
+                    FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp($"Impossible d'uploader le fichier : {file.Name}\nIl est possible que le fichier existe déjà ou que le serveur rencontre un problème.");
+                    await frmErrorPopUp.ShowDialog((Window)this.VisualRoot!);
+                }
+                LoadingBar.Value += gap;
+                await Task.Delay(1);
+            }
+        }
+
+        private void FetchFiles()
+        {
+            FrmFetchFiles fetchFiles = new FrmFetchFiles();
+            fetchFiles.Show((Window)this.VisualRoot!);
+            fetchFiles.Closed += OnClosed;
+        }
+
+
+
 
         #endregion Methode
 
@@ -424,12 +582,22 @@ namespace StorgUI
 
         #region FileBrowser
 
-        private async void OpenFileBorwser(object? sender, PointerPressedEventArgs e) // Permet d'ouvrir l'explorateur de fichier
+        private async void FileBrowser(object? sender, PointerPressedEventArgs e)
+        {
+            IReadOnlyList<IStorageFile> items = await OpenFileBorwser();
+
+            if (items.Count > 0)
+            {
+                AddWithProgressBar(items);
+            }
+        }
+
+        private async Task<IReadOnlyList<IStorageFile>> OpenFileBorwser() // Permet d'ouvrir l'explorateur de fichier
         {
             TopLevel topLevel = TopLevel.GetTopLevel(this)!;
             if (topLevel.StorageProvider == null)
             {
-                return;
+                return [];
             }
 
             IReadOnlyList<IStorageFile> items = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions // Recupere le ou les fichiers selectionner
@@ -442,20 +610,50 @@ namespace StorgUI
                 }
             });
 
-            if (items.Count > 0)
+            return items;
+        }
+
+        private async void OpenFolderBrowser() // Permet d'ouvrir l'explorateur de fichier
+        {
+            TopLevel topLevel = TopLevel.GetTopLevel(this)!;
+            if (topLevel.StorageProvider == null)
             {
-                LoadingBar.ProgressTextFormat = "Import en cours...";
-                LoadingBar.Value = 0;
-                LoadingBar.IsVisible = true;
-                await Task.Delay(10);
-                await LoopOnFileToAdd(items);
-
-                LoadingBar.ProgressTextFormat = "Terminé";
-                await Task.Delay(500);
-                LoadingBar.IsVisible = false;
-
+                return;
             }
 
+            IReadOnlyList<IStorageFolder> folders = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions // Recupere le ou les fichiers selectionner
+            {
+                Title = "Sélection votre fichier", // Titre de la fenetre
+                AllowMultiple = true,  // Permet de selectionner plusieur fichier
+            });
+
+            if (folders.Count > 0)
+            {
+                foreach (IStorageFolder folder in folders)
+                {
+                    List<IStorageFile> files = new List<IStorageFile>();
+                    await foreach (IStorageItem item in folder.GetItemsAsync())
+                    {
+                        if (item is IStorageFile) files.Add((IStorageFile)item);
+                    }
+
+                    AddWithProgressBar(files);
+                }
+            }
+        }
+
+        private async void AddWithProgressBar(IReadOnlyList<IStorageFile> files)
+        {
+            LoadingBar.ProgressTextFormat = "Import en cours...";
+            LoadingBar.Value = 0;
+            LoadingBar.IsVisible = true;
+            await Task.Delay(10);
+
+            await LoopOnFileToAdd(files);
+
+            LoadingBar.ProgressTextFormat = "Terminé";
+            await Task.Delay(500);
+            LoadingBar.IsVisible = false;
         }
 
         private async Task LoopOnFileToAdd(IReadOnlyList<IStorageFile> items)
@@ -476,6 +674,49 @@ namespace StorgUI
             // LoadingBar.IsVisible = false;
             refresh(); // Refresh pour que le nouveau fichier soit en haut
         }
+
+        private async void LiveDecompressionWithProgressBar(IReadOnlyList<IStorageFile> files)
+        {
+            LoadingBar.ProgressTextFormat = "Decompression en cours...";
+            LoadingBar.Value = 0;
+            LoadingBar.IsVisible = true;
+            await Task.Delay(10);
+
+            await LoopOnLiveDecompression(files);
+
+            LoadingBar.ProgressTextFormat = "Terminé";
+            await Task.Delay(500);
+            LoadingBar.IsVisible = false;
+        }
+
+        private async Task LoopOnLiveDecompression(IReadOnlyList<IStorageFile> items)
+        {
+            float gap = 100.0f / items.Count;
+            foreach (var files in items)
+            {
+
+                var file = files as IStorageFile;
+                if (file != null)
+                {
+                    string filePath = file.TryGetLocalPath()!;
+                    FrmErrorPopUp frmErrorPopUp = new FrmErrorPopUp($"Le fichier {Path.GetFileName(filePath)} ne peut pas être décompresser");
+                    if (Path.GetExtension(filePath) == ".zip")
+                    {
+                        if (!await _libsGlobal.LiveDecompression(filePath))
+                        {
+                            await frmErrorPopUp.ShowDialog((Window)this.VisualRoot!);
+                        }
+                    }
+                    else
+                    {
+                        await frmErrorPopUp.ShowDialog((Window)this.VisualRoot!);
+                    }
+                    LoadingBar.Value += gap;
+                    await Task.Delay(1);
+                }
+            }
+        }
+
 
         #endregion FileBrowser
 
