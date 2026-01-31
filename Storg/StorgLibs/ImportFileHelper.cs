@@ -21,14 +21,7 @@ public class ImportFileHelper
 
     public ImportFileHelper()
     {
-        if (_systemHelper.GetCurrentOS() == _currentOS.Windows)
-        {
-            _storedFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigurationManager.AppSettings.Get("SavedFolder")!);
-        }
-        else if (_systemHelper.GetCurrentOS() == _currentOS.Linux || _systemHelper.GetCurrentOS() == _currentOS.OSX)
-        {
-            _storedFilePath = Path.Combine(Path.Combine(home, "storg"), ".data/SavedFolder");
-        }
+        _storedFilePath = _systemHelper.GetDestinationFolder();
     }
 
     public async Task<bool> ImportFileFromApi(ModelDisplayFetchFile fileName)

@@ -91,7 +91,7 @@ public partial class FrmDownloadPopup : Window
             {
                 if (!await _libsglobal.DownloadFile(file.Name))
                 {
-                    FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec du téléchargement du ficher :" + file.Name);
+                    FrmErrorPopUp PopUpWindows = new FrmErrorPopUp("Echec du téléchargement du ficher :" + file.Name+". Un dossier portant le même nom peut poser problème ou le fichier est compue");
                     await PopUpWindows.ShowDialog((Window)this.VisualRoot!);
                 }
                 LoadingBar.Value += gap;

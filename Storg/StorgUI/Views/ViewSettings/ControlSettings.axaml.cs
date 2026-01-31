@@ -167,15 +167,15 @@ public partial class ControlSettings : UserControl
         string url = "https://storg.serveousercontent.com/";
         try
         {
-            if (_libsGlobal.GetCurrentOS() == _currentOS.Windows)
+            if (_libsGlobal.IsWindows())
             {
                 Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
             }
-            else if (_libsGlobal.GetCurrentOS() == _currentOS.Linux)
+            else if (_libsGlobal.IsLinux())
             {
                 Process.Start("xdg-open", url);
             }
-            else if (_libsGlobal.GetCurrentOS() == _currentOS.OSX)
+            else if (_libsGlobal.IsOSX())
             {
                 Process.Start("open", url);
             }

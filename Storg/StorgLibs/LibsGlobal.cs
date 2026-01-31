@@ -145,5 +145,20 @@ namespace StorgLibs
         {
             return await _gestionfilehelper.LiveDecompression(filePath);
         }
+
+        public bool IsWindows()
+        {
+            return _systemhelper.IsWindows();
+        }
+
+        public bool IsLinux()
+        {
+            return _systemhelper.IsLinux();
+        }
+
+        public bool IsOSX()
+        {
+            return _systemhelper.IsOSX();
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.IO.Enumeration;
 using System.Threading.Tasks;
@@ -82,11 +83,12 @@ public partial class FrmErrorPopUp : Window
         this.Close();
     }
 
-    private void CloseErrorOrReplaceOnImport(object? sender, RoutedEventArgs e)
+    private async void CloseErrorOrReplaceOnImport(object? sender, RoutedEventArgs e)
     {
         if (_replaceMode)
         {
             _libsglobal.DeleteFile(_libsglobal.GetFileNameWithNoExtention(_fileName));
+            this.Hide();
             _ = _libsglobal.ImportFileFromApi(new ModelDisplayFetchFile() { fileName = _fileName });
         }
         this.Close();

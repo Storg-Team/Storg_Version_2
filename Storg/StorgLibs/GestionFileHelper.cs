@@ -25,7 +25,7 @@ namespace StorgLibs
         private delegate bool CompressFileDelegate(string filepath, string savefilepath, string data);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate int DecompressFileDelegate(
+        private delegate bool DecompressFileDelegate(
             [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr)]
             string[] filelist, int size, string filePath);
 
@@ -35,7 +35,6 @@ namespace StorgLibs
         private CompressFileDelegate _compressFile;
         private DecompressFileDelegate _decompressFile;
         private GetFileDataDelegate _getFileData;
-        private bool _disposed = false;
 
 
         private static string _savedFolder = ConfigurationManager.AppSettings.Get("SavedFolder")!;
@@ -47,7 +46,7 @@ namespace StorgLibs
         #region Methode
         public string GetLibPath()
         {
-            string libPath = "";
+            string libPath;
 
             if (_systemhelper.IsWindows())
             {
@@ -103,7 +102,7 @@ namespace StorgLibs
         }
         public async Task<bool> StoreFile(string fileName, string filePath, string fileSize)
         {
-            string Destination_Path = Path.Combine(_systemhelper.GetDestinationFolder(), fileName);
+            string destinationPath = Path.Combine(_systemhelper.GetDestinationFolder(), fileName);
 
             Directory.CreateDirectory(destinationPath);
             string tmpFilePath = Path.Combine(_systemhelper.GetWorkSpace(), fileName + ".txt");
@@ -154,12 +153,12 @@ namespace StorgLibs
 
             try
             {
-                if (!File.Exists(Path.Combine(downloadFolder, fileName)))
+                if (!File.Exists(Path.Combine(downloadFolder, fileName)) && !Directory.Exists(Path.Combine(downloadFolder, fileName)))
                 {
 
                     string[] filelist = GetFileImageListe(_bddhelper.GetStoredPath(fileName));
 
-                    if (DecompressFile(filelist, filelist.Length, tmpFilePath))
+                    if (_decompressFile(filelist, filelist.Length, tmpFilePath))
                     {
                         using FileStream fs = new FileStream(tmpFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 61440 * 1024);
                         using FileStream output = new FileStream(Path.Combine(downloadFolder, fileName), FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 61440 * 1024);
@@ -239,7 +238,7 @@ namespace StorgLibs
             }
             else
             {
-                string downloadFolderPath = Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_" + fileName);
+                string downloadFolderPath = Path.Combine(_systemhelper.GetDownloadFolder(), fileName+".zip");
                 Directory.Delete(downloadFolderPath, recursive: true);
                 await ExportFile(fileName);
             }
@@ -254,7 +253,7 @@ namespace StorgLibs
             }
             else
             {
-                if (Directory.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), "Dir_" + fileName)))
+                if (Directory.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), fileName+".zip")))
                     return true;
             }
 
@@ -290,7 +289,7 @@ namespace StorgLibs
 
                 string[] imageList = this.GetFileImageListe(filePathUnZip);
 
-                if (DecompressFile(imageList, imageList.Length, tmpFilePath))
+                if (_decompressFile(imageList, imageList.Length, tmpFilePath))
                 {
                     using FileStream fs = new FileStream(tmpFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 61440 * 1024);
                     using FileStream output = new FileStream(Path.Combine(_systemhelper.GetDownloadFolder(), fileName), FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 61440 * 1024);
