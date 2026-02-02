@@ -17,7 +17,7 @@ public class APIHelper
 
     public APIHelper()
     {
-        _httpClient.BaseAddress = new Uri("https://storgapi.serveousercontent.com");
+        _httpClient.BaseAddress = new Uri("https://kandra-unmalleable-glayds.ngrok-free.dev");
     }
 
 

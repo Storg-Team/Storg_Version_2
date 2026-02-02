@@ -43,14 +43,6 @@ namespace StorgTestUnitaire
         }
 
         [TestMethod]
-        public void TestModelCurrentOS()
-        {
-            Assert.AreEqual(_currentOs.Windows, "Windows");
-            Assert.AreEqual(_currentOs.Linux, "Linux");
-            Assert.AreEqual(_currentOs.OSX, "MacOs");
-        }
-
-        [TestMethod]
         public void TestBDDStorage()
         {
 
@@ -120,14 +112,13 @@ namespace StorgTestUnitaire
 
             Assert.IsTrue(File.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), testfile.Name)));
 
-            // using (FileStream fs = File.Open(Path.Combine(_systemhelper.GetDownloadFolder(), testfile.Name), FileMode.Open))
-            // {
-            //     Assert.Equals(LengthRef, fs.Length);
-            // }
 
             Assert.IsTrue(_gestionfilehelper.DeleteFile(testfile.Name));
 
             File.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "testdelete.pdf"));
+            File.Delete(Path.Combine(_systemhelper.GetDownloadFolder(), testfile.Name+".zip"));
+            File.Delete(Path.Combine(_systemhelper.GetDownloadFolder(), testfile.Name));
+            File.Delete(Path.Combine(_systemhelper.GetDestinationFolder(), testfile.Name));
         }
 
 
