@@ -57,7 +57,7 @@ namespace StorgLibs
             }
             else if (_systemhelper.IsOSX())
             {
-                libPath = Path.Combine(_currentExecDirectory,"Libs", "libs_filecompression.dylib");
+                libPath = Path.Combine(_currentExecDirectory, "Libs", "libs_filecompression.dylib");
             }
             else
             {
@@ -237,7 +237,7 @@ namespace StorgLibs
             }
             else
             {
-                string downloadFolderPath = Path.Combine(_systemhelper.GetDownloadFolder(), fileName+".zip");
+                string downloadFolderPath = Path.Combine(_systemhelper.GetDownloadFolder(), fileName + ".zip");
                 Directory.Delete(downloadFolderPath, recursive: true);
                 await ExportFile(fileName);
             }
@@ -252,7 +252,7 @@ namespace StorgLibs
             }
             else
             {
-                if (Directory.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), fileName+".zip")))
+                if (Directory.Exists(Path.Combine(_systemhelper.GetDownloadFolder(), fileName + ".zip")))
                     return true;
             }
 
@@ -263,14 +263,21 @@ namespace StorgLibs
         {
             IList<KeyValuePair<int, string>> ImageListeKeyValue = new List<KeyValuePair<int, string>>();
 
-            Regex regex = new Regex(@"/img(\d{0,}).webp");
+            Regex regex = new Regex(@"img(\d{0,}).webp");
 
-            foreach (string imageName in Directory.GetFiles(filePath))
+            try
             {
-                int imageNumber = Int16.Parse(regex.Match(imageName).Groups[1].Value);
-                ImageListeKeyValue.Add(new KeyValuePair<int, string>(imageNumber, $"{imageName}"));
+                foreach (string imageName in Directory.GetFiles(filePath))
+                {
+                    int imageNumber = Int16.Parse(regex.Match(imageName).Groups[1].Value);
+                    ImageListeKeyValue.Add(new KeyValuePair<int, string>(imageNumber, $"{imageName}"));
+                }
+                return ImageListeKeyValue.OrderBy(f => f.Key).Select(f => f.Value).ToArray();
             }
-            return ImageListeKeyValue.OrderBy(f => f.Key).Select(f => f.Value).ToArray();
+            catch (Exception)
+            {
+                return [];
+            }
         }
 
         public async Task<bool> LiveDecompression(string filePath)
