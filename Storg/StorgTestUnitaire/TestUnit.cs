@@ -9,15 +9,14 @@ using StorgLibs.Libs;
 namespace StorgTestUnitaire
 {
     [TestClass]
+    [DoNotParallelize]
     public sealed class TestUnit
     {
 
         private BDDHelper _bddhelper = new BDDHelper();
         private GestionFileHelper _gestionfilehelper = new GestionFileHelper();
-        private ModelCurrentOS _currentOs = new ModelCurrentOS();
         private SystemHelper _systemhelper = new SystemHelper();
         private APIHelper _apiHelper = new APIHelper();
-        private ImportFileHelper _import = new ImportFileHelper();
 
         [TestMethod]
         public void TestBDDFileExist()

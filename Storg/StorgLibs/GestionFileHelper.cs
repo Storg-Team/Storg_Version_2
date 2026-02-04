@@ -37,7 +37,6 @@ namespace StorgLibs
         private GetFileDataDelegate _getFileData;
 
 
-        private static string _savedFolder = ConfigurationManager.AppSettings.Get("SavedFolder")!;
         private static string _currentExecDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private SystemHelper _systemhelper = new SystemHelper();
         private BDDHelper _bddhelper = new BDDHelper();

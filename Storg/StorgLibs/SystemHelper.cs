@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Configuration;
 using System.Runtime.InteropServices;
 using StorgCommon;
 
@@ -32,7 +31,7 @@ namespace StorgLibs
 
             if (IsWindows()) // Cree les chemin pour enregistrer les fichiers
             {
-                destinationFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigurationManager.AppSettings.Get("SavedFolder")!);
+                destinationFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".data\\SavedFile");
             }
             else if (IsLinux() || IsOSX())
             {
