@@ -110,7 +110,7 @@ namespace StorgLibs
             try
             {
                 using FileStream fs = File.OpenRead(filePath);
-                using FileStream output = new FileStream(tmpFilePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 61440 * 1024);
+                using FileStream output = new FileStream(tmpFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, bufferSize: 61440 * 1024);
 
                 using ToBase64Transform transform = new ToBase64Transform();
                 using CryptoStream crypto = new CryptoStream(output, transform, CryptoStreamMode.Write);
@@ -160,7 +160,7 @@ namespace StorgLibs
 
                     if (_decompressFile(filelist, filelist.Length, tmpFilePath))
                     {
-                        using FileStream fs = new FileStream(tmpFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 61440 * 1024);
+                        using FileStream fs = new FileStream(tmpFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize: 61440 * 1024);
                         using FileStream output = new FileStream(Path.Combine(downloadFolder, fileName), FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 61440 * 1024);
 
                         using FromBase64Transform transform = new FromBase64Transform();
