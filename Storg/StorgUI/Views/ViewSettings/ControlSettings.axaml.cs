@@ -61,6 +61,9 @@ public partial class ControlSettings : UserControl
             txtboxPassword.Text = hidePassword;
             check.IsVisible = true;
             cross.IsVisible = false;
+            _settings.isConnected = true;
+            _settings.login = email;
+            _settings.password = password;
         }
         else
         {
@@ -74,7 +77,12 @@ public partial class ControlSettings : UserControl
         _settings.canConnect = (bool)switchConnection.IsChecked!;
         this.SetVisibility();
         _libsGlobal.UpdateSettingsCanConnect(_settings.canConnect);
-        if (!_settings.canConnect) _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId, false);
+        if (!_settings.canConnect)
+        {
+            _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId, false);
+            check.IsVisible = false;
+            cross.IsVisible = true;
+        }
         else
         {
             Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(_settings.login, _settings.password);
@@ -82,10 +90,10 @@ public partial class ControlSettings : UserControl
             if (userInformation.First().Value)
             {
                 _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId);
+                check.IsVisible = true;
+                cross.IsVisible = false;
             }
         }
-        check.IsVisible = check.IsVisible ? false : true;
-        cross.IsVisible = cross.IsVisible ? false : true;
     }
 
     private void GotFocusEmail(object? sender, RoutedEventArgs e)
