@@ -15,6 +15,10 @@ using StorgUI.Views.ViewFetchFiles;
 using Avalonia.Media;
 using System.Runtime.CompilerServices;
 using System.IO;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
+using Avalonia;
 
 
 namespace StorgUI
@@ -116,6 +120,8 @@ namespace StorgUI
         {
             _settings = _libsGlobal.LoadSettings();
             btnFetch.IsVisible = _settings.isConnected;
+
+            Application.Current!.RequestedThemeVariant = _settings.lightMode ? ThemeVariant.Light : ThemeVariant.Dark;
         }
 
         private void OnClickSettings(object? sender, RoutedEventArgs e)

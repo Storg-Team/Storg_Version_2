@@ -7,6 +7,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using StorgCommon;
 using StorgLibs;
 
@@ -120,7 +121,10 @@ public partial class ControlSettings : UserControl
 
     private void UpdateSettingsTheme(object? sender, RoutedEventArgs e)
     {
-        _libsGlobal.UpdateSettingsThemeMode(!(bool)switchTheme.IsChecked!);
+        _settings.lightMode = !(bool)switchTheme.IsChecked!;
+        _libsGlobal.UpdateSettingsThemeMode(_settings.lightMode);
+        Application.Current!.RequestedThemeVariant = _settings.lightMode ? ThemeVariant.Light : ThemeVariant.Dark;
+
     }
 
     private void OnLoadSettings(object? sender, RoutedEventArgs e)
