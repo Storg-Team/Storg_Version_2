@@ -15,22 +15,24 @@ using Avalonia.Layout;
 using StorgLibs;
 using StorgCommon;
 using System.Linq;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.Data.Sqlite;
 
 namespace StorgUI
 {
     public partial class MainWindow : Window
     {
 
+        private LibsGlobal _libsGlobal = new LibsGlobal();
 
         public MainWindow()
         {
+            _libsGlobal.IsBddExisting();
+            _libsGlobal.VerifConnection();
+
             InitializeComponent();
-
-
-
         }
-
-
     }
 }
 

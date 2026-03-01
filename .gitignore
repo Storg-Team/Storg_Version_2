@@ -6,7 +6,6 @@
 ###################
 *.com
 *.class
-*.dll
 *.exe
 *.pdb
 *.dll.config
@@ -23,6 +22,7 @@ _UpgradeReport_Files/
 ###############
 # Directories #
 ###############
+.vscode/
 .idea/
 bin/
 obj/
@@ -57,6 +57,11 @@ TestResults/
 # OS generated files #
 ######################
 .DS_Store?
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
+
 ehthumbs.db
 Icon?
 Thumbs.db

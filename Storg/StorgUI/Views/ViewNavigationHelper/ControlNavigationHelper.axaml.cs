@@ -1,8 +1,11 @@
+using System.Collections;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 
 namespace StorgUI;
 
@@ -19,51 +22,51 @@ public partial class ControlNavigationHelper : UserControl
         Button btnFonc = this.FindControl<Button>("Fonc")!;
         if (btnFonc != null)
         {
-           btnFonc.Click += GoToFonc;
-           btnFonc.GotFocus += (sender, e) =>
-           {
-               btnFonc.Background = new SolidColorBrush(Color.Parse("#bca7a7"));
-           };
-           btnFonc.LostFocus += (sender, e) =>
-           {
-               btnFonc.Background = new SolidColorBrush(Color.Parse("#d6bebe"));
-           };
+            btnFonc.Click += GoToFonc;
+            btnFonc.GotFocus += (sender, e) =>
+            {
+                btnFonc.Background = new SolidColorBrush(Color.Parse("#bca7a7"));
+            };
+            btnFonc.LostFocus += (sender, e) =>
+            {
+                btnFonc.Background = new SolidColorBrush(Color.Parse("#d6bebe"));
+            };
 
         }
         Button btnNav = this.FindControl<Button>("Nav")!;
         if (btnNav != null)
         {
-           this.Loaded += (sender, e) => btnNav.Focus();
+            this.Loaded += (sender, e) => btnNav.Focus();
 
-           btnNav.GotFocus += (sender, e) =>
-           {
-               btnNav.Background = new SolidColorBrush(Color.Parse("#bca7a7"));
-           };
-           btnNav.LostFocus += (sender, e) =>
-           {
-               btnNav.Background = new SolidColorBrush(Color.Parse("#d6bebe"));
-           };
-           btnNav.Click += SetAideNav;
+            btnNav.GotFocus += (sender, e) =>
+            {
+                btnNav.Background = new SolidColorBrush(Color.Parse("#bca7a7"));
+            };
+            btnNav.LostFocus += (sender, e) =>
+            {
+                btnNav.Background = new SolidColorBrush(Color.Parse("#d6bebe"));
+            };
+            btnNav.Click += SetAideNav;
         }
     }
 
     private void Dynamic_Change_Size(object? sender, RoutedEventArgs e)
     {
-       var scoll_find = this.FindControl<ScrollViewer>("ScrollBar");
-       if (scoll_find != null)
-       {
-           scoll_find.Height = Height - 300;
-       }
+        ScrollViewer? scoll_find = this.FindControl<ScrollViewer>("ScrollBar");
+        if (scoll_find != null)
+        {
+            scoll_find.Height = Height - 300;
+        }
     }
 
     private void GoToFonc(object? sender, RoutedEventArgs e)
     {
-       MainContentNav.Content = new ControlWorkingHelper().Content;
+        MainContentNav.Content = new ControlWorkingHelper().Content;
     }
 
     private void SetAideNav(object? sender, RoutedEventArgs e)
     {
-       MainContentNav.Content = new ControlNavigationHelper();
+        MainContentNav.Content = new ControlNavigationHelper();
     }
 
 }

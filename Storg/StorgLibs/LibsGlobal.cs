@@ -1,5 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using StorgCommon;
+using StorgLibs.Libs;
 
 namespace StorgLibs
 {
@@ -8,21 +10,25 @@ namespace StorgLibs
         private SystemHelper _systemhelper = new SystemHelper();
         private BDDHelper _bddhelper = new BDDHelper();
         private GestionFileHelper _gestionfilehelper = new GestionFileHelper();
+        private static APIHelper _apiHelper = new APIHelper();
+        private ConnectionHelper _connectionHelper = new ConnectionHelper();
+        private UploadFileHelper _uploadFileHelper = new UploadFileHelper();
+        private ImportFileHelper _importFileHelper = new ImportFileHelper();
 
-      
+
+        public void IsBddExisting()
+        {
+            _bddhelper.IsBddExisting();
+        }
+
         public IList<ModelFile> LoadStoredFile()
         {
             return _bddhelper.LoadStoredFile();
         }
 
-        public string GetCurrentOS()
+        public bool CheckIfFileExistInBDD(string NameFIle)
         {
-            return _systemhelper.GetCurrentOS();
-        }
-
-        public bool CheckIfFileExist(string NameFIle)
-        {
-            return _bddhelper.CheckIfFileExist(NameFIle);
+            return _bddhelper.CheckIfFileExistInBDD(NameFIle);
         }
 
         public ModelTime GetDateTime()
@@ -30,14 +36,14 @@ namespace StorgLibs
             return _systemhelper.GetDateTime();
         }
 
-        public bool StoreFile(string FileName, string FilePath, string FileSize)
+        public async Task<bool> StoreFile(string FileName, string FilePath, string FileSize)
         {
-            return _gestionfilehelper.StoreFile(FileName, FilePath, FileSize);
+            return await _gestionfilehelper.StoreFile(FileName, FilePath, FileSize);
         }
 
-        public void StoreFileToBDD(ModelFile file)
+        public bool StoreFileToBDD(ModelFile file)
         {
-            _bddhelper.StoreFileToBDD(file);
+            return _bddhelper.StoreFileToBDD(file);
         }
 
         public string GetDownloadFolder()
@@ -45,35 +51,114 @@ namespace StorgLibs
             return _systemhelper.GetDownloadFolder();
         }
 
-        public bool DownloadFile(string FileName)
+        public async Task<bool> DownloadFile(string fileName)
         {
-            return _gestionfilehelper.DownloadFile(FileName);
+            return await _gestionfilehelper.DownloadFile(fileName);
         }
 
-        public string GetStoredPath(string FileName)
+        public string GetStoredPath(string fileName)
         {
-            return _bddhelper.GetStoredPath(FileName);
+            return _bddhelper.GetStoredPath(fileName);
         }
 
-        public void DeleteFileInBDD(string FileName)
+        public bool DeleteFile(string fileName)
         {
-            _bddhelper.DeleteFileInBDD(FileName);
+            return _gestionfilehelper.DeleteFile(fileName);
         }
 
-        public void DeleteFile(string StoredFilePath)
+        public async Task<bool> ExportFile(string fileName)
         {
-            _gestionfilehelper.DeleteFile(StoredFilePath);
+            return await _gestionfilehelper.ExportFile(fileName);
         }
 
-        public void ExportFile(string FileName)
+        public IList<ModelFile> ResearchFileByName(string researchText)
         {
-            _gestionfilehelper.ExportFile(FileName);
+            return _bddhelper.ResearchFileByName(researchText);
         }
 
-        public IList<ModelFile> ResearchFileByName(string ResearchText)
+        public async Task ReplaceOnExportOrDownload(string fileName, bool isFile = true)
         {
-            return _bddhelper.ResearchFileByName(ResearchText);
+            await _gestionfilehelper.ReplaceOnExportOrDownload(fileName, isFile);
         }
 
+        public bool CheckIfExistInDownloadFolder(string fileName, bool isFile = true)
+        {
+            return _gestionfilehelper.CheckIfExistInDownloadFolder(fileName, isFile);
+        }
+
+        public async Task<Dictionary<int, bool>> StartConnection(string login, string password)
+        {
+            return await _apiHelper.StartConnection(login, password);
+        }
+
+        public bool UpdateSettingsThemeMode(bool lightMode)
+        {
+            return _bddhelper.UpdateSettingsThemeMode(lightMode);
+        }
+
+        public bool UpdateSettingsCanConnect(bool canConnect)
+        {
+            return _bddhelper.UpdateSettingsCanConnect(canConnect);
+        }
+
+        public bool UpdateSettingsCredentials(string login, string password, int userId, bool isConnected = true)
+        {
+            return _bddhelper.UpdateSettingsCredentials(login, password, userId, isConnected);
+        }
+
+        public ModelSettings LoadSettings()
+        {
+            return _bddhelper.LoadSettings();
+        }
+
+        public async void VerifConnection()
+        {
+            await _connectionHelper.VerifConnection();
+        }
+
+        public async Task<IList<string>> GetFilesUploaded()
+        {
+            return await _apiHelper.GetFilesUploaded();
+        }
+
+        public async Task<bool> UploadFileFromApi(ModelDisplayFiles file)
+        {
+            return await _uploadFileHelper.UploadFileFromApi(file);
+        }
+
+        public async Task<bool> ImportFileFromApi(ModelDisplayFetchFile fileName)
+        {
+            return await _importFileHelper.ImportFileFromApi(fileName);
+        }
+
+        public async Task<bool> DeleteFileApi(string fileName)
+        {
+            return await _apiHelper.DeleteFileApi(fileName);
+        }
+
+        public string GetFileNameWithNoExtention(string fileName)
+        {
+            return _importFileHelper.GetFileNameWithNoExtention(fileName);
+        }
+
+        public async Task<bool> LiveDecompression(string filePath)
+        {
+            return await _gestionfilehelper.LiveDecompression(filePath);
+        }
+
+        public bool IsWindows()
+        {
+            return _systemhelper.IsWindows();
+        }
+
+        public bool IsLinux()
+        {
+            return _systemhelper.IsLinux();
+        }
+
+        public bool IsOSX()
+        {
+            return _systemhelper.IsOSX();
+        }
     }
 }

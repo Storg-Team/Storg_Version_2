@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Width="500" Height="600"
+        WindowStartupLocation="CenterOwner"
+        CanMinimize="False"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="600"
+        x:Class="StorgUI.Views.ViewFetchFiles.FrmFetchFiles"
+        Focusable="True"
+        PointerPressed="UnSelectDataGrid"
+        Title="FrmFetchFiles">
+
+<Grid>
+  <StackPanel Orientation="Vertical" Margin="15" Spacing="40">
+    <TextBlock Text="Récupérer les fichiers que vous avez trensférer :" FontSize="25" TextWrapping="Wrap"  />
+
+    <DataGrid Name="dataGrid" GridLinesVisibility="All" BorderThickness="1" BorderBrush="Black" MaxHeight="400"
+    IsReadOnly="True" CanUserResizeColumns="False" CanUserReorderColumns="False"/>
+      
+  </StackPanel>
+  <ProgressBar Name="loadingBar" IsVisible="False" VerticalAlignment="Bottom" Margin="15,0,15,90" ProgressTextFormat="Import en cours..." Height="20" ShowProgressText="True" Foreground="#0eba2f"/>
+  <Button Name="btnSupprimer" Content="Supprimer" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,130,30" Classes="ErrorBtn" BorderBrush="Black" IsVisible="False"/>
+  <Button Name="btnImporter" Content="Importer" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,30" Classes="ErrorBtn" BorderBrush="Black"/>
+</Grid>
+</Window>
+ 

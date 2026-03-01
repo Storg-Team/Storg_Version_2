@@ -2,8 +2,39 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="StorgUI.ControlSettings">
-	<Grid>
-		<TextBlock Text="Paramètres :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black" Margin="25,25,0,0" FontSize="30"/>
+	<Grid Margin="25,25,0,0">
+        <StackPanel Orientation="Vertical" Spacing="40">
+            <StackPanel Orientation="Vertical" Spacing="20">
+                <TextBlock Text="Apparence :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black"  FontSize="25"/>
+ 
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center"> 
+                    <TextBlock Text="Thème : " />
+                    <ToggleSwitch OffContent="Clair" OnContent="Sombre" Classes="ThemeMode" Margin="0,-5,0,0" Name="switchTheme"/>
+                </StackPanel>
+
+            </StackPanel>
+
+            <StackPanel Spacing="20" HorizontalAlignment="Left">
+                <TextBlock Text="Transfer de fichiers :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black"  FontSize="25"/>
+
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <TextBlock Text="Autoriser la connexion : "/>
+                    <ToggleSwitch OffContent="Désactiver" OnContent="Activer" Margin="0,-8,0,0" Name="switchConnection"/>
+                    <Image Source="avares://StorgUI/Resources/check_green.png" Name="check" Width="25" Height="25" Margin="0,-8,0,0" IsVisible="False" ToolTip.Tip="Vous êtes connecté"/> 
+                    <Image Source="avares://StorgUI/Resources/cross_red.png" Name="cross" Width="25" Height="25" Margin="0,-8,0,0" IsVisible="True" ToolTip.Tip="Vous n'êtes pas connecté"/> 
+                </StackPanel>
+                <TextBox Text="Email" Width="350" Name="txtboxEmail" IsEnabled="False" Focusable="True" HorizontalAlignment="Left"/>
+                <TextBox Text="Mot de passe" Width="350" Name="txtboxPassword" IsEnabled="False" Focusable="True" HorizontalAlignment="Left"/>
+                <TextBlock Name="txtConnectionResult" Text="template texte" IsVisible="False"/>
+                <Button Content="Connexion" Name="btnConnection" IsEnabled="False"/>
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
+                    <TextBlock Text="Si vous n'avez pas encore de compte créé en un " Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                    <HyperlinkButton Name="hyperLinkUser" Content="ici" Grid.Row="0" Grid.Column="1" FontSize="16" Background="Transparent" Classes="DefaultBt" Foreground="BlueViolet"/>
+                </Grid>
+            </StackPanel>
+            
+        </StackPanel>
 	</Grid>
 </UserControl>
