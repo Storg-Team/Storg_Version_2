@@ -50,7 +50,7 @@ namespace StorgUI
             this.refresh();
 
             FilesGrid.Tapped += DisplayBtnOptionFile;
-            dragDrop.AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop
+            dragDrop.AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declencher la fonction de Drag and Drop
 
 
 
