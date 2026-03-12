@@ -33,7 +33,7 @@ public partial class ControlSettings : UserControl
 
 
         btnConnection.Click += TryConnection;
-        switchConnection.Click += ToggleConnection;
+        btnDisconnection.Click += TryDisconnection;
         txtboxEmail.GotFocus += GotFocusEmail;
         txtboxPassword.GotFocus += GotFocusPassword;
         txtboxPassword.LostFocus += LostFocusPassword;
@@ -57,7 +57,8 @@ public partial class ControlSettings : UserControl
         Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(email, password);
         if (userInformation.First().Value)
         {
-            txtConnectionResult.Text = "Connexion réussi";
+            txtConnectionStatus.Text = "Connecté";
+            txtConnectionResult.Text = "Connexion réussie";
             _libsGlobal.UpdateSettingsCredentials(email, password, userInformation.First().Key);
             txtboxPassword.Text = hidePassword;
             check.IsVisible = true;
@@ -73,27 +74,22 @@ public partial class ControlSettings : UserControl
         txtConnectionResult.IsVisible = true;
     }
 
+    private async void TryDisconnection(object? sender, RoutedEventArgs e)
+    {
+        _libsGlobal.DisconnectUser();
+        check.IsVisible = false;
+        cross.IsVisible = true;
+    }
+
     private async void ToggleConnection(object? sender, RoutedEventArgs e)
     {
-        _settings.canConnect = (bool)switchConnection.IsChecked!;
-        this.SetVisibility();
-        _libsGlobal.UpdateSettingsCanConnect(_settings.canConnect);
-        if (!_settings.canConnect)
-        {
-            _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId, false);
-            check.IsVisible = false;
-            cross.IsVisible = true;
-        }
-        else
-        {
-            Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(_settings.login, _settings.password);
+        Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(_settings.login, _settings.password);
 
-            if (userInformation.First().Value)
-            {
-                _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId);
-                check.IsVisible = true;
-                cross.IsVisible = false;
-            }
+        if (userInformation.First().Value)
+        {
+            _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId);
+            check.IsVisible = true;
+            cross.IsVisible = false;
         }
     }
 
@@ -131,7 +127,6 @@ public partial class ControlSettings : UserControl
     {
         _settings = _libsGlobal.LoadSettings();
         this.SetLoadSettings();
-        this.SetVisibility();
     }
 
     private void OnLoadSetConnectionIcons(object? sender, RoutedEventArgs e)
@@ -159,17 +154,9 @@ public partial class ControlSettings : UserControl
 
     #region Methode
 
-    private void SetVisibility()
-    {
-        txtboxEmail.IsEnabled = _settings.canConnect;
-        txtboxPassword.IsEnabled = _settings.canConnect;
-        btnConnection.IsEnabled = _settings.canConnect;
-    }
-
     private void SetLoadSettings()
     {
         switchTheme.IsChecked = !_settings.lightMode;
-        switchConnection.IsChecked = _settings.canConnect;
         txtboxEmail.Text = _settings.login != "" ? _settings.login : "Email";
         txtboxPassword.Text = _settings.password != "" ? hidePassword : "Mot de passe";
     }
