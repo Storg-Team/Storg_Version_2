@@ -29,17 +29,17 @@
                 <TextBox Text="Email" Width="350" Name="txtboxEmail" Focusable="True" HorizontalAlignment="Left"/>
                 <TextBox Text="Mot de passe" Width="350" Name="txtboxPassword" Focusable="True" HorizontalAlignment="Left"/>
                 <TextBlock Name="txtConnectionResult" Text="template texte" IsVisible="False"/>
-                <CheckBox Name="stayConnected" Text="Se souvenir de moi" IsChecked="False"/>
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
-                    <Button Content="Connexion" Name="btnConnection" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                    <Button Content="Déconnexion" Name="btnDisconnection" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Focusable="False"/>
-                </Grid>
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
-                    <TextBlock Text="Si vous n'avez pas encore de compte créé en un " Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                    <HyperlinkButton Name="hyperLinkUser" Content="ici" Grid.Row="0" Grid.Column="1" FontSize="16" Background="Transparent" Classes="DefaultBt" Foreground="Black"/>
-                </Grid>
-            </StackPanel>
-
+                <CheckBox Name="stayConnected">Se souvenir de moi</CheckBox>
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
+                <Button Content="Connexion" Name="btnConnection" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                <Button Content="Déconnexion" Name="btnDisconnection" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" IsEnabled="False"/>
+            </Grid>
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
+                <TextBlock Text="Si vous n'avez pas encore de compte créé en un " Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                <HyperlinkButton Name="hyperLinkUser" Content="ici" Grid.Row="0" Grid.Column="1" FontSize="16" Background="Transparent" Classes="DefaultBt" Foreground="Black"/>
+            </Grid>
         </StackPanel>
-    </Grid>
+
+    </StackPanel>
+</Grid>
 </UserControl>

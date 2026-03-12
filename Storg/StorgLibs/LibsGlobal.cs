@@ -96,11 +96,6 @@ namespace StorgLibs
             return _bddhelper.UpdateSettingsThemeMode(lightMode);
         }
 
-        public bool UpdateSettingsCanConnect(bool canConnect)
-        {
-            return _bddhelper.UpdateSettingsCanConnect(canConnect);
-        }
-
         public bool UpdateSettingsCredentials(string login, string password, int userId, bool isConnected = true)
         {
             return _bddhelper.UpdateSettingsCredentials(login, password, userId, isConnected);
@@ -115,6 +110,11 @@ namespace StorgLibs
         {
             await _connectionHelper.VerifConnection();
         }
+
+        public async void DisconnectUser()
+        {
+            await _connectionHelper.DisconnectUser();
+        } 
 
         public async Task<IList<string>> GetFilesUploaded()
         {

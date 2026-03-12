@@ -26,7 +26,7 @@ public partial class ControlSettings : UserControl
         InitializeComponent();
 
         this.Loaded += OnLoadSettings;
-        this.Loaded += OnLoadSetConnectionIcons;
+        this.Loaded += OnLoadSetConnection;
 
 
         #region Event
@@ -35,6 +35,7 @@ public partial class ControlSettings : UserControl
         btnConnection.Click += TryConnection;
         btnDisconnection.Click += TryDisconnection;
         txtboxEmail.GotFocus += GotFocusEmail;
+        txtboxEmail.LostFocus += LostFocusEmail;
         txtboxPassword.GotFocus += GotFocusPassword;
         txtboxPassword.LostFocus += LostFocusPassword;
         switchTheme.IsCheckedChanged += UpdateSettingsTheme;
@@ -66,6 +67,8 @@ public partial class ControlSettings : UserControl
             _settings.isConnected = true;
             _settings.login = email;
             _settings.password = password;
+            btnDisconnection.IsEnabled = true;
+            btnConnection.IsEnabled = false;
         }
         else
         {
@@ -77,8 +80,21 @@ public partial class ControlSettings : UserControl
     private async void TryDisconnection(object? sender, RoutedEventArgs e)
     {
         _libsGlobal.DisconnectUser();
+        _settings.isConnected = false;
+        txtConnectionStatus.Text = "Déconnecté";
         check.IsVisible = false;
         cross.IsVisible = true;
+        btnConnection.IsEnabled = true;
+        btnDisconnection.IsEnabled = false;
+        if (stayConnected.IsChecked == true)
+        {
+            txtboxEmail.Text = _settings.login;
+            txtboxPassword.Text = _settings.password;
+            txtboxPassword.PasswordChar = '*';
+        }
+        txtboxEmail.Text = "Email";
+        txtboxPassword.Text = "Mot de passe";
+        txtboxPassword.PasswordChar = '\0';
     }
 
     private async void ToggleConnection(object? sender, RoutedEventArgs e)
@@ -98,9 +114,17 @@ public partial class ControlSettings : UserControl
         if (txtboxEmail.Text == "Email") txtboxEmail.Text = "";
     }
 
+    private void LostFocusEmail(object? sender, RoutedEventArgs e)
+    {
+        if (txtboxEmail.Text == "")
+        {
+            txtboxEmail.Text = "Email";
+        }
+    }
+
     private void GotFocusPassword(object? sender, RoutedEventArgs e)
     {
-        if (txtboxPassword.Text == "Mot de passe" || txtboxPassword.Text == hidePassword)
+        if (txtboxPassword.Text == "Mot de passe" || txtboxPassword.Text == _settings.password)
         {
             txtboxPassword.Text = "";
             txtboxPassword.PasswordChar = '*';
@@ -109,9 +133,11 @@ public partial class ControlSettings : UserControl
 
     private void LostFocusPassword(object? sender, RoutedEventArgs e)
     {
-        if (_settings.password != "" && txtboxPassword.Text == "")
+        if (txtboxPassword.Text == "")
         {
-            txtboxPassword.Text = hidePassword;
+            txtboxPassword.Text = "Mot de passe";
+            txtboxPassword.PasswordChar = '\0';
+
         }
     }
 
@@ -129,10 +155,13 @@ public partial class ControlSettings : UserControl
         this.SetLoadSettings();
     }
 
-    private void OnLoadSetConnectionIcons(object? sender, RoutedEventArgs e)
+    private void OnLoadSetConnection(object? sender, RoutedEventArgs e)
     {
         if (_settings.isConnected)
         {
+            txtConnectionStatus.Text = "Connecté";
+            btnConnection.IsEnabled = false;
+            btnDisconnection.IsEnabled = true;
             check.IsVisible = true;
             cross.IsVisible = false;
         }
@@ -158,7 +187,14 @@ public partial class ControlSettings : UserControl
     {
         switchTheme.IsChecked = !_settings.lightMode;
         txtboxEmail.Text = _settings.login != "" ? _settings.login : "Email";
-        txtboxPassword.Text = _settings.password != "" ? hidePassword : "Mot de passe";
+        if (stayConnected.IsChecked == true)
+        {
+            txtboxPassword.Text = _settings.password;
+        }
+        else
+        {
+            txtboxPassword.Text = "Mot de passe";
+        }
     }
 
     private void Redirect()
