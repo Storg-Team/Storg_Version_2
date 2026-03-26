@@ -21,6 +21,7 @@ public class ConnectionHelper
             if (!_settings.stayConnected)
             {
                 await this.DisconnectUser();
+                return;
             }
             Dictionary<int, bool> userInformation = await _apiHelper.StartConnection(_settings.login, _settings.password);
             if (userInformation.First().Value)
