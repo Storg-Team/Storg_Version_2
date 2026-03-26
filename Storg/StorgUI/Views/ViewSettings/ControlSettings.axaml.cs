@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -53,8 +55,8 @@ public partial class ControlSettings : UserControl
     {
         string email = txtboxEmail.Text ?? "";
         string password = txtboxPassword.Text != null && txtboxPassword.Text != hidePassword ? txtboxPassword.Text : _settings.password;
-
-        Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(email, password);
+        Console.WriteLine(CryptoHelper.Hash(password));
+        Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(email, CryptoHelper.Hash(password));
         if (userInformation.First().Value)
         {
             txtConnectionStatus.Text = "Connecté";
@@ -204,7 +206,7 @@ public partial class ControlSettings : UserControl
         switchTheme.IsChecked = !_settings.lightMode;
         txtboxEmail.Text = _settings.login != "" ? _settings.login : "Email";
         txtboxPassword.Text = _settings.stayConnected ? _settings.password : "Mot de passe";
-        txtboxPassword.PasswordChar = '*';
+        if (txtboxPassword.Text != "Mot de passe") txtboxPassword.PasswordChar ='*';
     }
 
     private void Redirect()

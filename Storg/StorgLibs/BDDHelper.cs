@@ -9,6 +9,7 @@ using Microsoft.Data.Sqlite;
 using StorgCommon;
 using System.Runtime.CompilerServices;
 using System.Configuration;
+using System.Security.Cryptography;
 
 namespace StorgLibs
 {
@@ -18,8 +19,6 @@ namespace StorgLibs
         private static string _connectionString = "";
         private SystemHelper _systemhelper = new SystemHelper();
         private string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-
 
         public BDDHelper()
         {
@@ -321,7 +320,7 @@ namespace StorgLibs
                 command.CommandText = "UPDATE Settings SET userId = @userId, login = @login, password = @password, isConnected = @connected WHERE id = 1;";
                 command.Parameters.AddWithValue("userId", userId);
                 command.Parameters.AddWithValue("login", login);
-                command.Parameters.AddWithValue("password", password);
+                command.Parameters.AddWithValue("password", CryptoHelper.Hash(password));
                 command.Parameters.AddWithValue("connected", isConnected);
 
                 command.ExecuteNonQuery();
