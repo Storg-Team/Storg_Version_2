@@ -18,7 +18,10 @@ public class ConnectionHelper
         _settings = _bddHelper.LoadSettings();
         try
         {
-
+            if (!_settings.stayConnected)
+            {
+                await this.DisconnectUser();
+            }
             Dictionary<int, bool> userInformation = await _apiHelper.StartConnection(_settings.login, _settings.password);
             if (userInformation.First().Value)
             {
@@ -38,7 +41,7 @@ public class ConnectionHelper
 
     public async Task DisconnectUser()
     {
-        if (_settings.stayConnected == false)
+        if (!_settings.stayConnected)
         {
             _bddHelper.UpdateSettingsCredentials("", "", _settings.userId, false);
         }

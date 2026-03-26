@@ -54,9 +54,8 @@ public partial class ControlSettings : UserControl
     private async void TryConnection(object? sender, RoutedEventArgs e)
     {
         string email = txtboxEmail.Text ?? "";
-        string password = txtboxPassword.Text != null && txtboxPassword.Text != hidePassword ? txtboxPassword.Text : _settings.password;
-        Console.WriteLine(CryptoHelper.Hash(password));
-        Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(email, CryptoHelper.Hash(password));
+        string password = txtboxPassword.Text != null && txtboxPassword.Text != hidePassword ? CryptoHelper.Hash(txtboxPassword.Text) : _settings.password;
+        Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(email, password);
         if (userInformation.First().Value)
         {
             txtConnectionStatus.Text = "Connecté";
@@ -205,7 +204,7 @@ public partial class ControlSettings : UserControl
         stayConnected.IsChecked = _settings.stayConnected;
         switchTheme.IsChecked = !_settings.lightMode;
         txtboxEmail.Text = _settings.login != "" ? _settings.login : "Email";
-        txtboxPassword.Text = _settings.stayConnected ? _settings.password : "Mot de passe";
+        txtboxPassword.Text = _settings.stayConnected ? hidePassword : "Mot de passe";
         if (txtboxPassword.Text != "Mot de passe") txtboxPassword.PasswordChar ='*';
     }
 

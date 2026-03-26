@@ -320,7 +320,7 @@ namespace StorgLibs
                 command.CommandText = "UPDATE Settings SET userId = @userId, login = @login, password = @password, isConnected = @connected WHERE id = 1;";
                 command.Parameters.AddWithValue("userId", userId);
                 command.Parameters.AddWithValue("login", login);
-                command.Parameters.AddWithValue("password", CryptoHelper.Hash(password));
+                command.Parameters.AddWithValue("password", password);
                 command.Parameters.AddWithValue("connected", isConnected);
 
                 command.ExecuteNonQuery();
