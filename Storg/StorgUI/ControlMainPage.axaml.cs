@@ -381,13 +381,13 @@ namespace StorgUI
 
         private void SetFocusStyle(object? sender, RoutedEventArgs e)
         {
-            // string focus = "#bca7a7";
+            // string focus = "#546873";
             // this.Background = new SolidColorBrush(Color.Parse(focus));
         }
 
         private void SetDefaultStyle(object? sender, RoutedEventArgs e)
         {
-            // string lostfocus = "#d6bebe";
+            // string lostfocus = "#879DA9";
             // this.Background = new SolidColorBrush(Color.Parse(lostfocus));
         }
 

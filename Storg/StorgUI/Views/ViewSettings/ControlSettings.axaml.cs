@@ -17,7 +17,6 @@ public partial class ControlSettings : UserControl
 {
 
     private LibsGlobal _libsGlobal = new LibsGlobal();
-    private ModelCurrentOS _currentOS = new ModelCurrentOS();
     private static ModelSettings _settings = new ModelSettings();
     private string hidePassword = "***********************";
 
@@ -69,6 +68,16 @@ public partial class ControlSettings : UserControl
             _settings.password = password;
             btnDisconnection.IsEnabled = true;
             btnConnection.IsEnabled = false;
+            if (stayConnected.IsChecked == true)
+            {
+                _libsGlobal.UpdateSettingsStayConnected(true);
+                _settings.stayConnected = true;
+            }
+            else
+            {
+                _libsGlobal.UpdateSettingsStayConnected(false);
+                _settings.stayConnected = false;
+            }
         }
         else
         {
@@ -91,10 +100,16 @@ public partial class ControlSettings : UserControl
             txtboxEmail.Text = _settings.login;
             txtboxPassword.Text = _settings.password;
             txtboxPassword.PasswordChar = '*';
+            _libsGlobal.UpdateSettingsStayConnected(true);
+
         }
-        txtboxEmail.Text = "Email";
-        txtboxPassword.Text = "Mot de passe";
-        txtboxPassword.PasswordChar = '\0';
+        else
+        {
+            txtboxEmail.Text = "Email";
+            txtboxPassword.Text = "Mot de passe";
+            txtboxPassword.PasswordChar = '\0';
+            _libsGlobal.UpdateSettingsStayConnected(false);
+        }
     }
 
     private async void ToggleConnection(object? sender, RoutedEventArgs e)
@@ -185,16 +200,11 @@ public partial class ControlSettings : UserControl
 
     private void SetLoadSettings()
     {
+        stayConnected.IsChecked = _settings.stayConnected;
         switchTheme.IsChecked = !_settings.lightMode;
         txtboxEmail.Text = _settings.login != "" ? _settings.login : "Email";
-        if (stayConnected.IsChecked == true)
-        {
-            txtboxPassword.Text = _settings.password;
-        }
-        else
-        {
-            txtboxPassword.Text = "Mot de passe";
-        }
+        txtboxPassword.Text = _settings.stayConnected ? _settings.password : "Mot de passe";
+        txtboxPassword.PasswordChar = '*';
     }
 
     private void Redirect()

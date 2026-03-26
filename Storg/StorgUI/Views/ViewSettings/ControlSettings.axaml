@@ -3,11 +3,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Background="{DynamicResource AppBackground}"
              x:Class="StorgUI.ControlSettings">
     <Grid Margin="25,25,0,0">
         <StackPanel Orientation="Vertical" Spacing="40">
             <StackPanel Orientation="Vertical" Spacing="20">
-                <TextBlock Text="Apparence :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black"  FontSize="25"/>
+                <TextBlock Text="Apparence :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource AppForeground}"  FontSize="25"/>
 
                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                     <TextBlock Text="Thème : " />
@@ -17,26 +18,26 @@
             </StackPanel>
 
             <StackPanel Spacing="20" HorizontalAlignment="Left">
-                <TextBlock Text="Transfer de fichiers :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="Black"  FontSize="25"/>
+                <TextBlock Text="Transfert de fichiers :" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="{DynamicResource AppForeground}"  FontSize="25"/>
                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                     <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
-                        <TextBlock Text="Statut : " Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                        <TextBlock Name="txtConnectionStatus" Text="Déconnecté" Grid.Row="0" Grid.Column="1"/>
+                        <TextBlock Text="Statut : " Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Foreground="{DynamicResource AppForeground}"/>
+                        <TextBlock Name="txtConnectionStatus" Text="Déconnecté" Grid.Row="0" Grid.Column="1" Foreground="{DynamicResource AppForeground}"/>
                     </Grid>
                     <Image Source="avares://StorgUI/Resources/check_green.png" Name="check" Width="25" Height="25" Margin="0,-8,0,0" IsVisible="False" ToolTip.Tip="Vous êtes connecté"/>
                     <Image Source="avares://StorgUI/Resources/cross_red.png" Name="cross" Width="25" Height="25" Margin="0,-8,0,0" IsVisible="True" ToolTip.Tip="Vous n'êtes pas connecté"/>
                 </StackPanel>
-                <TextBox Text="Email" Width="350" Name="txtboxEmail" Focusable="True" HorizontalAlignment="Left"/>
-                <TextBox Text="Mot de passe" Width="350" Name="txtboxPassword" Focusable="True" HorizontalAlignment="Left"/>
-                <TextBlock Name="txtConnectionResult" Text="template texte" IsVisible="False"/>
-                <CheckBox Name="stayConnected">Se souvenir de moi</CheckBox>
+                <TextBox Text="Email" Width="350" Name="txtboxEmail" Focusable="True" HorizontalAlignment="Left" Foreground="{DynamicResource AppForeground}" Background="{DynamicResource AccentBackground}"/>
+                <TextBox Text="Mot de passe" Width="350" Name="txtboxPassword" Focusable="True" HorizontalAlignment="Left" Foreground="{DynamicResource AppForeground}" Background="{DynamicResource AccentBackground}"/>
+                <TextBlock Name="txtConnectionResult" Text="template texte" IsVisible="False" Foreground="{DynamicResource AppForeground}"/>
+                <CheckBox Name="stayConnected" Foreground="{DynamicResource AppForeground}">Se souvenir de moi</CheckBox>
             <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
-                <Button Content="Connexion" Name="btnConnection" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                <Button Content="Déconnexion" Name="btnDisconnection" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" IsEnabled="False"/>
+                <Button Content="Connexion" Name="btnConnection" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Foreground="{DynamicResource AppForeground}" Background="{DynamicResource NavBackground}"/>
+                <Button Content="Déconnexion" Name="btnDisconnection" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" IsEnabled="False" Foreground="{DynamicResource AppForeground}" Background="{DynamicResource NavBackground}"/>
             </Grid>
             <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, Auto">
-                <TextBlock Text="Si vous n'avez pas encore de compte créé en un " Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-                <HyperlinkButton Name="hyperLinkUser" Content="ici" Grid.Row="0" Grid.Column="1" FontSize="16" Background="Transparent" Classes="DefaultBt" Foreground="Black"/>
+                <TextBlock Text="Si vous n'avez pas encore de compte crééz en un " Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Foreground="{DynamicResource AppForeground}"/>
+                <HyperlinkButton Name="hyperLinkUser" Content="ici" Grid.Row="0" Grid.Column="1" FontSize="16" Background="Transparent" Classes="DefaultBt" Foreground="{DynamicResource AppForeground}"/>
             </Grid>
         </StackPanel>
 
