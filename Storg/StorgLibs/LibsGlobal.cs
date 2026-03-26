@@ -101,6 +101,11 @@ namespace StorgLibs
             return _bddhelper.UpdateSettingsCredentials(login, password, userId, isConnected);
         }
 
+        public bool UpdateSettingsStayConnected(bool stayCo)
+        {
+            return _bddhelper.UpdateSettingsStayConnected(stayCo);
+        }
+
         public ModelSettings LoadSettings()
         {
             return _bddhelper.LoadSettings();

@@ -38,13 +38,13 @@ public class ConnectionHelper
 
     public async Task DisconnectUser()
     {
-        if (_settings.stayConnected == true)
+        if (_settings.stayConnected == false)
         {
-            _bddHelper.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId, false);
+            _bddHelper.UpdateSettingsCredentials("", "", _settings.userId, false);
         }
         else
         {
-            _bddHelper.UpdateSettingsCredentials("", "", _settings.userId, false);
+            _bddHelper.UpdateSettingsCredentials("", _settings.password, _settings.userId, false);
         }
 
         _settings.isConnected = false;
