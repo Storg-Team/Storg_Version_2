@@ -20,32 +20,32 @@
 							<ListBox>
 								<ListBoxItem Name="BtAccueil" Background="{DynamicResource NavBackground}"  Classes="DefaultBt" Focusable="True">
 									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-										<Image Source="/Resources/logo_accueil.png" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
-										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Accueil</TextBlock>
+										<Image x:Name="ImgAccueil" Width="35" Height="35" Margin="0,0,15,0"/>
+										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource AppForeground}" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Accueil</TextBlock>
 									</StackPanel>
 								</ListBoxItem>
 								<ListBoxItem Name="BtSettings"  Background="{DynamicResource NavBackground}"  Classes="DefaultBt" Focusable="True">
 									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-										<Image Source="/Resources/settings.png" HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
-										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Paramètres</TextBlock>
+										<Image x:Name="ImgSettings" Width="35" Height="35" Margin="0,0,15,0"/>
+										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource AppForeground}" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Paramètres</TextBlock>
 									</StackPanel>
 								</ListBoxItem>
 								<ListBoxItem Name="BtAide"  Background="{DynamicResource NavBackground}"  Classes="DefaultBt" Focusable="True">
 									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-										<Image Source="/Resources/logo_help.png" HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
-										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Aide</TextBlock>
+										<Image x:Name="ImgHelp" Width="35" Height="35" Margin="0,0,15,0"/>
+										<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource AppForeground}" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Aide</TextBlock>
 									</StackPanel>
 								</ListBoxItem>
 								<ListBoxItem Name="BtAProps" Background="{DynamicResource NavBackground}"  Classes="DefaultBt" Focusable="True">
 									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-										<Image Source="/Resources/logo_a_propos.png" HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
-										<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">A propos</TextBlock>
+										<Image x:Name="ImgAPropos" Width="35" Height="35" Margin="0,0,15,0"/>
+										<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{DynamicResource AppForeground}" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">A propos</TextBlock>
 									</StackPanel>
 								</ListBoxItem>
 								<ListBoxItem Name="BtLiveDecomp" Background="{DynamicResource NavBackground}"  Classes="DefaultBt" Focusable="True">
 									<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-										<Image Source="avares://StorgUI/Resources/folder-input.png " HorizontalAlignment="Left" Margin="0, 0, 15,0" Width="35" Height="35"/>
-										<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Live décompression</TextBlock>
+										<Image x:Name="FolderInput" Width="35" Height="35" Margin="0,0,15,0"/>
+										<TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{DynamicResource AppForeground}" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Live décompression</TextBlock>
 									</StackPanel>
 								</ListBoxItem>
 							</ListBox>
@@ -64,29 +64,29 @@
 							<Grid.RowDefinitions>
 								<RowDefinition Height="30"/>
 							</Grid.RowDefinitions>
-							<TextBox VerticalContentAlignment="Center" Height="40" Grid.Column="0" Grid.Row="0" Margin="0,0,10,0" CornerRadius="60" Foreground="Black" Classes="Search" x:Name="Search" GotFocus="Focus" LostFocus="NoFocus" KeyDown="TriggerKeyResearch" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins">
+							<TextBox VerticalContentAlignment="Center" Height="40" Grid.Column="0" Grid.Row="0" Margin="0,0,10,0" CornerRadius="60" Foreground="{DynamicResource AppForeground}" Classes="Search" x:Name="Search" GotFocus="Focus" LostFocus="NoFocus" KeyDown="TriggerKeyResearch" FontFamily="avares://StorgUI/Resources/Poppins/Poppins-Bold.ttf#Poppins">
 								Rechercher des fichiers compressés
 							</TextBox>
-							<Button Name="BtResearch" HorizontalAlignment="Right" Width="40" Height="40" Padding="30, 0, 0, 0" Margin="0,0,10,0" CornerRadius="100" Classes="DefaultBt" Background="{DynamicResource NavBackground}">
-							<Image Grid.Column="0" Grid.Row="0" Margin="0,0,20,0" Source="/Resources/search.png" HorizontalAlignment="Right" Width="25" Height="25"/>
+							<Button Name="BtResearch" HorizontalAlignment="Right" Width="40" Height="40" Padding="0, 0, 0, 0" Margin="0,0,10,0" CornerRadius="100" Classes="DefaultBt" Background="{DynamicResource NavBackground}">
+							<Image x:Name="ImgSearch" Width="30" Height="30" HorizontalAlignment="Center"/>
 							</Button>
 						</Grid>
 						<StackPanel Orientation="Horizontal" Margin="330,0,0,0" Spacing="20">
 							<Button Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Center" Name="btnReload" Background="Transparent" Classes="DefaultBt"  ToolTip.Tip="Actualiser">
-								<Image Width="30" Height="30" Source="/Resources/reload.png"/>
+								<Image x:Name="Reload" Width="30" Height="30" HorizontalAlignment="Center"/>
 							</Button>
 							<Button Name="btnTelecharger" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Classes="DefaultBt" ToolTip.Tip="Télécharger">
-								<Image Source="Resources/download.png" Width="25" Height="25" ></Image>
+								<Image x:Name="ImgDownload" Width="35" Height="35" HorizontalAlignment="Center"/>
 							</Button>
 							<Button Name="btnSupprimer" IsVisible="False" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Classes="DefaultBt" ToolTip.Tip="Supprimer">
-								<Image Source="Resources/trash-2.png" Width="25" Height="25"></Image>
+								<Image x:Name="Trash" Width="30" Height="30" HorizontalAlignment="Center"/>
 							</Button>
 							<Button Name="btnUpload" Width="40" Height="40" CornerRadius="30" HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Classes="DefaultBt" ToolTip.Tip="Transferer" IsVisible="False">
-								<Image  Source="Resources/hard-drive-upload.png" Width="25" Height="25"/>
+								<Image x:Name="HardDriveUpload" Width="35" Height="35" HorizontalAlignment="Center"/>
 							</Button>
 						</StackPanel>
-						<Button Name="btnFetch" HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="30" Width="40" Height="40" Background="Transparent" Classes="DefaultBt" Margin="0,0,10,0" ToolTip.Tip="Récupérer fichiers transférer" IsVisible="False"> 
-							<Image Source="Resources/cloud-backup.png" Width="25" Height="25"/>
+						<Button Name="btnFetch" HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="30" Width="40" Height="40" Background="Transparent" Classes="DefaultBt" ToolTip.Tip="Récupérer fichiers transférer" IsVisible="False"> 
+							<Image x:Name="CloudBackup" Width="35" Height="35" HorizontalAlignment="Center"/>
 						</Button>
 					</Grid>
 						<DataGrid x:Name="FilesGrid" 
@@ -105,11 +105,11 @@
 					<Grid>
 					<Grid Name="dragDrop" Background="#879DA9" DragDrop.AllowDrop="True" HorizontalAlignment="Stretch" Height="190" Margin="0,-40,0,0" PointerPressed="FileBrowser">
 						<Rectangle StrokeDashArray="5, 3" Stroke="Black" StrokeThickness="3"></Rectangle>
-						<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Déposez ici / Cliquez pour parcourir</TextBlock>
+						<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource AppForeground}" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Déposez ici / Cliquez pour parcourir</TextBlock>
 					</Grid>
 						<Grid Name="folderImport" VerticalAlignment="Bottom" HorizontalAlignment="Center" Background="Transparent">
 							<Rectangle StrokeDashArray="5, 3" Stroke="Black" StrokeThickness="3" Width="300" Height="40"></Rectangle>
-							<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Importer le contenu d'un dossier</TextBlock>
+							<TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource AppForeground}" FontFamily="Resources/Poppins/Poppins-Bold.ttf#Poppins">Importer le contenu d'un dossier</TextBlock>
 						</Grid>
 					</Grid>
 				</StackPanel>

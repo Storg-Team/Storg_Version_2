@@ -7,13 +7,12 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.ThemeDictionaries>
+
 				<ResourceDictionary x:Key="Light">
-					<!-- existants -->
 					<SolidColorBrush x:Key="AppBackground" Color="#FFFFFF"/>
 					<SolidColorBrush x:Key="AppForeground" Color="#000000"/>
 					<SolidColorBrush x:Key="NavBackground" Color="#879DA9"/>
 					<SolidColorBrush x:Key="AccentBackground" Color="#B7C4CB"/>
-					<!-- nouveaux -->
 					<SolidColorBrush x:Key="HoverBackground" Color="#879DA9"/>
 					<SolidColorBrush x:Key="ClickedBackground" Color="#879DA9"/>
 					<SolidColorBrush x:Key="ErrorHoverBackground" Color="#d3d1cf"/>
@@ -21,12 +20,10 @@
 				</ResourceDictionary>
 
 				<ResourceDictionary x:Key="Dark">
-					<!-- existants -->
 					<SolidColorBrush x:Key="AppBackground" Color="#000000"/>
 					<SolidColorBrush x:Key="AppForeground" Color="#FFFFFF"/>
 					<SolidColorBrush x:Key="NavBackground" Color="#121D2D"/>
 					<SolidColorBrush x:Key="AccentBackground" Color="#404E56"/>
-					<!-- nouveaux -->
 					<SolidColorBrush x:Key="HoverBackground" Color="#4A6275"/>
 					<SolidColorBrush x:Key="ClickedBackground" Color="#2C3E50"/>
 					<SolidColorBrush x:Key="ErrorHoverBackground" Color="#3A3A3A"/>
