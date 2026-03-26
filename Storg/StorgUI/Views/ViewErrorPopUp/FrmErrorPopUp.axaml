@@ -8,7 +8,7 @@
         x:Class="StorgUI.FrmErrorPopUp">
 	<Grid>
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Spacing="20" Margin="10,20,0,0">
-			<Image Source="/Resources/erreur.png" Width="30" Height="30" Margin="0,0,0,0"/>
+			<Image Source="/Resources/cross_red.png" Width="30" Height="30" Margin="0,0,0,0"/>
 			<SelectableTextBlock Name="MessageErreur" Text="Texte dynamique" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black" Margin="0,0,10,0" TextWrapping="Wrap" Width="280"/>
 		</StackPanel>
 		<StackPanel Margin="0,15,20,20" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="15"> 

@@ -16,33 +16,41 @@ public class ConnectionHelper
     public async Task VerifConnection()
     {
         _settings = _bddHelper.LoadSettings();
-
-        if (_settings.canConnect)
+        try
         {
-            try
+            if (!_settings.stayConnected)
             {
-
-                Dictionary<int, bool> userInformation = await _apiHelper.StartConnection(_settings.login, _settings.password);
-                if (userInformation.First().Value)
-                {
-                    _bddHelper.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId, true);
-                    _settings.isConnected = true;
-                }
-                else
-                {
-                    this.DisconnectUser();
-                }
+                await this.DisconnectUser();
+                return;
             }
-            catch (Exception)
+            Dictionary<int, bool> userInformation = await _apiHelper.StartConnection(_settings.login, _settings.password);
+            if (userInformation.First().Value)
             {
-                this.DisconnectUser();
+                _bddHelper.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId, true);
+                _settings.isConnected = true;
             }
+            else
+            {
+                await this.DisconnectUser();
+            }
+        }
+        catch (Exception)
+        {
+            await this.DisconnectUser();
         }
     }
 
-    private void DisconnectUser()
+    public async Task DisconnectUser()
     {
-        _bddHelper.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId, false);
+        if (!_settings.stayConnected)
+        {
+            _bddHelper.UpdateSettingsCredentials("", "", _settings.userId, false);
+        }
+        else
+        {
+            _bddHelper.UpdateSettingsCredentials("", _settings.password, _settings.userId, false);
+        }
+
         _settings.isConnected = false;
     }
 

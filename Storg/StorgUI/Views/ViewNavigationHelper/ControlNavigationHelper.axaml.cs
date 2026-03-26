@@ -16,38 +16,36 @@ public partial class ControlNavigationHelper : UserControl
     public ControlNavigationHelper()
     {
         InitializeComponent();
-
         this.SizeChanged += Dynamic_Change_Size;
 
         Button btnFonc = this.FindControl<Button>("Fonc")!;
         if (btnFonc != null)
         {
+            btnFonc.GotFocus += (sender, e) => btnFonc.Background = GetThemeBrush("HoverBackground");
+            btnFonc.LostFocus += (sender, e) => btnFonc.Background = GetThemeBrush("NavBackground");
             btnFonc.Click += GoToFonc;
-            btnFonc.GotFocus += (sender, e) =>
-            {
-                btnFonc.Background = new SolidColorBrush(Color.Parse("#bca7a7"));
-            };
-            btnFonc.LostFocus += (sender, e) =>
-            {
-                btnFonc.Background = new SolidColorBrush(Color.Parse("#d6bebe"));
-            };
-
         }
+
         Button btnNav = this.FindControl<Button>("Nav")!;
         if (btnNav != null)
         {
             this.Loaded += (sender, e) => btnNav.Focus();
-
-            btnNav.GotFocus += (sender, e) =>
-            {
-                btnNav.Background = new SolidColorBrush(Color.Parse("#bca7a7"));
-            };
-            btnNav.LostFocus += (sender, e) =>
-            {
-                btnNav.Background = new SolidColorBrush(Color.Parse("#d6bebe"));
-            };
+            btnNav.GotFocus += (sender, e) => btnNav.Background = GetThemeBrush("HoverBackground");
+            btnNav.LostFocus += (sender, e) => btnNav.Background = GetThemeBrush("NavBackground");
             btnNav.Click += SetAideNav;
         }
+    }
+
+    private SolidColorBrush GetThemeBrush(string key)
+    {
+        var themeVariant = Application.Current!.ActualThemeVariant;
+        if (Application.Current.TryGetResource(key, themeVariant, out var resource)
+            && resource is SolidColorBrush brush)
+        {
+            return brush;
+        }
+        // Fallback si la ressource n'est pas trouvée
+        return new SolidColorBrush(Colors.Transparent);
     }
 
     private void Dynamic_Change_Size(object? sender, RoutedEventArgs e)

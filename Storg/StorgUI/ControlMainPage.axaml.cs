@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using StorgUI.Views.ViewDownloadPopUp;
 using System.Threading.Tasks;
 using StorgUI.Views.ViewFetchFiles;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using System.Runtime.CompilerServices;
 using System.IO;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -44,13 +46,16 @@ namespace StorgUI
 
             this.Loaded += OnLoadSettings;
             this.Loaded += SetDynSize;
+            UpdateIcons();
+            if (Application.Current != null)
+                Application.Current.ActualThemeVariantChanged += (s, e) => UpdateIcons();
 
             LoadingBar.IsVisible = false;
             MainMenu.IsPaneOpen = _isPaneOpen;
             this.refresh();
 
             FilesGrid.Tapped += DisplayBtnOptionFile;
-            dragDrop.AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declancher la fonction de Drag and Drop
+            dragDrop.AddHandler(DragDrop.DropEvent, OnDrop);  //  Ajouter l'evenement pour declencher la fonction de Drag and Drop
 
 
 
@@ -127,6 +132,49 @@ namespace StorgUI
         private void OnClickSettings(object? sender, RoutedEventArgs e)
         {
             this.LoadFrmSettings();
+        }
+
+        private void UpdateIcons()
+        {
+            var isDark = Application.Current?.ActualThemeVariant == ThemeVariant.Dark;
+            var folder = isDark ? "Dark" : "Light";
+
+            SetIcon("ImgAccueil", $"avares://StorgUI/Resources/{folder}/logo_accueil.png");
+            SetIcon("ImgSettings", $"avares://StorgUI/Resources/{folder}/settings.png");
+            SetIcon("ImgHelp", $"avares://StorgUI/Resources/{folder}/logo_help.png");
+            SetIcon("ImgAPropos", $"avares://StorgUI/Resources/{folder}/logo_a_propos.png");
+            SetIcon("FolderInput", $"avares://StorgUI/Resources/{folder}/folder-input.png");
+            SetIcon("ImgSearch", $"avares://StorgUI/Resources/{folder}/search.png");
+            SetIcon("Reload", $"avares://StorgUI/Resources/{folder}/reload.png");
+            SetIcon("ImgDownload", $"avares://StorgUI/Resources/{folder}/download.png");
+            SetIcon("Trash", $"avares://StorgUI/Resources/{folder}/trash-2.png");
+            SetIcon("HardDriveUpload", $"avares://StorgUI/Resources/{folder}/hard-drive-upload.png");
+            SetIcon("CloudBackup", $"avares://StorgUI/Resources/{folder}/cloud-backup.png");
+
+            var dragDropGrid = this.FindControl<Grid>("dragDrop");
+            if (dragDropGrid != null)
+            {
+                var stream = AssetLoader.Open(new Uri($"avares://StorgUI/Resources/{folder}/Bg.png"));
+                dragDropGrid.Background = new ImageBrush(new Bitmap(stream))
+                {
+                    Stretch = Stretch.UniformToFill
+                };
+            }
+        }
+
+        private void SetIcon(string name, string uri)
+        {
+            var img = this.FindControl<Image>(name);
+            if (img == null) return;
+            try
+            {
+                var stream = AssetLoader.Open(new Uri(uri));
+                img.Source = new Bitmap(stream);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[SetIcon] Erreur pour {name} : {e.Message}");
+            }
         }
 
         private void OnKeyDownSettings(object? sender, KeyEventArgs e)
@@ -381,13 +429,13 @@ namespace StorgUI
 
         private void SetFocusStyle(object? sender, RoutedEventArgs e)
         {
-            // string focus = "#bca7a7";
+            // string focus = "#546873";
             // this.Background = new SolidColorBrush(Color.Parse(focus));
         }
 
         private void SetDefaultStyle(object? sender, RoutedEventArgs e)
         {
-            // string lostfocus = "#d6bebe";
+            // string lostfocus = "#879DA9";
             // this.Background = new SolidColorBrush(Color.Parse(lostfocus));
         }
 
