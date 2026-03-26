@@ -41,6 +41,7 @@ public partial class ControlSettings : UserControl
         txtboxPassword.LostFocus += LostFocusPassword;
         switchTheme.IsCheckedChanged += UpdateSettingsTheme;
         hyperLinkUser.Click += OnClickWebSiteRedirect;
+        stayConnected.IsCheckedChanged += UpdateStayConnect;
 
 
 
@@ -99,7 +100,7 @@ public partial class ControlSettings : UserControl
         if (stayConnected.IsChecked == true)
         {
             txtboxEmail.Text = _settings.login;
-            txtboxPassword.Text = _settings.password;
+            txtboxPassword.Text = hidePassword;
             txtboxPassword.PasswordChar = '*';
             _libsGlobal.UpdateSettingsStayConnected(true);
 
@@ -111,6 +112,12 @@ public partial class ControlSettings : UserControl
             txtboxPassword.PasswordChar = '\0';
             _libsGlobal.UpdateSettingsStayConnected(false);
         }
+    }
+
+    private void UpdateStayConnect(object? sender, RoutedEventArgs e)
+    {
+        _libsGlobal.UpdateSettingsStayConnected((bool)stayConnected.IsChecked!);
+        _settings.stayConnected = (bool)stayConnected.IsChecked!;
     }
 
     private async void ToggleConnection(object? sender, RoutedEventArgs e)
@@ -205,7 +212,7 @@ public partial class ControlSettings : UserControl
         switchTheme.IsChecked = !_settings.lightMode;
         txtboxEmail.Text = _settings.login != "" ? _settings.login : "Email";
         txtboxPassword.Text = _settings.stayConnected ? hidePassword : "Mot de passe";
-        if (txtboxPassword.Text != "Mot de passe") txtboxPassword.PasswordChar ='*';
+        if (txtboxPassword.Text != "Mot de passe") txtboxPassword.PasswordChar = '*';
     }
 
     private void Redirect()
@@ -232,7 +239,7 @@ public partial class ControlSettings : UserControl
         }
         catch (System.Exception)
         {
-            FrmErrorPopUp errorPopUp = new FrmErrorPopUp("Navigateur introuvable.\nVeuillez vous rendre sur : https://storg.serveousercontent.com/");
+            FrmErrorPopUp errorPopUp = new FrmErrorPopUp("Navigateur introuvable.\nVeuillez vous rendre sur : https://ministers-checkout-britney-grid.trycloudflare.com/storg/");
             errorPopUp.ShowDialog((Window)VisualRoot!);
         }
     }
