@@ -13,7 +13,7 @@
 
 <Grid>
   <StackPanel Orientation="Vertical" Margin="15" Spacing="40">
-    <TextBlock Text="Récupérer les fichiers que vous avez trensférer :" FontSize="25" TextWrapping="Wrap"  />
+    <TextBlock Text="Récupérer les fichiers que vous avez transféré :" FontSize="25" TextWrapping="Wrap"  />
 
     <DataGrid Name="dataGrid" GridLinesVisibility="All" BorderThickness="1" BorderBrush="Black" MaxHeight="400"
     IsReadOnly="True" CanUserResizeColumns="False" CanUserReorderColumns="False"/>

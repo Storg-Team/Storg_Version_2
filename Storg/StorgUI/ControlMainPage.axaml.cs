@@ -150,6 +150,16 @@ namespace StorgUI
             SetIcon("Trash", $"avares://StorgUI/Resources/{folder}/trash-2.png");
             SetIcon("HardDriveUpload", $"avares://StorgUI/Resources/{folder}/hard-drive-upload.png");
             SetIcon("CloudBackup", $"avares://StorgUI/Resources/{folder}/cloud-backup.png");
+
+            var dragDropGrid = this.FindControl<Grid>("dragDrop");
+            if (dragDropGrid != null)
+            {
+                var stream = AssetLoader.Open(new Uri($"avares://StorgUI/Resources/{folder}/Bg.png"));
+                dragDropGrid.Background = new ImageBrush(new Bitmap(stream))
+                {
+                    Stretch = Stretch.UniformToFill
+                };
+            }
         }
 
         private void SetIcon(string name, string uri)
