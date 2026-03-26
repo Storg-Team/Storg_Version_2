@@ -17,7 +17,6 @@ public partial class ControlSettings : UserControl
 {
 
     private LibsGlobal _libsGlobal = new LibsGlobal();
-    private ModelCurrentOS _currentOS = new ModelCurrentOS();
     private static ModelSettings _settings = new ModelSettings();
     private string hidePassword = "***********************";
 
@@ -26,15 +25,16 @@ public partial class ControlSettings : UserControl
         InitializeComponent();
 
         this.Loaded += OnLoadSettings;
-        this.Loaded += OnLoadSetConnectionIcons;
+        this.Loaded += OnLoadSetConnection;
 
 
         #region Event
 
 
         btnConnection.Click += TryConnection;
-        switchConnection.Click += ToggleConnection;
+        btnDisconnection.Click += TryDisconnection;
         txtboxEmail.GotFocus += GotFocusEmail;
+        txtboxEmail.LostFocus += LostFocusEmail;
         txtboxPassword.GotFocus += GotFocusPassword;
         txtboxPassword.LostFocus += LostFocusPassword;
         switchTheme.IsCheckedChanged += UpdateSettingsTheme;
@@ -57,7 +57,8 @@ public partial class ControlSettings : UserControl
         Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(email, password);
         if (userInformation.First().Value)
         {
-            txtConnectionResult.Text = "Connexion réussi";
+            txtConnectionStatus.Text = "Connecté";
+            txtConnectionResult.Text = "Connexion réussie";
             _libsGlobal.UpdateSettingsCredentials(email, password, userInformation.First().Key);
             txtboxPassword.Text = hidePassword;
             check.IsVisible = true;
@@ -65,6 +66,18 @@ public partial class ControlSettings : UserControl
             _settings.isConnected = true;
             _settings.login = email;
             _settings.password = password;
+            btnDisconnection.IsEnabled = true;
+            btnConnection.IsEnabled = false;
+            if (stayConnected.IsChecked == true)
+            {
+                _libsGlobal.UpdateSettingsStayConnected(true);
+                _settings.stayConnected = true;
+            }
+            else
+            {
+                _libsGlobal.UpdateSettingsStayConnected(false);
+                _settings.stayConnected = false;
+            }
         }
         else
         {
@@ -73,16 +86,42 @@ public partial class ControlSettings : UserControl
         txtConnectionResult.IsVisible = true;
     }
 
+    private async void TryDisconnection(object? sender, RoutedEventArgs e)
+    {
+        _libsGlobal.DisconnectUser();
+        _settings.isConnected = false;
+        txtConnectionStatus.Text = "Déconnecté";
+        check.IsVisible = false;
+        cross.IsVisible = true;
+        btnConnection.IsEnabled = true;
+        btnDisconnection.IsEnabled = false;
+        if (stayConnected.IsChecked == true)
+        {
+            txtboxEmail.Text = _settings.login;
+            txtboxPassword.Text = _settings.password;
+            txtboxPassword.PasswordChar = '*';
+            _libsGlobal.UpdateSettingsStayConnected(true);
+
+        }
+        else
+        {
+            txtboxEmail.Text = "Email";
+            txtboxPassword.Text = "Mot de passe";
+            txtboxPassword.PasswordChar = '\0';
+            _libsGlobal.UpdateSettingsStayConnected(false);
+        }
+    }
+
     private async void ToggleConnection(object? sender, RoutedEventArgs e)
     {
-            Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(_settings.login, _settings.password);
+        Dictionary<int, bool> userInformation = await _libsGlobal.StartConnection(_settings.login, _settings.password);
 
-            if (userInformation.First().Value)
-            {
-                _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId);
-                check.IsVisible = true;
-                cross.IsVisible = false;
-            }
+        if (userInformation.First().Value)
+        {
+            _libsGlobal.UpdateSettingsCredentials(_settings.login, _settings.password, _settings.userId);
+            check.IsVisible = true;
+            cross.IsVisible = false;
+        }
     }
 
     private void GotFocusEmail(object? sender, RoutedEventArgs e)
@@ -90,9 +129,17 @@ public partial class ControlSettings : UserControl
         if (txtboxEmail.Text == "Email") txtboxEmail.Text = "";
     }
 
+    private void LostFocusEmail(object? sender, RoutedEventArgs e)
+    {
+        if (txtboxEmail.Text == "")
+        {
+            txtboxEmail.Text = "Email";
+        }
+    }
+
     private void GotFocusPassword(object? sender, RoutedEventArgs e)
     {
-        if (txtboxPassword.Text == "Mot de passe" || txtboxPassword.Text == hidePassword)
+        if (txtboxPassword.Text == "Mot de passe" || txtboxPassword.Text == _settings.password)
         {
             txtboxPassword.Text = "";
             txtboxPassword.PasswordChar = '*';
@@ -101,9 +148,11 @@ public partial class ControlSettings : UserControl
 
     private void LostFocusPassword(object? sender, RoutedEventArgs e)
     {
-        if (_settings.password != "" && txtboxPassword.Text == "")
+        if (txtboxPassword.Text == "")
         {
-            txtboxPassword.Text = hidePassword;
+            txtboxPassword.Text = "Mot de passe";
+            txtboxPassword.PasswordChar = '\0';
+
         }
     }
 
@@ -121,10 +170,13 @@ public partial class ControlSettings : UserControl
         this.SetLoadSettings();
     }
 
-    private void OnLoadSetConnectionIcons(object? sender, RoutedEventArgs e)
+    private void OnLoadSetConnection(object? sender, RoutedEventArgs e)
     {
         if (_settings.isConnected)
         {
+            txtConnectionStatus.Text = "Connecté";
+            btnConnection.IsEnabled = false;
+            btnDisconnection.IsEnabled = true;
             check.IsVisible = true;
             cross.IsVisible = false;
         }
@@ -148,9 +200,11 @@ public partial class ControlSettings : UserControl
 
     private void SetLoadSettings()
     {
+        stayConnected.IsChecked = _settings.stayConnected;
         switchTheme.IsChecked = !_settings.lightMode;
         txtboxEmail.Text = _settings.login != "" ? _settings.login : "Email";
-        txtboxPassword.Text = _settings.password != "" ? hidePassword : "Mot de passe";
+        txtboxPassword.Text = _settings.stayConnected ? _settings.password : "Mot de passe";
+        txtboxPassword.PasswordChar = '*';
     }
 
     private void Redirect()

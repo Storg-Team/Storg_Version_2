@@ -76,7 +76,7 @@ namespace StorgLibs
                 command.ExecuteNonQuery();
 
                 command = conn.CreateCommand();
-                command.CommandText = "CREATE TABLE IF NOT EXISTS Settings (id INTEGER PRIMARY KEY, userId INTEGER NOT NULL, lightMode INTEGER NOT NULL, canConnect INTEGER NOT NULL, login TEXT NOT NULL, password TEXT NOT NULL, isConnected INTEGER NOT NULL)";
+                command.CommandText = "CREATE TABLE IF NOT EXISTS Settings (id INTEGER PRIMARY KEY, userId INTEGER NOT NULL, lightMode INTEGER NOT NULL, login TEXT NOT NULL, password TEXT NOT NULL, isConnected INTEGER NOT NULL, stayConnected INTEGER NOT NULL)";
                 command.ExecuteNonQuery();
 
                 command = conn.CreateCommand();
@@ -87,7 +87,7 @@ namespace StorgLibs
                     if (!reader.Read())
                     {
                         command = conn.CreateCommand();
-                        command.CommandText = "INSERT INTO Settings (id, userId, lightMode, canConnect, login, password, isConnected) VALUES(1, 0, true, false, '', '', false);";
+                        command.CommandText = "INSERT INTO Settings (id, userId, lightMode, login, password, isConnected, stayConnected) VALUES(1, 0, true, '', '', false, false);";
                         command.ExecuteNonQuery();
                     }
                 }
@@ -267,10 +267,10 @@ namespace StorgLibs
                     {
                         settings.userId = reader.GetInt32(1);
                         settings.lightMode = reader.GetBoolean(2);
-                        settings.canConnect = reader.GetBoolean(3);
-                        settings.login = reader.GetString(4);
-                        settings.password = reader.GetString(5);
-                        settings.isConnected = reader.GetBoolean(6);
+                        settings.login = reader.GetString(3);
+                        settings.password = reader.GetString(4);
+                        settings.isConnected = reader.GetBoolean(5);
+                        settings.stayConnected = reader.GetBoolean(6);
                     }
                 }
                 conn.Close();
@@ -295,15 +295,14 @@ namespace StorgLibs
             return true;
         }
 
-        public bool UpdateSettingsCanConnect(bool canConnect)
+        public bool UpdateSettingsStayConnected(bool stayConnected)
         {
             using (SqliteConnection conn = new SqliteConnection(_connectionString))
             {
                 conn.Open();
-
                 SqliteCommand command = conn.CreateCommand();
-                command.CommandText = "UPDATE Settings SET canConnect = @connect WHERE id = 1;";
-                command.Parameters.AddWithValue("connect", canConnect);
+                command.CommandText = "UPDATE Settings SET stayConnected = @stayCo WHERE id= 1;";
+                command.Parameters.AddWithValue("stayCo", stayConnected);
 
                 command.ExecuteNonQuery();
 
