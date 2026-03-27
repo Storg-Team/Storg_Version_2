@@ -2,10 +2,92 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="StorgUI.FrmAPropos">
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="StorgUI.FrmAPropos"
+             Background="{DynamicResource AppBackground}">
 
-<StackPanel>
-        <TextBlock></TextBlock>
-    </StackPanel>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                    Spacing="30" Margin="60,50,60,60" MaxWidth="750">
+            <StackPanel HorizontalAlignment="Center" Spacing="8">
+                <TextBlock Text="Vos fichiers, transformés en art."
+                           FontSize="16"
+                           HorizontalAlignment="Center"
+                           Foreground="{DynamicResource NavBackground}"
+                           FontFamily="avares://StorgUI/Resources/Montserrat/Montserrat-Bold.ttf#Montserrat"/>
+            </StackPanel>
+            <Border Padding="28,22">
+                <TextBlock TextWrapping="Wrap"
+                           TextAlignment="Left"
+                           LineHeight="22"
+                           Foreground="{DynamicResource AppForeground}"
+                           FontFamily="avares://StorgUI/Resources/Montserrat/Montserrat-Bold.ttf#Montserrat"
+                           FontSize="13">
+                    <Run Text="Nous avons développé STORG dans le cadre de notre deuxième année de bachelor à l'IPI (2025-2026). C'est un logiciel initialement conçu pour compresser et décompresser des fichiers. L'algorithme de compression transforme les fichiers en une image, chaque pixel de cette image ayant une couleur hexadécimale différente en fonction des données binaires qu'il contient."/>
+                    <LineBreak/><LineBreak/>
+                    <Run Text="De cette manière, les utilisateurs peuvent compresser des fichiers volumineux et partager l'image, et le destinataire peut décompresser l'image pour récupérer le fichier d'origine."/>
+                    <LineBreak/><LineBreak/>
+                    <Run Text="Pour compléter le logiciel, nous avons également développé une application mobile et un site web, ainsi qu'une fonctionnalité de transfert pour partager des fichiers entre différents appareils."/>
+                </TextBlock>
+            </Border>
+            <TextBlock Text="L'équipe"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Foreground="{DynamicResource AppForeground}"
+                       FontFamily="avares://StorgUI/Resources/Montserrat/Montserrat-Bold.ttf#Montserrat"/>
+            <WrapPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                            Spacing="10" Margin="20">
+                    <Border Width="90" Height="90" CornerRadius="45"
+                            HorizontalAlignment="Center">
+                        <Image Source="avares://StorgUI/Resources/Lucas.png"
+                               Stretch="UniformToFill"/>
+                    </Border>
+                    <TextBlock Text="Lucas Sertelon" FontSize="14" FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource AppForeground}"
+                               FontFamily="avares://StorgUI/Resources/Montserrat/Montserrat-Bold.ttf#Montserrat"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                            Spacing="10" Margin="20">
+                    <Border Width="90" Height="90" CornerRadius="45"
+                            HorizontalAlignment="Center">
+                        <Image Source="avares://StorgUI/Resources/Augustin.png"
+                               Stretch="UniformToFill"/>
+                    </Border>
+                    <TextBlock Text="Augustin Federici" FontSize="14" FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource AppForeground}"
+                               FontFamily="avares://StorgUI/Resources/Montserrat/Montserrat-Bold.ttf#Montserrat"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                            Spacing="10" Margin="20">
+                    <Border Width="90" Height="90" CornerRadius="45"
+                            HorizontalAlignment="Center">
+                            <Image Source="avares://StorgUI/Resources/Issam.png"
+                               Stretch="UniformToFill"/>
+                    </Border>
+                    <TextBlock Text="Issam Lastab" FontSize="14" FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource AppForeground}"
+                               FontFamily="avares://StorgUI/Resources/Montserrat/Montserrat-Bold.ttf#Montserrat"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                            Spacing="10" Margin="20">
+                    <Border Width="90" Height="90" CornerRadius="45"
+                            HorizontalAlignment="Center">
+                            <Image Source="avares://StorgUI/Resources/Eden.png"
+                               Stretch="UniformToFill"/>
+                    </Border>
+                    <TextBlock Text="Eden Malhis" FontSize="14" FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource AppForeground}"
+                               FontFamily="avares://StorgUI/Resources/Montserrat/Montserrat-Bold.ttf#Montserrat"/>
+                </StackPanel>
+
+            </WrapPanel>
+
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
