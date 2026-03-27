@@ -32,7 +32,7 @@
 						<Grid ColumnDefinitions="Auto, *">
 						
 							<Image Grid.Column="0" Source="/Resources/ImageHelper/bouton_A_propos_de.png" Width="400" Height="300" VerticalAlignment="Top"/>
-							<TextBlock Grid.Column="1" Text="Le bouton “A propos de” vous permet de prendre connaissance de l’utilité de Storg, de savoir pourquoi il a été créé, par qui et pour qui." Foreground="{DynamicResource AppForeground}" VerticalAlignment="Top" TextWrapping="Wrap" Margin="20,0,10,0"/>
+							<TextBlock Grid.Column="1" Text="Le bouton “A propos” vous permet de prendre connaissance de l’utilité de Storg, de savoir pourquoi il a été créé, par qui et pour qui." Foreground="{DynamicResource AppForeground}" VerticalAlignment="Top" TextWrapping="Wrap" Margin="20,0,10,0"/>
 						</Grid>
 							<TextBlock Text="Paramètres :" FontSize="30" Foreground="{DynamicResource AppForeground}" FontFamily="avares://StorgUI/Resources/Montserrat/Montserrat-Bold.ttf#Montserrat"/>
 						<Grid ColumnDefinitions="Auto, *">

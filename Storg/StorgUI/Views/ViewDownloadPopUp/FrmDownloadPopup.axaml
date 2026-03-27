@@ -10,9 +10,9 @@
         Title="Options de téléchragement">
   
 <Grid ColumnDefinitions="*" Margin="20">
-    <TextBlock Grid.Column="0" Text="Options de téléchragement :" FontSize="16"/>
-    <CheckBox Name="chkDl" Grid.Column="0" VerticalAlignment="Top" Margin="0,65,0,0" Content="Récupérer le fichier d'orignie/source (le fichier stocker sera supprimer)"/>
-    <CheckBox Name="chkExp" Grid.Column="0" VerticalAlignment="Center" Margin="0,50,0,0" Content="Recupérer les images compresser (le fichier stocker ne sera pas supprimer)"/>
+    <TextBlock Grid.Column="0" Text="Options de téléchargement :" FontSize="16"/>
+    <CheckBox Name="chkDl" Grid.Column="0" VerticalAlignment="Top" Margin="0,65,0,0" Content="Récupérer le fichier d'orignie/source (le fichier stocké sera supprimé)"/>
+    <CheckBox Name="chkExp" Grid.Column="0" VerticalAlignment="Center" Margin="0,50,0,0" Content="Recupérer les images compresser (le fichier stocké ne sera pas supprimé)"/>
     <ProgressBar Name="LoadingBar" Grid.Column="0" Height="20" Minimum="0" Maximum="100" Foreground="#0eba2f" Margin="0,175,0,0" ShowProgressText="True"/> 
     <StackPanel Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" Orientation="Horizontal" Spacing="15">
       <Button Name="BtnCancel" Content="Annuler" Width="70" Height="35" FontSize="14" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>

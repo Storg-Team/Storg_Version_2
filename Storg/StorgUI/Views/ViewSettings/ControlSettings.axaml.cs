@@ -217,7 +217,7 @@ public partial class ControlSettings : UserControl
 
     private void Redirect()
     {
-        string url = "https://storg.serveousercontent.com/";
+        string url = "https://ministers-checkout-britney-grid.trycloudflare.com/storg/";
         try
         {
             if (_libsGlobal.IsWindows())
