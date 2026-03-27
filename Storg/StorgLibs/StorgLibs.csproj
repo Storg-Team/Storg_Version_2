@@ -6,15 +6,24 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-    <ItemGroup>
-    <None Include="Libs/libs_filecompression.so" Condition="'$(OS)' == 'Unix'">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+    <None Include="Libs/libs_filecompression.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-        <None Include="Libs/libs_filecompression.dll" Condition="'$(OS)' == 'Windows_NT'">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-    
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <None Include="Libs/libs_filecompression.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <None Include="Libs/libs_filecompression.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.9" />
   </ItemGroup>
