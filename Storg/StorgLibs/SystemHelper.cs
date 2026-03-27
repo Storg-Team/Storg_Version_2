@@ -62,7 +62,7 @@ namespace StorgLibs
                 if (!string.IsNullOrEmpty(home))
                 {
                     string? Download = Environment.GetEnvironmentVariable("XDG_DOWNLOAD_DIR");
-                    return !string.IsNullOrEmpty(Download) ? Download : Path.Combine(home, "Downloads"); // Récupèration du dossier Telechargement
+                    return !string.IsNullOrEmpty(Download) ? Download : Path.Combine(home, "Téléchargements"); // Récupèration du dossier Telechargement
 
                 }
             }
